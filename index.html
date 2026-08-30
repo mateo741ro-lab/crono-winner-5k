@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<title>CRONO WINNER 5K</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#0a0a0a;color:#fff;overflow:hidden;touch-action:manipulation}
+  .screen{display:none;height:100%;width:100%;flex-direction:column;padding:16px}
+  .screen.active{display:flex}
+  h1{font-size:1.6rem;letter-spacing:2px;text-align:center;margin-bottom:4px}
+  h2{font-size:.9rem;text-align:center;color:#888;margin-bottom:20px;font-weight:400}
+  .logo-big{font-size:2.2rem;font-weight:900;letter-spacing:3px;text-align:center;margin-top:8vh;margin-bottom:6px;color:#fff}
+  .logo-sub{font-size:1rem;text-align:center;color:#ff6b35;margin-bottom:6vh;letter-spacing:4px}
+  .level-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;max-width:400px;width:100%;align-self:center}
+  .level-btn{background:#1a1a1a;border:2px solid #333;color:#fff;padding:16px;font-size:1.05rem;font-weight:700;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s}
+  .level-btn:active{border-color:#ff6b35;background:#22130d;transform:scale(.97)}
+  .level-btn.selected{border-color:#ff6b35;background:#ff6b35;color:#0a0a0a}
+  .btn-primary{background:#ff6b35;color:#0a0a0a;border:none;padding:18px;font-size:1.2rem;font-weight:800;border-radius:14px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:10px}
+  .btn-primary:active{transform:scale(.97)}
+  .btn-secondary{background:#1a1a1a;color:#fff;border:2px solid #444;padding:16px;font-size:1.1rem;font-weight:700;border-radius:14px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:10px}
+  .btn-danger{background:#ff3366;color:#fff;border:none;padding:16px;font-size:1.1rem;font-weight:700;border-radius:14px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:10px}
+  .summary-box{background:#141414;border-radius:16px;padding:20px;margin:10px 0;text-align:center;border:1px solid #222}
+  .big-number{font-size:4rem;font-weight:900;color:#ff6b35;line-height:1}
+  .big-label{font-size:.9rem;color:#888;margin-top:4px}
+  .stats-row{display:flex;justify-content:space-around;margin:16px 0}
+  .stat{text-align:center}
+  .stat-num{font-size:1.6rem;font-weight:800}
+  .stat-label{font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:1px}
+  .progress-container{width:100%;height:14px;background:#222;border-radius:10px;margin:14px 0;overflow:hidden}
+  .progress-bar{height:100%;background:#ff6b35;border-radius:10px;width:0%;transition:width .5s}
+  .status-box{text-align:center;padding:14px;border-radius:14px;margin:10px 0;font-weight:800;font-size:1.3rem;letter-spacing:1px}
+  .good{background:rgba(0,212,170,.15);color:#00d4aa;border:1px solid rgba(0,212,170,.3)}
+  .warn{background:rgba(255,204,0,.15);color:#ffcc00;border:1px solid rgba(255,204,0,.3)}
+  .bad{background:rgba(255,51,102,.15);color:#ff3366;border:1px solid rgba(255,51,102,.3)}
+  .stage-badge{display:inline-block;background:#ff6b35;color:#0a0a0a;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:800;margin-bottom:10px}
+  .gps-error{background:#ff3366;color:#fff;padding:16px;border-radius:12px;text-align:center;margin:10px 0;font-weight:700}
+  .routine-list{text-align:left;background:#141414;border-radius:14px;padding:16px;margin:14px 0;border:1px solid #222;max-width:400px;align-self:center;width:100%}
+  .routine-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:.95rem}
+  .routine-item:last-child{border-bottom:none}
+  .hidden{display:none!important}
+  .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .top-bar small{color:#888;font-size:.75rem}
+  .hint-box{background:#1a1a1a;border:1px dashed #555;border-radius:10px;padding:12px;margin:10px 0;font-size:.8rem;color:#aaa;text-align:center;max-width:400px;align-self:center}
+</style>
+</head>
+<body>
+
+<section id="screen-home" class="screen active">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div class="logo-big">CRONO WINNER</div>
+    <div class="logo-sub">5K PERFORMANCE SYSTEM</div>
+    <h2 style="margin-bottom:14px">Seleccioná tu nivel</h2>
+    <div class="level-grid" id="levelGrid"></div>
+    <button class="btn-primary" onclick="goToPreTraining()">MODO ENTRENAMIENTO</button>
+  </div>
+</section>
+
+<section id="screen-pre" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 id="preTitle">NIVEL 1</h1>
+    <h2>Velocidad objetivo: <span id="preTarget">8.0</span> km/h</h2>
+    <div class="routine-list" id="routineList"></div>
+    <button class="btn-primary" onclick="startTraining()">INICIAR ENTRENAMIENTO</button>
+    <button class="btn-secondary" onclick="showScreen('screen-home')">VOLVER</button>
+  </div>
+</section>
+
+<section id="screen-training" class="screen">
+  <div class="top-bar">
+    <small id="topStage">ETAPA 1/6</small>
+    <small id="topTimeTotal">00:00</small>
+  </div>
+  <div style="text-align:center;margin-bottom:6px">
+    <span class="stage-badge" id="stageName">CALENTAMIENTO</span>
+  </div>
+  <div class="summary-box">
+    <div class="big-number" id="dispSpeed">0.0</div>
+    <div class="big-label">km/h (actual)</div>
+  </div>
+  <div style="text-align:center;margin:8px 0">
+    <div style="font-size:1.3rem;font-weight:700">Objetivo: <span id="dispTarget" style="color:#ff6b35">8.0</span> km/h</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num" id="dispDist">0</div>
+      <div class="stat-label">Distancia</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="dispTime">00:00</div>
+      <div class="stat-label">Etapa</div>
+    </div>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progTotal"></div>
+  </div>
+  <div style="text-align:center;font-size:.75rem;color:#666;margin-bottom:8px">Progreso total</div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progStage" style="background:#00d4aa"></div>
+  </div>
+  <div style="text-align:center;font-size:.75rem;color:#666;margin-bottom:8px">Progreso etapa</div>
+  <div class="status-box good" id="statusBox">Esperando GPS...</div>
+  <div id="gpsErrorBox" class="gps-error hidden"></div>
+  <div class="hint-box" id="gpsHint">
+    📡 Buscando señal GPS...<br>Asegurate de estar al aire libre.
+  </div>
+  <div style="margin-top:auto;padding-top:10px">
+    <button class="btn-primary" onclick="pauseTraining()">PAUSAR</button>
+    <button class="btn-danger" onclick="finishTraining(true)">FINALIZAR</button>
+  </div>
+</section>
+
+<section id="screen-pause" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 style="font-size:2rem;margin-bottom:10px">PAUSA</h1>
+    <div class="big-number" id="pauseTime" style="font-size:3rem;margin-bottom:20px">00:00</div>
+    <button class="btn-primary" onclick="resumeTraining()">CONTINUAR</button>
+    <button class="btn-danger" onclick="finishTraining(true)">FINALIZAR</button>
+  </div>
+</section>
+
+<section id="screen-summary" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 style="color:#00d4aa">ENTRENAMIENTO COMPLETADO</h1>
+    <div class="summary-box" style="width:100%;max-width:400px">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-num" id="sumTime">00:00</div><div class="stat-label">Tiempo</div></div>
+        <div class="stat"><div class="stat-num" id="sumDist">0</div><div class="stat-label">Distancia</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-num" id="sumAvg">0.0</div><div class="stat-label">Vel. media</div></div>
+        <div class="stat"><div class="stat-num" id="sumLevel">1</div><div class="stat-label">Nivel</div></div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="resetAll()">VOLVER AL INICIO</button>
+  </div>
+</section>
+
+<script>
+const LEVELS = [
+  {name:'Nivel 1',  target:8.0},
+  {name:'Nivel 2',  target:8.5},
+  {name:'Nivel 3',  target:9.0},
+  {name:'Nivel 4',  target:9.5},
+  {name:'Nivel 5',  target:10.0},
+  {name:'Nivel 6',  target:10.5},
+  {name:'Nivel 7',  target:11.0},
+  {name:'Nivel 8',  target:11.5},
+  {name:'Nivel 9',  target:12.0},
+  {name:'Nivel 10', target:13.0}
+];
+const ALPHA = 0.25;
+const SPEECH_COOLDOWN = 25000;
+
+let selectedLevel = 0;
+let routine = [];
+let state = {
+  running:false, paused:false,
+  stage:0, stageStart:0,
+  startTime:0, totalPaused:0, pauseStart:0,
+  dist:0, lastPos:null,
+  watchId:null,
+  filteredSpeed:0,
+  lastSpeech:0,
+  speedSamples:[],
+  gpsReady:false
+};
+
+function buildRoutine(target){
+  return [
+    {name:'Calentamiento',      dur:300, speed:Math.max(5.0, target-3.0)},
+    {name:'Ritmo inicial',      dur:180, speed:target-1.5},
+    {name:'Aumento progresivo', dur:180, speed:target-0.5},
+    {name:'Mantener ritmo',     dur:300, speed:target},
+    {name:'Tramo rápido',       dur:120, speed:target+0.5},
+    {name:'Recuperación',       dur:120, speed:target-2.0}
+  ];
+}
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return m+':'+sec;
+}
+function fmtDist(m){
+  if(m < 1000) return Math.round(m)+' m';
+  return (m/1000).toFixed(2)+' km';
+}
+function speak(text,force){
+  if(!window.speechSynthesis) return;
+  const now = Date.now();
+  if(!force && (now - state.lastSpeech) < SPEECH_COOLDOWN) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'es-ES';
+  u.rate = 1.05;
+  u.pitch = 1;
+  window.speechSynthesis.speak(u);
+  state.lastSpeech = now;
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+const g = document.getElementById('levelGrid');
+LEVELS.forEach((lv,i)=>{
+  const b = document.createElement('div');
+  b.className = 'level-btn';
+  b.textContent = lv.name + '\n' + lv.target + ' km/h';
+  b.style.whiteSpace = 'pre';
+  b.onclick = ()=>{selectedLevel=i; document.querySelectorAll('.level-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected');};
+  g.appendChild(b);
+});
+g.children[0].classList.add('selected');
+
+function goToPreTraining(){
+  const lv = LEVELS[selectedLevel];
+  routine = buildRoutine(lv.target);
+  document.getElementById('preTitle').textContent = lv.name;
+  document.getElementById('preTarget').textContent = lv.target.toFixed(1);
+  const list = document.getElementById('routineList');
+  list.innerHTML = '';
+  routine.forEach((st,i)=>{
+    const row = document.createElement('div');
+    row.className = 'routine-item';
+    row.innerHTML = '<span>'+(i+1)+'. '+st.name+'</span><span style="color:#ff6b35">'+st.speed.toFixed(1)+' km/h</span>';
+    list.appendChild(row);
+  });
+  showScreen('screen-pre');
+}
+
+function startTraining(){
+  const d = document.documentElement;
+  if(d.requestFullscreen) d.requestFullscreen(); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen();
+
+  state = {
+    running:true, paused:false,
+    stage:0, stageStart:Date.now(),
+    startTime:Date.now(), totalPaused:0, pauseStart:0,
+    dist:0, lastPos:null,
+    watchId:null,
+    filteredSpeed:0,
+    lastSpeech:0,
+    speedSamples:[],
+    gpsReady:false
+  };
+
+  document.getElementById('gpsErrorBox').classList.add('hidden');
+  document.getElementById('gpsHint').classList.remove('hidden');
+  updateStageUI();
+
+  if(!navigator.geolocation){
+    showGpsError('Tu navegador no soporta GPS.');
+    return;
+  }
+  state.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {
+    enableHighAccuracy:true, timeout:15000, maximumAge:0
+  });
+
+  speak('Comenzamos. '+routine[0].name+'. Objetivo: '+routine[0].speed.toFixed(1)+' kilómetros por hora.', true);
+  showScreen('screen-training');
+  requestAnimationFrame(loop);
+}
+
+function onGps(pos){
+  const now = Date.now();
+  const lat = pos.coords.latitude;
+  const lon = pos.coords.longitude;
+
+  if(!state.gpsReady){
+    state.gpsReady = true;
+    document.getElementById('gpsHint').classList.add('hidden');
+  }
+
+  let raw = 0;
+  if(pos.coords.speed !== null && pos.coords.speed > 0){
+    raw = pos.coords.speed * 3.6;
+  }
+
+  if(state.lastPos){
+    const d = haversine(state.lastPos.lat, state.lastPos.lon, lat, lon);
+    state.dist += d;
+    if(raw === 0){
+      const dt = (now - state.lastPos.t)/1000;
+      if(dt > 0) raw = (d/dt)*3.6;
+    }
+  }
+  state.lastPos = {lat:lat, lon:lon, t:now};
+
+  if(state.filteredSpeed === 0) state.filteredSpeed = raw;
+  else state.filteredSpeed = ALPHA*raw + (1-ALPHA)*state.filteredSpeed;
+
+  if(state.filteredSpeed > 0.5){
+    state.speedSamples.push(state.filteredSpeed);
+    if(state.speedSamples.length > 20) state.speedSamples.shift();
+  }
+}
+
+function onGpsErr(err){
+  let msg = 'Error de GPS.';
+  if(err.code === 1) msg = 'GPS rechazado. Permití el acceso a ubicación en la configuración del navegador.';
+  else if(err.code === 2) msg = 'GPS no disponible. Asegurate de estar al aire libre.';
+  else if(err.code === 3) msg = 'GPS tardando demasiado. Reintentando...';
+  showGpsError(msg);
+}
+function showGpsError(msg){
+  const box = document.getElementById('gpsErrorBox');
+  box.textContent = msg;
+  box.classList.remove('hidden');
+}
+
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371000, toRad=Math.PI/180;
+  const dLat=(lat2-lat1)*toRad, dLon=(lon2-lon1)*toRad;
+  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*toRad)*Math.cos(lat2*toRad)*Math.sin(dLon/2)**2;
+  return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function loop(){
+  if(!state.running) return;
+  if(!state.paused){
+    const now = Date.now();
+    const stage = routine[state.stage];
+    const stageElapsed = (now - state.stageStart)/1000;
+
+    if(stageElapsed >= stage.dur){
+      state.stage++;
+      if(state.stage >= routine.length){
+        finishTraining(false);
+        return;
+      }
+      state.stageStart = now;
+      const st = routine[state.stage];
+      speak('Etapa '+(state.stage+1)+'. '+st.name+'. Objetivo: '+st.speed.toFixed(1)+' kilómetros por hora.', true);
+    }
+    updateStageUI();
+  }
+  requestAnimationFrame(loop);
+}
+
+function updateStageUI(){
+  const st = routine[state.stage];
+  const now = Date.now();
+  const totalElapsed = Math.floor((now - state.startTime - state.totalPaused)/1000);
+  const stageElapsed = Math.floor((now - state.stageStart)/1000);
+
+  document.getElementById('topStage').textContent = 'ETAPA '+(state.stage+1)+'/'+routine.length;
+  document.getElementById('topTimeTotal').textContent = fmtTime(totalElapsed);
+  document.getElementById('stageName').textContent = st.name.toUpperCase();
+  document.getElementById('dispSpeed').textContent = state.filteredSpeed.toFixed(1);
+  document.getElementById('dispTarget').textContent = st.speed.toFixed(1);
+  document.getElementById('dispDist').textContent = fmtDist(state.dist);
+  document.getElementById('dispTime').textContent = fmtTime(stageElapsed);
+
+  const totalDur = routine.reduce((a,b)=>a+b.dur,0);
+  let done = 0;
+  for(let i=0;i<state.stage;i++) done += routine[i].dur;
+  done += Math.min((now-state.stageStart)/1000, st.dur);
+  document.getElementById('progTotal').style.width = Math.min(100, (done/totalDur)*100)+'%';
+  document.getElementById('progStage').style.width = Math.min(100, (stageElapsed/st.dur)*100)+'%';
+
+  const diff = state.filteredSpeed - st.speed;
+  const box = document.getElementById('statusBox');
+  let txt = 'Mantené el ritmo', cls = 'good';
+  if(Math.abs(diff) < 0.4){ txt = 'Vas muy bien'; cls = 'good'; }
+  else if(diff < -0.9){ txt = 'Acelerá un poco'; cls = 'bad'; }
+  else if(diff < -0.4){ txt = 'Acelerá ligeramente'; cls = 'warn'; }
+  else if(diff > 0.9){ txt = 'Reducí un poco'; cls = 'bad'; }
+  else if(diff > 0.4){ txt = 'Reducí ligeramente'; cls = 'warn'; }
+  box.textContent = txt;
+  box.className = 'status-box '+cls;
+
+  if(state.filteredSpeed > 1 && Math.abs(diff) > 0.8){
+    if(diff < 0) speak('Acelerá un poco');
+    else speak('Reducí ligeramente');
+  }
+}
+
+function pauseTraining(){
+  state.paused = true;
+  state.pauseStart = Date.now();
+  if(state.watchId !== null){
+    navigator.geolocation.clearWatch(state.watchId);
+    state.watchId = null;
+  }
+  document.getElementById('pauseTime').textContent = document.getElementById('topTimeTotal').textContent;
+  showScreen('screen-pause');
+}
+function resumeTraining(){
+  state.paused = false;
+  state.totalPaused += (Date.now() - state.pauseStart);
+  state.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {
+    enableHighAccuracy:true, timeout:15000, maximumAge:0
+  });
+  showScreen('screen-training');
+}
+function finishTraining(manual){
+  state.running = false;
+  if(state.watchId !== null){
+    navigator.geolocation.clearWatch(state.watchId);
+    state.watchId = null;
+  }
+  const totalTime = Math.floor((Date.now() - state.startTime - state.totalPaused)/1000);
+  const avgSpeed = state.speedSamples.length > 0
+    ? (state.speedSamples.reduce((a,b)=>a+b,0)/state.speedSamples.length)
+    : 0;
+  document.getElementById('sumTime').textContent = fmtTime(totalTime);
+  document.getElementById('sumDist').textContent = fmtDist(state.dist);
+  document.getElementById('sumAvg').textContent = avgSpeed.toFixed(1);
+  document.getElementById('sumLevel').textContent = (selectedLevel+1);
+  speak(manual ? 'Entrenamiento finalizado.' : 'Excelente. Entrenamiento completado.', true);
+  showScreen('screen-summary');
+}
+function resetAll(){
+  showScreen('screen-home');
+}
+</script>
+</body>
+</html>
