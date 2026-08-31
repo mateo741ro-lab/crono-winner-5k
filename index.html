@@ -1,361 +1,259 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prueba GPS</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<title>CRONO WINNER 5K - Tracker GPS</title>
 <style>
-body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    text-align:center;
-    padding:30px;
-}
-
-h1{
-    color:#ff6b35;
-}
-
-.box{
-    background:#222;
-    border-radius:20px;
-    padding:20px;
-    margin-top:20px;
-}
-
-.numero{
-    font-size:50px;
-    font-weight:bold;
-    margin:15px;
-}
-
-button{
-    width:100%;
-    padding:18px;
-    border:0;
-    border-radius:15px;
-    font-size:18px;
-    font-weight:bold;
-}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#0a0a0a;color:#fff;overflow:hidden;touch-action:manipulation}
+  .screen{display:none;height:100%;width:100%;flex-direction:column;padding:20px;align-items:center;justify-content:center}
+  .screen.active{display:flex}
+  .logo-big{font-size:2rem;font-weight:900;letter-spacing:3px;text-align:center;margin-bottom:6px}
+  .logo-sub{font-size:.9rem;text-align:center;color:#ff6b35;letter-spacing:4px;margin-bottom:30px}
+  .card{background:#141414;border:1px solid #222;border-radius:16px;padding:24px;width:100%;max-width:380px;text-align:center;margin-bottom:12px}
+  .big-number{font-size:4.5rem;font-weight:900;color:#ff6b35;line-height:1}
+  .big-label{font-size:.85rem;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+  .stats-row{display:flex;justify-content:space-around;margin:20px 0}
+  .stat{text-align:center;flex:1}
+  .stat-num{font-size:1.8rem;font-weight:800}
+  .stat-label{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+  .btn{background:#ff6b35;color:#0a0a0a;border:none;padding:18px;font-size:1.2rem;font-weight:800;border-radius:14px;width:100%;max-width:380px;cursor:pointer;margin-top:8px}
+  .btn:active{transform:scale(.97)}
+  .btn-sec{background:#1a1a1a;color:#fff;border:2px solid #444;padding:16px;font-size:1.1rem;font-weight:700;border-radius:14px;width:100%;max-width:380px;cursor:pointer;margin-top:10px}
+  .btn-dan{background:#ff3366;color:#fff;border:none;padding:16px;font-size:1.1rem;font-weight:700;border-radius:14px;width:100%;max-width:380px;cursor:pointer;margin-top:10px}
+  .hint{font-size:.8rem;color:#888;text-align:center;margin-top:12px;line-height:1.4;max-width:380px}
+  .status{font-size:1.1rem;font-weight:700;text-align:center;margin:10px 0;padding:10px;border-radius:10px}
+  .ok{color:#00d4aa}
+  .wait{color:#ffcc00}
+  .err{color:#ff3366}
+  .gps-box{background:#0f0f0f;border:1px dashed #444;border-radius:10px;padding:12px;margin:10px 0;font-size:.8rem;color:#aaa;text-align:center;max-width:380px;width:100%}
 </style>
-
 </head>
-
 <body>
 
-<h1>CHRONO WINNER</h1>
+<!-- INICIO -->
+<section id="scr-home" class="screen active">
+  <div class="logo-big">CRONO WINNER</div>
+  <div class="logo-sub">5K TRACKER GPS</div>
+  <div class="hint">Esta página usa el GPS real de tu teléfono.<br>Permití el acceso a ubicación cuando te lo pida.</div>
+  <button class="btn" onclick="startTracking()" style="margin-top:20px">INICIAR TRACKING</button>
+</section>
 
-<h2>PRUEBA GPS</h2>
+<!-- TRACKING -->
+<section id="scr-track" class="screen">
+  <div class="card">
+    <div class="big-number" id="dispSpeed">0.0</div>
+    <div class="big-label">km/h (velocidad)</div>
+  </div>
 
-<button onclick="iniciarGPS()">
-INICIAR GPS
-</button>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num" id="dispDist">0</div>
+      <div class="stat-label">Distancia</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="dispTime">00:00</div>
+      <div class="stat-label">Tiempo</div>
+    </div>
+  </div>
 
-<div class="box">
+  <div class="status wait" id="statusText">Buscando señal GPS...</div>
 
-<div>VELOCIDAD</div>
+  <div class="gps-box" id="gpsBox">
+    📡 Esperando posición del GPS...<br>
+    Asegurate de estar al aire libre.
+  </div>
 
-<div class="numero" id="velocidad">
---
-</div>
+  <button class="btn-sec" onclick="pauseTracking()">PAUSAR</button>
+  <button class="btn-dan" onclick="stopTracking()">FINALIZAR</button>
+</section>
 
-<div>km/h</div>
+<!-- PAUSA -->
+<section id="scr-pause" class="screen">
+  <div class="logo-big" style="font-size:1.6rem">PAUSA</div>
+  <div class="card" style="margin-top:20px">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num" id="pauseDist">0</div><div class="stat-label">Distancia</div></div>
+      <div class="stat"><div class="stat-num" id="pauseTime">00:00</div><div class="stat-label">Tiempo</div></div>
+    </div>
+  </div>
+  <button class="btn" onclick="resumeTracking()">CONTINUAR</button>
+  <button class="btn-dan" onclick="stopTracking()">FINALIZAR</button>
+</section>
 
-<hr>
-
-<div>PRECISIÓN</div>
-
-<div id="precision">
---
-</div>
-
-<hr>
-
-<div>LATITUD</div>
-
-<div id="latitud">
---
-</div>
-
-<hr>
-
-<div>LONGITUD</div>
-
-<div id="longitud">
---
-</div>
-
-</div>
-
+<!-- RESUMEN -->
+<section id="scr-end" class="screen">
+  <div class="logo-big" style="color:#00d4aa;font-size:1.6rem">RESUMEN</div>
+  <div class="card" style="margin-top:20px">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num" id="endTime">00:00</div><div class="stat-label">Tiempo total</div></div>
+      <div class="stat"><div class="stat-num" id="endDist">0</div><div class="stat-label">Distancia</div></div>
+    </div>
+    <div class="stats-row" style="margin-top:14px">
+      <div class="stat"><div class="stat-num" id="endAvg">0.0</div><div class="stat-label">Vel. media</div></div>
+      <div class="stat"><div class="stat-num" id="endMax">0.0</div><div class="stat-label">Vel. máxima</div></div>
+    </div>
+  </div>
+  <button class="btn" onclick="resetAll()">NUEVO TRACKING</button>
+</section>
 
 <script>
-
-let anterior = null;
-
-let velocidadFiltrada = 0;
-
-function iniciarGPS(){
-
-if(!navigator.geolocation){
-
-alert("Este teléfono no tiene geolocalización disponible.");
-
-return;
-
-}
-
-navigator.geolocation.watchPosition(
-
-gps,
-
-error,
-
-{
-enableHighAccuracy:true,
-maximumAge:0,
-timeout:10000
-}
-
-);
-
-}
-
-
-function gps(pos){
-
-let lat = pos.coords.latitude;
-
-let lon = pos.coords.longitude;
-
-let precision = pos.coords.accuracy;
-
-document.getElementById("precision").innerText =
-Math.round(precision) + " metros";
-
-document.getElementById("latitud").innerText =
-lat.toFixed(6);
-
-document.getElementById("longitud").innerText =
-lon.toFixed(6);
-
-
-/*
-Si la precisión es demasiado mala,
-no calculamos velocidad.
-*/
-
-if(precision > 30){
-
-document.getElementById("velocidad").innerText =
-"--";
-
-anterior = null;
-
-velocidadFiltrada = 0;
-
-return;
-
-}
-
-
-/*
-Primera medición.
-*/
-
-if(anterior === null){
-
-anterior = {
-
-lat:lat,
-
-lon:lon,
-
-tiempo:Date.now()
-
+const ALPHA = 0.25;
+let S = {
+  run:false, paused:false,
+  start:0, totalPause:0, pauseAt:0,
+  dist:0, lastPos:null,
+  watchId:null,
+  filtSpeed:0,
+  samples:[], maxSpeed:0
 };
 
-return;
-
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return m+':'+sec;
+}
+function fmtDist(m){
+  if(m < 1000) return Math.round(m)+' m';
+  return (m/1000).toFixed(2)+' km';
+}
+function show(id){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-
-let ahora = Date.now();
-
-let segundos =
-(ahora - anterior.tiempo) / 1000;
-
-
-if(segundos <= 0){
-
-return;
-
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371000, toRad=Math.PI/180;
+  const dLat=(lat2-lat1)*toRad, dLon=(lon2-lon1)*toRad;
+  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*toRad)*Math.cos(lat2*toRad)*Math.sin(dLon/2)**2;
+  return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
+function onGps(pos){
+  const now = Date.now();
+  const lat = pos.coords.latitude;
+  const lon = pos.coords.longitude;
 
-let metros =
-distancia(
-anterior.lat,
-anterior.lon,
-lat,
-lon
-);
+  document.getElementById('gpsBox').classList.add('hidden');
+  document.getElementById('statusText').textContent = 'GPS activo';
+  document.getElementById('statusText').className = 'status ok';
 
+  let raw = 0;
+  if(pos.coords.speed !== null && pos.coords.speed > 0){
+    raw = pos.coords.speed * 3.6;
+  }
 
-/*
-IGNORAR MOVIMIENTOS PEQUEÑOS.
+  if(S.lastPos){
+    const d = haversine(S.lastPos.lat, S.lastPos.lon, lat, lon);
+    S.dist += d;
+    if(raw === 0){
+      const dt = (now - S.lastPos.t)/1000;
+      if(dt > 0) raw = (d/dt)*3.6;
+    }
+  }
+  S.lastPos = {lat,lon,t:now};
 
-Esto elimina gran parte del ruido GPS
-cuando estás quieto.
-*/
+  if(S.filtSpeed === 0) S.filtSpeed = raw;
+  else S.filtSpeed = ALPHA*raw + (1-ALPHA)*S.filtSpeed;
 
-if(metros < 3){
-
-velocidadFiltrada *= 0.5;
-
-if(velocidadFiltrada < 0.2){
-
-velocidadFiltrada = 0;
-
+  if(S.filtSpeed > 0.5){
+    S.samples.push(S.filtSpeed);
+    if(S.samples.length > 30) S.samples.shift();
+    if(S.filtSpeed > S.maxSpeed) S.maxSpeed = S.filtSpeed;
+  }
 }
 
-document.getElementById("velocidad").innerText =
-velocidadFiltrada.toFixed(1);
-
-anterior = {
-
-lat:lat,
-
-lon:lon,
-
-tiempo:ahora
-
-};
-
-return;
-
+function onGpsErr(err){
+  let msg = 'Error de GPS.';
+  if(err.code === 1) msg = 'GPS rechazado. Permití ubicación en configuración.';
+  else if(err.code === 2) msg = 'GPS no disponible. Andá al aire libre.';
+  else if(err.code === 3) msg = 'GPS tardando. Reintentando...';
+  document.getElementById('statusText').textContent = msg;
+  document.getElementById('statusText').className = 'status err';
 }
 
+function updateUI(){
+  if(!S.run || S.paused) return;
+  const now = Date.now();
+  const elapsed = Math.floor((now - S.start - S.totalPause)/1000);
 
-/*
-Velocidad calculada.
-*/
+  document.getElementById('dispSpeed').textContent = S.filtSpeed.toFixed(1);
+  document.getElementById('dispDist').textContent = fmtDist(S.dist);
+  document.getElementById('dispTime').textContent = fmtTime(elapsed);
 
-let velocidad =
-(metros / segundos) * 3.6;
-
-
-/*
-Ignorar velocidades imposibles.
-*/
-
-if(velocidad > 25){
-
-anterior = {
-
-lat:lat,
-
-lon:lon,
-
-tiempo:ahora
-
-};
-
-return;
-
+  requestAnimationFrame(updateUI);
 }
 
+function startTracking(){
+  if(!navigator.geolocation){
+    alert('Tu navegador no soporta GPS.');
+    return;
+  }
 
-/*
-Filtro fuerte.
+  S = {
+    run:true, paused:false,
+    start:Date.now(), totalPause:0, pauseAt:0,
+    dist:0, lastPos:null,
+    watchId:null,
+    filtSpeed:0,
+    samples:[], maxSpeed:0
+  };
 
-No permitimos cambios bruscos.
-*/
+  document.getElementById('gpsBox').classList.remove('hidden');
+  document.getElementById('statusText').textContent = 'Buscando señal GPS...';
+  document.getElementById('statusText').className = 'status wait';
 
-velocidadFiltrada =
-(velocidadFiltrada * 0.75) +
-(velocidad * 0.25);
+  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {
+    enableHighAccuracy:true, timeout:10000, maximumAge:0
+  });
 
-
-/*
-Si estamos casi quietos,
-forzamos a 0.
-*/
-
-if(velocidadFiltrada < 0.7){
-
-velocidadFiltrada = 0;
-
+  show('scr-track');
+  updateUI();
 }
 
-
-document.getElementById("velocidad").innerText =
-velocidadFiltrada.toFixed(1);
-
-
-/*
-Guardar posición.
-*/
-
-anterior = {
-
-lat:lat,
-
-lon:lon,
-
-tiempo:ahora
-
-};
-
+function pauseTracking(){
+  S.paused = true;
+  S.pauseAt = Date.now();
+  if(S.watchId !== null){
+    navigator.geolocation.clearWatch(S.watchId);
+    S.watchId = null;
+  }
+  document.getElementById('pauseDist').textContent = fmtDist(S.dist);
+  document.getElementById('pauseTime').textContent = document.getElementById('dispTime').textContent;
+  show('scr-pause');
 }
 
-
-/*
-DISTANCIA GPS
-*/
-
-function distancia(lat1,lon1,lat2,lon2){
-
-const R = 6371000;
-
-const rad = Math.PI / 180;
-
-const dLat =
-(lat2-lat1)*rad;
-
-const dLon =
-(lon2-lon1)*rad;
-
-const a =
-Math.sin(dLat/2) *
-Math.sin(dLat/2) +
-
-Math.cos(lat1*rad) *
-Math.cos(lat2*rad) *
-Math.sin(dLon/2) *
-Math.sin(dLon/2);
-
-const c =
-2 *
-Math.atan2(
-Math.sqrt(a),
-Math.sqrt(1-a)
-);
-
-return R*c;
-
+function resumeTracking(){
+  S.paused = false;
+  S.totalPause += (Date.now() - S.pauseAt);
+  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {
+    enableHighAccuracy:true, timeout:10000, maximumAge:0
+  });
+  show('scr-track');
+  updateUI();
 }
 
+function stopTracking(){
+  S.run = false;
+  if(S.watchId !== null){
+    navigator.geolocation.clearWatch(S.watchId);
+    S.watchId = null;
+  }
+  const totalTime = Math.floor((Date.now() - S.start - S.totalPause)/1000);
+  const avg = S.samples.length > 0 ? (S.samples.reduce((a,b)=>a+b,0)/S.samples.length) : 0;
 
-function error(error){
-
-document.getElementById("velocidad").innerText =
-"GPS ERROR";
-
+  document.getElementById('endTime').textContent = fmtTime(totalTime);
+  document.getElementById('endDist').textContent = fmtDist(S.dist);
+  document.getElementById('endAvg').textContent = avg.toFixed(1);
+  document.getElementById('endMax').textContent = S.maxSpeed.toFixed(1);
+  show('scr-end');
 }
 
+function resetAll(){
+  show('scr-home');
+}
 </script>
-
 </body>
 </html>
