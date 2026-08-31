@@ -4,124 +4,356 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a0a0a">
-<title>CRONO WINNER 5K - Tracker GPS</title>
+<title>CRONO WINNER 5K</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#0a0a0a;color:#fff;overflow:hidden;touch-action:manipulation}
-  .screen{display:none;height:100%;width:100%;flex-direction:column;padding:20px;align-items:center;justify-content:center}
+  .screen{display:none;height:100%;width:100%;flex-direction:column;padding:16px}
   .screen.active{display:flex}
-  .logo-big{font-size:2rem;font-weight:900;letter-spacing:3px;text-align:center;margin-bottom:6px}
-  .logo-sub{font-size:.9rem;text-align:center;color:#ff6b35;letter-spacing:4px;margin-bottom:30px}
-  .card{background:#141414;border:1px solid #222;border-radius:16px;padding:24px;width:100%;max-width:380px;text-align:center;margin-bottom:12px}
-  .big-number{font-size:4.5rem;font-weight:900;color:#ff6b35;line-height:1}
-  .big-label{font-size:.85rem;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
-  .stats-row{display:flex;justify-content:space-around;margin:20px 0}
+  h1{font-size:1.4rem;letter-spacing:1px;text-align:center;margin-bottom:4px}
+  h2{font-size:.85rem;text-align:center;color:#888;margin-bottom:12px;font-weight:400}
+  .logo-big{font-size:2rem;font-weight:900;letter-spacing:2px;text-align:center;margin-top:4vh;margin-bottom:4px}
+  .logo-sub{font-size:.85rem;text-align:center;color:#ff6b35;margin-bottom:3vh;letter-spacing:3px}
+  .level-card{background:#141414;border:1px solid #222;border-radius:14px;padding:14px;margin:6px 0;width:100%;max-width:400px;align-self:center;cursor:pointer;transition:.15s}
+  .level-card:active{border-color:#ff6b35;background:#1a0f0a}
+  .level-card h3{color:#ff6b35;font-size:1rem;margin-bottom:4px}
+  .level-card p{color:#aaa;font-size:.8rem;line-height:1.4}
+  .sess-list{background:#141414;border:1px solid #222;border-radius:14px;padding:12px;margin:8px 0;max-width:400px;align-self:center;width:100%;max-height:35vh;overflow-y:auto}
+  .sess-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #222;cursor:pointer}
+  .sess-item:last-child{border-bottom:none}
+  .sess-item:active{color:#ff6b35}
+  .sess-name{font-size:.9rem;font-weight:700}
+  .sess-dur{font-size:.75rem;color:#888}
+  .btn-primary{background:#ff6b35;color:#0a0a0a;border:none;padding:16px;font-size:1.1rem;font-weight:800;border-radius:12px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:8px}
+  .btn-primary:active{transform:scale(.97)}
+  .btn-secondary{background:#1a1a1a;color:#fff;border:2px solid #444;padding:14px;font-size:1rem;font-weight:700;border-radius:12px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:8px}
+  .btn-danger{background:#ff3366;color:#fff;border:none;padding:14px;font-size:1rem;font-weight:700;border-radius:12px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:8px}
+  .card{background:#141414;border-radius:14px;padding:18px;margin:8px 0;text-align:center;border:1px solid #222;width:100%;max-width:400px;align-self:center}
+  .big-number{font-size:3.6rem;font-weight:900;color:#ff6b35;line-height:1}
+  .big-label{font-size:.8rem;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+  .stats-row{display:flex;justify-content:space-around;margin:14px 0}
   .stat{text-align:center;flex:1}
-  .stat-num{font-size:1.8rem;font-weight:800}
-  .stat-label{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-  .btn{background:#ff6b35;color:#0a0a0a;border:none;padding:18px;font-size:1.2rem;font-weight:800;border-radius:14px;width:100%;max-width:380px;cursor:pointer;margin-top:8px}
-  .btn:active{transform:scale(.97)}
-  .btn-sec{background:#1a1a1a;color:#fff;border:2px solid #444;padding:16px;font-size:1.1rem;font-weight:700;border-radius:14px;width:100%;max-width:380px;cursor:pointer;margin-top:10px}
-  .btn-dan{background:#ff3366;color:#fff;border:none;padding:16px;font-size:1.1rem;font-weight:700;border-radius:14px;width:100%;max-width:380px;cursor:pointer;margin-top:10px}
-  .hint{font-size:.8rem;color:#888;text-align:center;margin-top:12px;line-height:1.4;max-width:380px}
-  .status{font-size:1.1rem;font-weight:700;text-align:center;margin:10px 0;padding:10px;border-radius:10px}
-  .ok{color:#00d4aa}
-  .wait{color:#ffcc00}
-  .err{color:#ff3366}
-  .gps-box{background:#0f0f0f;border:1px dashed #444;border-radius:10px;padding:12px;margin:10px 0;font-size:.8rem;color:#aaa;text-align:center;max-width:380px;width:100%}
+  .stat-num{font-size:1.5rem;font-weight:800}
+  .stat-label{font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:1px}
+  .progress-container{width:100%;height:10px;background:#222;border-radius:6px;margin:10px 0;overflow:hidden}
+  .progress-bar{height:100%;background:#ff6b35;border-radius:6px;width:0%;transition:width .4s}
+  .stage-badge{display:inline-block;background:#ff6b35;color:#0a0a0a;padding:4px 12px;border-radius:16px;font-size:.75rem;font-weight:800;margin-bottom:6px}
+  .status-box{text-align:center;padding:10px;border-radius:10px;margin:8px 0;font-weight:800;font-size:1.1rem}
+  .good{color:#00d4aa;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.25)}
+  .warn{color:#ffcc00;background:rgba(255,204,0,.12);border:1px solid rgba(255,204,0,.25)}
+  .bad{color:#ff3366;background:rgba(255,51,102,.12);border:1px solid rgba(255,51,102,.25)}
+  .hint-box{background:#1a1a1a;border:1px dashed #444;border-radius:8px;padding:10px;margin:8px 0;font-size:.75rem;color:#aaa;text-align:center;max-width:400px;align-self:center}
+  .routine-detail{background:#0f0f0f;border-radius:10px;padding:10px;margin:8px 0;font-size:.8rem;color:#ccc;max-width:400px;align-self:center;width:100%;max-height:25vh;overflow-y:auto}
+  .routine-detail div{padding:4px 0;border-bottom:1px solid #222}
+  .routine-detail div:last-child{border-bottom:none}
+  .hidden{display:none!important}
+  .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .top-bar small{color:#888;font-size:.7rem}
+  .rpe-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+  .rpe-btn{background:#1a1a1a;border:2px solid #333;color:#fff;padding:10px;border-radius:8px;text-align:center;cursor:pointer;font-weight:700;font-size:.9rem}
+  .rpe-btn:active,.rpe-btn.sel{border-color:#ff6b35;background:#ff6b35;color:#0a0a0a}
 </style>
 </head>
 <body>
 
-<!-- INICIO -->
+<!-- HOME -->
 <section id="scr-home" class="screen active">
-  <div class="logo-big">CRONO WINNER</div>
-  <div class="logo-sub">5K TRACKER GPS</div>
-  <div class="hint">Esta página usa el GPS real de tu teléfono.<br>Permití el acceso a ubicación cuando te lo pida.</div>
-  <button class="btn" onclick="startTracking()" style="margin-top:20px">INICIAR TRACKING</button>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+    <div class="logo-big">CRONO WINNER</div>
+    <div class="logo-sub">5K PERFORMANCE SYSTEM</div>
+    <h2 style="margin-bottom:16px">Seleccioná tu nivel</h2>
+    <div class="level-card" onclick="selectLevel('principiante')">
+      <h3>🟢 Nivel 1 — Principiante</h3>
+      <p>Objetivo: Terminar los 5K sin detenerse. Método caminar/trotar.</p>
+    </div>
+    <div class="level-card" onclick="selectLevel('intermedio')">
+      <h3>🟡 Nivel 2 — Intermedio</h3>
+      <p>Mejorar tiempo y mantener ritmo continuo. Intervalos y progresión.</p>
+    </div>
+    <div class="level-card" onclick="selectLevel('avanzado')">
+      <h3>🔴 Nivel 3 — Avanzado</h3>
+      <p>Maximizar rendimiento. Umbral anaeróbico y series.</p>
+    </div>
+  </div>
 </section>
 
-<!-- TRACKING -->
-<section id="scr-track" class="screen">
+<!-- SELECCIONAR SESION -->
+<section id="scr-sessions" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+    <h1 id="sessTitle">NIVEL 1</h1>
+    <h2 id="sessSub">Elegí la sesión de hoy</h2>
+    <div class="sess-list" id="sessList"></div>
+    <button class="btn-secondary" onclick="show('scr-home')">VOLVER</button>
+  </div>
+</section>
+
+<!-- PRE-ENTRENAMIENTO -->
+<section id="scr-pre" class="screen">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 id="preTitle">Sesión</h1>
+    <div class="routine-detail" id="preRoutine"></div>
+    <button class="btn-primary" onclick="startTraining()">INICIAR ENTRENAMIENTO</button>
+    <button class="btn-secondary" onclick="show('scr-sessions')">VOLVER</button>
+  </div>
+</section>
+
+<!-- ENTRENAMIENTO -->
+<section id="scr-train" class="screen">
+  <div class="top-bar">
+    <small id="topStage">ETAPA 1/10</small>
+    <small id="topTime">00:00</small>
+  </div>
+  <div style="text-align:center"><span class="stage-badge" id="stageName">CALENTAMIENTO</span></div>
   <div class="card">
     <div class="big-number" id="dispSpeed">0.0</div>
-    <div class="big-label">km/h (velocidad)</div>
+    <div class="big-label">km/h</div>
   </div>
-
   <div class="stats-row">
-    <div class="stat">
-      <div class="stat-num" id="dispDist">0</div>
-      <div class="stat-label">Distancia</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="dispTime">00:00</div>
-      <div class="stat-label">Tiempo</div>
-    </div>
+    <div class="stat"><div class="stat-num" id="dispDist">0</div><div class="stat-label">Distancia</div></div>
+    <div class="stat"><div class="stat-num" id="dispTime">00:00</div><div class="stat-label">Sesión</div></div>
   </div>
-
-  <div class="status wait" id="statusText">Buscando señal GPS...</div>
-
-  <div class="gps-box" id="gpsBox">
-    📡 Esperando posición del GPS...<br>
-    Asegurate de estar al aire libre.
+  <div class="progress-container"><div class="progress-bar" id="progTotal"></div></div>
+  <div class="progress-container"><div class="progress-bar" id="progStage" style="background:#00d4aa"></div></div>
+  <div class="status-box good" id="statusBox">Buscando GPS...</div>
+  <div class="hint-box" id="gpsHint">📡 Conectando con GPS... Andá al aire libre.</div>
+  <div style="margin-top:auto;padding-top:8px">
+    <button class="btn-primary" onclick="pauseTraining()">PAUSAR</button>
+    <button class="btn-danger" onclick="finishTraining(true)">FINALIZAR</button>
   </div>
-
-  <button class="btn-sec" onclick="pauseTracking()">PAUSAR</button>
-  <button class="btn-dan" onclick="stopTracking()">FINALIZAR</button>
 </section>
 
 <!-- PAUSA -->
 <section id="scr-pause" class="screen">
-  <div class="logo-big" style="font-size:1.6rem">PAUSA</div>
-  <div class="card" style="margin-top:20px">
-    <div class="stats-row">
-      <div class="stat"><div class="stat-num" id="pauseDist">0</div><div class="stat-label">Distancia</div></div>
-      <div class="stat"><div class="stat-num" id="pauseTime">00:00</div><div class="stat-label">Tiempo</div></div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 style="font-size:1.8rem">PAUSA</h1>
+    <div class="card" style="margin:14px 0">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-num" id="pauseDist">0</div><div class="stat-label">Distancia</div></div>
+        <div class="stat"><div class="stat-num" id="pauseTime">00:00</div><div class="stat-label">Tiempo</div></div>
+      </div>
     </div>
+    <button class="btn-primary" onclick="resumeTraining()">CONTINUAR</button>
+    <button class="btn-danger" onclick="finishTraining(true)">FINALIZAR</button>
   </div>
-  <button class="btn" onclick="resumeTracking()">CONTINUAR</button>
-  <button class="btn-dan" onclick="stopTracking()">FINALIZAR</button>
 </section>
 
 <!-- RESUMEN -->
 <section id="scr-end" class="screen">
-  <div class="logo-big" style="color:#00d4aa;font-size:1.6rem">RESUMEN</div>
-  <div class="card" style="margin-top:20px">
-    <div class="stats-row">
-      <div class="stat"><div class="stat-num" id="endTime">00:00</div><div class="stat-label">Tiempo total</div></div>
-      <div class="stat"><div class="stat-num" id="endDist">0</div><div class="stat-label">Distancia</div></div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 style="color:#00d4aa">¡ENTRENAMIENTO COMPLETADO!</h1>
+    <div class="card" style="margin:10px 0">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-num" id="endTime">00:00</div><div class="stat-label">Tiempo</div></div>
+        <div class="stat"><div class="stat-num" id="endDist">0</div><div class="stat-label">Distancia</div></div>
+      </div>
+      <div class="stats-row" style="margin-top:10px">
+        <div class="stat"><div class="stat-num" id="endAvg">0.0</div><div class="stat-label">Vel. media</div></div>
+        <div class="stat"><div class="stat-num" id="endMax">0.0</div><div class="stat-label">Vel. máxima</div></div>
+      </div>
     </div>
-    <div class="stats-row" style="margin-top:14px">
-      <div class="stat"><div class="stat-num" id="endAvg">0.0</div><div class="stat-label">Vel. media</div></div>
-      <div class="stat"><div class="stat-num" id="endMax">0.0</div><div class="stat-label">Vel. máxima</div></div>
-    </div>
+    <div style="font-size:.9rem;color:#888;margin-bottom:8px">¿Cómo te sentiste? (Esfuerzo 1-10)</div>
+    <div class="rpe-grid" id="rpeGrid" style="max-width:400px;width:100%"></div>
+    <button class="btn-primary" onclick="saveRpeAndReset()" style="margin-top:10px">GUARDAR Y VOLVER</button>
   </div>
-  <button class="btn" onclick="resetAll()">NUEVO TRACKING</button>
 </section>
 
 <script>
 const ALPHA = 0.25;
-let S = {
-  run:false, paused:false,
-  start:0, totalPause:0, pauseAt:0,
-  dist:0, lastPos:null,
-  watchId:null,
-  filtSpeed:0,
-  samples:[], maxSpeed:0
+const SPEECH_MIN = 20000;
+
+const PROGRAMS = {
+  principiante: {
+    name: "Nivel 1 — Principiante",
+    sessions: [
+      {
+        name: "Día 1: Trote/Caminata",
+        desc: "Calentamiento + 6x(1min trote / 2min caminata) + Enfriamiento",
+        stages: [
+          {n:"Calentamiento - Caminata rápida", d:300, t:5.0},
+          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
+          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
+          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
+          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
+          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
+          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
+          {n:"Enfriamiento - Caminata", d:300, t:5.0}
+        ]
+      },
+      {
+        name: "Día 3: Trote extendido",
+        desc: "Calentamiento + 5x(2min trote / 2min caminata) + Enfriamiento",
+        stages: [
+          {n:"Calentamiento", d:300, t:5.0},
+          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
+          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
+          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
+          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
+          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      },
+      {
+        name: "Día 5: Trote continuo",
+        desc: "Calentamiento + 10min trote + 5min caminata + 5min trote + Enfriamiento",
+        stages: [
+          {n:"Calentamiento", d:300, t:5.0},
+          {n:"Trote continuo", d:600, t:8.0},
+          {n:"Caminata recuperación", d:300, t:5.0},
+          {n:"Trote final", d:300, t:8.5},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      }
+    ]
+  },
+  intermedio: {
+    name: "Nivel 2 — Intermedio",
+    sessions: [
+      {
+        name: "Día 1: Carrera fácil",
+        desc: "30 minutos a ritmo conversacional constante",
+        stages: [
+          {n:"Calentamiento", d:300, t:6.0},
+          {n:"Carrera fácil - Ritmo conversacional", d:1800, t:9.0},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      },
+      {
+        name: "Día 2: Intervalos 400m",
+        desc: "Calentamiento + 6x(2min rápido / 90s recup) + Enfriamiento",
+        stages: [
+          {n:"Calentamiento", d:600, t:6.5},
+          {n:"Serie 1 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
+          {n:"Serie 2 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
+          {n:"Serie 3 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
+          {n:"Serie 4 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
+          {n:"Serie 5 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
+          {n:"Serie 6 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
+          {n:"Enfriamiento", d:600, t:5.0}
+        ]
+      },
+      {
+        name: "Día 4: Progresión",
+        desc: "25-30min aumentando velocidad cada 5 minutos",
+        stages: [
+          {n:"Calentamiento", d:300, t:6.0},
+          {n:"Bloque 1 - Suave", d:300, t:8.0},
+          {n:"Bloque 2 - Moderado", d:300, t:9.0},
+          {n:"Bloque 3 - Medio", d:300, t:10.0},
+          {n:"Bloque 4 - Rápido", d:300, t:11.0},
+          {n:"Bloque 5 - Máximo sostenido", d:300, t:12.0},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      },
+      {
+        name: "Día 6: Carrera larga",
+        desc: "45 minutos a ritmo cómodo y sostenido",
+        stages: [
+          {n:"Calentamiento", d:300, t:6.0},
+          {n:"Carrera larga - Ritmo cómodo", d:2700, t:8.5},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      }
+    ]
+  },
+  avanzado: {
+    name: "Nivel 3 — Avanzado",
+    sessions: [
+      {
+        name: "Día 1: Recuperación",
+        desc: "30 minutos de carrera muy suave",
+        stages: [
+          {n:"Calentamiento", d:300, t:5.5},
+          {n:"Carrera recuperación", d:1800, t:7.5},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      },
+      {
+        name: "Día 2: Velocidad 800m",
+        desc: "Calentamiento + 8x(3min36s rápido / 2min recup) + Enfriamiento",
+        stages: [
+          {n:"Calentamiento", d:900, t:6.5},
+          {n:"Serie 1 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 2 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 3 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 4 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 5 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 6 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 7 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Serie 8 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
+          {n:"Enfriamiento", d:900, t:5.0}
+        ]
+      },
+      {
+        name: "Día 3: Carrera fácil",
+        desc: "40 minutos a ritmo conversacional constante",
+        stages: [
+          {n:"Calentamiento", d:300, t:6.0},
+          {n:"Carrera fácil", d:2400, t:9.5},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      },
+      {
+        name: "Día 4: Tempo/Umbral",
+        desc: "Calentamiento + 22min a ritmo cómodamente duro + Enfriamiento",
+        stages: [
+          {n:"Calentamiento", d:600, t:6.5},
+          {n:"Tempo - Ritmo umbral", d:1320, t:11.5},
+          {n:"Enfriamiento", d:600, t:5.0}
+        ]
+      },
+      {
+        name: "Día 6: Carrera larga",
+        desc: "65 minutos a ritmo cómodo (resistencia aeróbica)",
+        stages: [
+          {n:"Calentamiento", d:300, t:6.0},
+          {n:"Carrera larga", d:3900, t:8.5},
+          {n:"Enfriamiento", d:300, t:5.0}
+        ]
+      }
+    ]
+  }
 };
 
-function fmtTime(s){
-  const m = Math.floor(s/60).toString().padStart(2,'0');
-  const sec = (s%60).toString().padStart(2,'0');
-  return m+':'+sec;
+let selLevel = null, selSession = null, routine = [];
+let S = {run:false,paused:false,stage:0,stageStart:0,start:0,totalPause:0,pauseAt:0,dist:0,lastPos:null,watchId:null,filtSpeed:0,lastSp:0,samples:[],maxSp:0};
+let rpeSel = null;
+
+function fmtT(s){const m=Math.floor(s/60).toString().padStart(2,'0');const sec=(s%60).toString().padStart(2,'0');return m+':'+sec;}
+function fmtD(m){if(m<1000)return Math.round(m)+' m';return (m/1000).toFixed(2)+' km';}
+function speak(txt,force){if(!window.speechSynthesis)return;const now=Date.now();if(!force&&(now-S.lastSp)<SPEECH_MIN)return;const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=1.05;window.speechSynthesis.speak(u);S.lastSp=now;}
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function selectLevel(lvl){
+  selLevel = lvl;
+  const prog = PROGRAMS[lvl];
+  document.getElementById('sessTitle').textContent = prog.name;
+  document.getElementById('sessSub').textContent = "Elegí la sesión de hoy";
+  const list = document.getElementById('sessList');
+  list.innerHTML = '';
+  prog.sessions.forEach((sess,i)=>{
+    const totalMin = Math.ceil(sess.stages.reduce((a,b)=>a+b.d,0)/60);
+    const div = document.createElement('div');
+    div.className = 'sess-item';
+    div.innerHTML = `<div><div class="sess-name">${sess.name}</div><div class="sess-dur">${totalMin} min · ${sess.desc}</div></div>`;
+    div.onclick = ()=>selectSession(i);
+    list.appendChild(div);
+  });
+  show('scr-sessions');
 }
-function fmtDist(m){
-  if(m < 1000) return Math.round(m)+' m';
-  return (m/1000).toFixed(2)+' km';
-}
-function show(id){
-  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+
+function selectSession(idx){
+  selSession = idx;
+  const sess = PROGRAMS[selLevel].sessions[idx];
+  routine = sess.stages;
+  document.getElementById('preTitle').textContent = sess.name;
+  const det = document.getElementById('preRoutine');
+  det.innerHTML = '';
+  routine.forEach((st,i)=>{
+    const d = document.createElement('div');
+    d.textContent = `${i+1}. ${st.n} — ${fmtT(st.d)}`;
+    det.appendChild(d);
+  });
+  show('scr-pre');
 }
 
 function haversine(lat1,lon1,lat2,lon2){
@@ -135,23 +367,15 @@ function onGps(pos){
   const now = Date.now();
   const lat = pos.coords.latitude;
   const lon = pos.coords.longitude;
-
-  document.getElementById('gpsBox').classList.add('hidden');
-  document.getElementById('statusText').textContent = 'GPS activo';
-  document.getElementById('statusText').className = 'status ok';
+  if(!S.run||S.paused)return;
 
   let raw = 0;
-  if(pos.coords.speed !== null && pos.coords.speed > 0){
-    raw = pos.coords.speed * 3.6;
-  }
+  if(pos.coords.speed !== null && pos.coords.speed > 0) raw = pos.coords.speed * 3.6;
 
   if(S.lastPos){
     const d = haversine(S.lastPos.lat, S.lastPos.lon, lat, lon);
     S.dist += d;
-    if(raw === 0){
-      const dt = (now - S.lastPos.t)/1000;
-      if(dt > 0) raw = (d/dt)*3.6;
-    }
+    if(raw === 0){ const dt=(now-S.lastPos.t)/1000; if(dt>0) raw=(d/dt)*3.6; }
   }
   S.lastPos = {lat,lon,t:now};
 
@@ -161,97 +385,138 @@ function onGps(pos){
   if(S.filtSpeed > 0.5){
     S.samples.push(S.filtSpeed);
     if(S.samples.length > 30) S.samples.shift();
-    if(S.filtSpeed > S.maxSpeed) S.maxSpeed = S.filtSpeed;
+    if(S.filtSpeed > S.maxSp) S.maxSp = S.filtSpeed;
   }
 }
 
 function onGpsErr(err){
-  let msg = 'Error de GPS.';
-  if(err.code === 1) msg = 'GPS rechazado. Permití ubicación en configuración.';
-  else if(err.code === 2) msg = 'GPS no disponible. Andá al aire libre.';
-  else if(err.code === 3) msg = 'GPS tardando. Reintentando...';
-  document.getElementById('statusText').textContent = msg;
-  document.getElementById('statusText').className = 'status err';
+  let msg = 'Error GPS';
+  if(err.code === 1) msg = 'GPS rechazado. Permití ubicación.';
+  else if(err.code === 2) msg = 'GPS no disponible. Andá afuera.';
+  else if(err.code === 3) msg = 'GPS tardando...';
+  document.getElementById('statusBox').textContent = msg;
+  document.getElementById('statusBox').className = 'status-box bad';
+}
+
+function startTraining(){
+  const d = document.documentElement;
+  if(d.requestFullscreen) d.requestFullscreen(); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen();
+
+  S = {run:true,paused:false,stage:0,stageStart:Date.now(),start:Date.now(),totalPause:0,pauseAt:0,dist:0,lastPos:null,watchId:null,filtSpeed:0,lastSp:0,samples:[],maxSp:0};
+  rpeSel = null;
+
+  document.getElementById('gpsHint').classList.remove('hidden');
+  document.getElementById('statusBox').textContent = 'Buscando GPS...';
+  document.getElementById('statusBox').className = 'status-box good';
+
+  if(!navigator.geolocation){ alert('Tu navegador no soporta GPS.'); return; }
+  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {enableHighAccuracy:true, timeout:10000, maximumAge:0});
+
+  speak('Comenzamos. '+routine[0].n, true);
+  show('scr-train');
+  requestAnimationFrame(loop);
+}
+
+function loop(){
+  if(!S.run) return;
+  if(!S.paused){
+    const now = Date.now();
+    const st = routine[S.stage];
+    const elapsed = (now - S.stageStart)/1000;
+
+    if(elapsed >= st.d){
+      S.stage++;
+      if(S.stage >= routine.length){ finishTraining(false); return; }
+      S.stageStart = now;
+      speak(routine[S.stage].n, true);
+    }
+    updateUI();
+  }
+  requestAnimationFrame(loop);
 }
 
 function updateUI(){
-  if(!S.run || S.paused) return;
+  const st = routine[S.stage];
   const now = Date.now();
-  const elapsed = Math.floor((now - S.start - S.totalPause)/1000);
+  const total = Math.floor((now - S.start - S.totalPause)/1000);
+  const stageE = Math.floor((now - S.stageStart)/1000);
 
+  document.getElementById('topStage').textContent = `ETAPA ${S.stage+1}/${routine.length}`;
+  document.getElementById('topTime').textContent = fmtT(total);
+  document.getElementById('stageName').textContent = st.n.toUpperCase();
   document.getElementById('dispSpeed').textContent = S.filtSpeed.toFixed(1);
-  document.getElementById('dispDist').textContent = fmtDist(S.dist);
-  document.getElementById('dispTime').textContent = fmtTime(elapsed);
+  document.getElementById('dispDist').textContent = fmtD(S.dist);
+  document.getElementById('dispTime').textContent = fmtT(stageE);
 
-  requestAnimationFrame(updateUI);
+  const totDur = routine.reduce((a,b)=>a+b.d,0);
+  let done = 0;
+  for(let i=0;i<S.stage;i++) done += routine[i].d;
+  done += Math.min((now-S.stageStart)/1000, st.d);
+  document.getElementById('progTotal').style.width = Math.min(100,(done/totDur)*100)+'%';
+  document.getElementById('progStage').style.width = Math.min(100,(stageE/st.d)*100)+'%';
+
+  const diff = S.filtSpeed - st.t;
+  const box = document.getElementById('statusBox');
+  let txt = 'Mantené el ritmo', cls = 'good';
+  if(Math.abs(diff) < 0.5){ txt = 'Vas muy bien'; cls = 'good'; }
+  else if(diff < -1.0){ txt = 'Acelerá un poco'; cls = 'bad'; }
+  else if(diff < -0.5){ txt = 'Acelerá ligeramente'; cls = 'warn'; }
+  else if(diff > 1.0){ txt = 'Reducí un poco'; cls = 'bad'; }
+  else if(diff > 0.5){ txt = 'Reducí ligeramente'; cls = 'warn'; }
+  box.textContent = txt;
+  box.className = 'status-box '+cls;
+
+  if(S.filtSpeed > 1 && Math.abs(diff) > 0.8){
+    if(diff < 0) speak('Acelerá un poco'); else speak('Reducí ligeramente');
+  }
 }
 
-function startTracking(){
-  if(!navigator.geolocation){
-    alert('Tu navegador no soporta GPS.');
-    return;
-  }
-
-  S = {
-    run:true, paused:false,
-    start:Date.now(), totalPause:0, pauseAt:0,
-    dist:0, lastPos:null,
-    watchId:null,
-    filtSpeed:0,
-    samples:[], maxSpeed:0
-  };
-
-  document.getElementById('gpsBox').classList.remove('hidden');
-  document.getElementById('statusText').textContent = 'Buscando señal GPS...';
-  document.getElementById('statusText').className = 'status wait';
-
-  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {
-    enableHighAccuracy:true, timeout:10000, maximumAge:0
-  });
-
-  show('scr-track');
-  updateUI();
-}
-
-function pauseTracking(){
-  S.paused = true;
-  S.pauseAt = Date.now();
-  if(S.watchId !== null){
-    navigator.geolocation.clearWatch(S.watchId);
-    S.watchId = null;
-  }
-  document.getElementById('pauseDist').textContent = fmtDist(S.dist);
-  document.getElementById('pauseTime').textContent = document.getElementById('dispTime').textContent;
+function pauseTraining(){
+  S.paused = true; S.pauseAt = Date.now();
+  if(S.watchId !== null){ navigator.geolocation.clearWatch(S.watchId); S.watchId = null; }
+  document.getElementById('pauseDist').textContent = fmtD(S.dist);
+  document.getElementById('pauseTime').textContent = document.getElementById('topTime').textContent;
   show('scr-pause');
 }
 
-function resumeTracking(){
+function resumeTraining(){
   S.paused = false;
   S.totalPause += (Date.now() - S.pauseAt);
-  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {
-    enableHighAccuracy:true, timeout:10000, maximumAge:0
-  });
-  show('scr-track');
-  updateUI();
+  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {enableHighAccuracy:true, timeout:10000, maximumAge:0});
+  show('scr-train');
 }
 
-function stopTracking(){
+function finishTraining(manual){
   S.run = false;
-  if(S.watchId !== null){
-    navigator.geolocation.clearWatch(S.watchId);
-    S.watchId = null;
-  }
+  if(S.watchId !== null){ navigator.geolocation.clearWatch(S.watchId); S.watchId = null; }
   const totalTime = Math.floor((Date.now() - S.start - S.totalPause)/1000);
   const avg = S.samples.length > 0 ? (S.samples.reduce((a,b)=>a+b,0)/S.samples.length) : 0;
 
-  document.getElementById('endTime').textContent = fmtTime(totalTime);
-  document.getElementById('endDist').textContent = fmtDist(S.dist);
+  document.getElementById('endTime').textContent = fmtT(totalTime);
+  document.getElementById('endDist').textContent = fmtD(S.dist);
   document.getElementById('endAvg').textContent = avg.toFixed(1);
-  document.getElementById('endMax').textContent = S.maxSpeed.toFixed(1);
+  document.getElementById('endMax').textContent = S.maxSp.toFixed(1);
+
+  // RPE
+  const grid = document.getElementById('rpeGrid');
+  grid.innerHTML = '';
+  for(let i=1;i<=10;i++){
+    const b = document.createElement('button');
+    b.className = 'rpe-btn';
+    b.textContent = i;
+    b.onclick = ()=>{rpeSel=i; document.querySelectorAll('.rpe-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');};
+    grid.appendChild(b);
+  }
+
+  speak(manual ? 'Entrenamiento finalizado.' : 'Excelente. Entrenamiento completado.', true);
   show('scr-end');
 }
 
-function resetAll(){
+function saveRpeAndReset(){
+  if(rpeSel){
+    // Aquí podrías guardar en localStorage o enviar al ESP32
+    console.log('RPE guardado:', rpeSel);
+  }
   show('scr-home');
 }
 </script>
