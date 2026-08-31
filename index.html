@@ -1,2377 +1,361 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html>
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<meta name="theme-color" content="#080808">
-
-<title>Chrono Winner 5K</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prueba GPS</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
--webkit-tap-highlight-color:transparent;
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+    padding:30px;
 }
 
-html,
-body{
-width:100%;
-height:100%;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-background:#080808;
-color:white;
+h1{
+    color:#ff6b35;
 }
 
-body{
-overflow:hidden;
+.box{
+    background:#222;
+    border-radius:20px;
+    padding:20px;
+    margin-top:20px;
+}
+
+.numero{
+    font-size:50px;
+    font-weight:bold;
+    margin:15px;
 }
 
 button{
-font-family:inherit;
+    width:100%;
+    padding:18px;
+    border:0;
+    border-radius:15px;
+    font-size:18px;
+    font-weight:bold;
 }
-
-.screen{
-display:none;
-width:100%;
-height:100%;
-min-height:100vh;
-overflow-y:auto;
-padding:18px;
-}
-
-.screen.active{
-display:flex;
-flex-direction:column;
-}
-
-.container{
-width:100%;
-max-width:480px;
-margin:auto;
-}
-
-.logo{
-font-size:2.2rem;
-font-weight:900;
-letter-spacing:3px;
-text-align:center;
-margin-top:5vh;
-}
-
-.logo span{
-color:#ff6b35;
-}
-
-.subtitle{
-text-align:center;
-color:#888;
-font-size:.8rem;
-letter-spacing:4px;
-margin-top:7px;
-margin-bottom:35px;
-}
-
-.card{
-background:#151515;
-border:1px solid #272727;
-border-radius:20px;
-padding:18px;
-margin-bottom:14px;
-}
-
-.title{
-font-size:1.1rem;
-font-weight:800;
-margin-bottom:8px;
-}
-
-.description{
-color:#888;
-font-size:.85rem;
-line-height:1.5;
-}
-
-.level-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:9px;
-margin-top:15px;
-}
-
-.level{
-background:#202020;
-border:2px solid #333;
-border-radius:14px;
-color:white;
-padding:14px 8px;
-font-weight:800;
-font-size:.95rem;
-cursor:pointer;
-}
-
-.level.selected{
-background:#ff6b35;
-border-color:#ff6b35;
-color:#080808;
-}
-
-.level small{
-display:block;
-font-size:.7rem;
-margin-top:5px;
-opacity:.65;
-}
-
-.primary{
-width:100%;
-border:0;
-background:#ff6b35;
-color:#080808;
-padding:17px;
-border-radius:15px;
-font-size:1.05rem;
-font-weight:900;
-cursor:pointer;
-margin-top:10px;
-}
-
-.secondary{
-width:100%;
-border:2px solid #444;
-background:#191919;
-color:white;
-padding:15px;
-border-radius:15px;
-font-size:1rem;
-font-weight:800;
-cursor:pointer;
-margin-top:10px;
-}
-
-.danger{
-width:100%;
-border:0;
-background:#e62955;
-color:white;
-padding:15px;
-border-radius:15px;
-font-size:1rem;
-font-weight:800;
-cursor:pointer;
-margin-top:10px;
-}
-
-.back{
-background:none;
-border:0;
-color:#888;
-font-size:.9rem;
-padding:14px;
-width:100%;
-cursor:pointer;
-}
-
-.routine{
-margin-top:14px;
-}
-
-.routine-row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:11px 0;
-border-bottom:1px solid #292929;
-font-size:.85rem;
-}
-
-.routine-row:last-child{
-border-bottom:0;
-}
-
-.routine-speed{
-color:#ff6b35;
-font-weight:800;
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:12px;
-}
-
-.top small{
-color:#777;
-font-weight:700;
-}
-
-.stage{
-text-align:center;
-margin-bottom:12px;
-}
-
-.stage-badge{
-display:inline-block;
-background:#ff6b35;
-color:#080808;
-font-weight:900;
-padding:7px 15px;
-border-radius:30px;
-font-size:.75rem;
-letter-spacing:1px;
-}
-
-.speed-card{
-text-align:center;
-background:#151515;
-border:1px solid #292929;
-border-radius:22px;
-padding:25px 15px;
-}
-
-.speed{
-font-size:4.5rem;
-font-weight:900;
-line-height:1;
-color:#ff6b35;
-}
-
-.speed-unit{
-color:#777;
-font-size:.8rem;
-margin-top:6px;
-}
-
-.target{
-font-size:1.1rem;
-text-align:center;
-margin-top:15px;
-}
-
-.target strong{
-color:#ff6b35;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-margin-top:14px;
-}
-
-.stat{
-background:#151515;
-border:1px solid #272727;
-border-radius:17px;
-padding:15px;
-text-align:center;
-}
-
-.stat-value{
-font-size:1.35rem;
-font-weight:900;
-}
-
-.stat-label{
-color:#777;
-font-size:.65rem;
-text-transform:uppercase;
-letter-spacing:1px;
-margin-top:4px;
-}
-
-.progress-wrap{
-margin-top:15px;
-}
-
-.progress{
-height:10px;
-background:#242424;
-border-radius:20px;
-overflow:hidden;
-}
-
-.progress-bar{
-height:100%;
-width:0%;
-background:#ff6b35;
-transition:width .4s;
-}
-
-.progress-text{
-text-align:center;
-color:#777;
-font-size:.7rem;
-margin-top:5px;
-}
-
-.status{
-padding:15px;
-border-radius:15px;
-text-align:center;
-font-weight:900;
-margin-top:14px;
-}
-
-.status.good{
-background:rgba(0,212,170,.13);
-border:1px solid rgba(0,212,170,.35);
-color:#00d4aa;
-}
-
-.status.warn{
-background:rgba(255,204,0,.13);
-border:1px solid rgba(255,204,0,.35);
-color:#ffcc00;
-}
-
-.status.bad{
-background:rgba(255,51,102,.13);
-border:1px solid rgba(255,51,102,.35);
-color:#ff3366;
-}
-
-.status.wait{
-background:#191919;
-border:1px solid #333;
-color:#aaa;
-}
-
-.gps{
-text-align:center;
-color:#777;
-font-size:.72rem;
-margin-top:10px;
-}
-
-.gps strong{
-color:#00d4aa;
-}
-
-.message{
-text-align:center;
-font-size:.85rem;
-color:#aaa;
-line-height:1.4;
-margin-top:10px;
-}
-
-.big-result{
-text-align:center;
-font-size:3rem;
-font-weight:900;
-color:#ff6b35;
-margin:15px 0;
-}
-
-.center{
-text-align:center;
-}
-
-.hidden{
-display:none!important;
-}
-
 </style>
 
 </head>
 
 <body>
 
+<h1>CHRONO WINNER</h1>
 
-<!-- ============================= -->
-<!-- INICIO -->
-<!-- ============================= -->
+<h2>PRUEBA GPS</h2>
 
-<section id="home" class="screen active">
-
-<div class="container">
-
-<div class="logo">
-CHRONO <span>WINNER</span>
-</div>
-
-<div class="subtitle">
-5K PERFORMANCE SYSTEM
-</div>
-
-
-<div class="card">
-
-<div class="title">
-🏃 MODO ENTRENAMIENTO
-</div>
-
-<div class="description">
-Entrená siguiendo una estrategia de ritmo progresiva.
-Chrono Winner utiliza el GPS de tu teléfono para medir
-tu velocidad y distancia reales.
-</div>
-
-</div>
-
-
-<div class="card">
-
-<div class="title">
-Seleccioná tu nivel
-</div>
-
-<div class="description">
-Elegí la exigencia que querés entrenar.
-</div>
-
-<div class="level-grid" id="levels"></div>
-
-</div>
-
-
-<button class="primary" onclick="openPreparation()">
-CONTINUAR
+<button onclick="iniciarGPS()">
+INICIAR GPS
 </button>
 
-</div>
+<div class="box">
 
-</section>
+<div>VELOCIDAD</div>
 
-
-
-<!-- ============================= -->
-<!-- PREPARACIÓN -->
-<!-- ============================= -->
-
-<section id="preparation" class="screen">
-
-<div class="container">
-
-<div class="top">
-
-<button class="back" onclick="showScreen('home')">
-← VOLVER
-</button>
-
-</div>
-
-
-<div class="center">
-
-<h1 id="prepLevel">
-NIVEL 1
-</h1>
-
-<p style="color:#888;margin-top:7px">
-Velocidad base:
-<strong id="prepTarget">
-8.0
-</strong> km/h
-</p>
-
-</div>
-
-
-<div class="card" style="margin-top:20px">
-
-<div class="title">
-📋 Rutina del entrenamiento
-</div>
-
-<div id="routine" class="routine"></div>
-
-</div>
-
-
-<div class="card">
-
-<div class="title">
-📍 Antes de comenzar
-</div>
-
-<div class="description">
-
-Activá la ubicación de tu teléfono.
-
-Salí a un lugar abierto para obtener mejor señal GPS.
-
-Cuando presiones iniciar, Chrome solicitará permiso
-para utilizar tu ubicación.
-
-</div>
-
-</div>
-
-
-<button class="primary" onclick="startTraining()">
-🏁 INICIAR ENTRENAMIENTO
-</button>
-
-<button class="secondary" onclick="showScreen('home')">
-CANCELAR
-</button>
-
-</div>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- ENTRENAMIENTO -->
-<!-- ============================= -->
-
-<section id="training" class="screen">
-
-<div class="container">
-
-
-<div class="top">
-
-<small id="stageCounter">
-ETAPA 1/6
-</small>
-
-<small id="totalTime">
-00:00
-</small>
-
-</div>
-
-
-<div class="stage">
-
-<span class="stage-badge" id="stageName">
-CALENTAMIENTO
-</span>
-
-</div>
-
-
-<div class="speed-card">
-
-<div class="speed" id="speed">
+<div class="numero" id="velocidad">
 --
 </div>
 
-<div class="speed-unit">
-KM/H — VELOCIDAD REAL
-</div>
+<div>km/h</div>
 
-</div>
+<hr>
 
+<div>PRECISIÓN</div>
 
-<div class="target">
-
-Objetivo:
-<strong id="targetSpeed">
+<div id="precision">
 --
-</strong>
-km/h
-
 </div>
 
+<hr>
 
-<div class="stats">
+<div>LATITUD</div>
 
-<div class="stat">
-
-<div class="stat-value" id="distance">
-0 m
-</div>
-
-<div class="stat-label">
-Distancia
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-value" id="stageTime">
-00:00
-</div>
-
-<div class="stat-label">
-Etapa
-</div>
-
-</div>
-
-</div>
-
-
-<div class="progress-wrap">
-
-<div class="progress">
-
-<div class="progress-bar" id="totalProgress">
-</div>
-
-</div>
-
-<div class="progress-text">
-PROGRESO DEL ENTRENAMIENTO
-</div>
-
-</div>
-
-
-<div class="progress-wrap">
-
-<div class="progress">
-
-<div class="progress-bar" id="stageProgress"
-style="background:#00d4aa">
-</div>
-
-</div>
-
-<div class="progress-text">
-PROGRESO DE LA ETAPA
-</div>
-
-</div>
-
-
-<div class="status wait" id="status">
-📡 BUSCANDO GPS
-</div>
-
-
-<div class="gps">
-
-Precisión GPS:
-<strong id="accuracy">
+<div id="latitud">
 --
-</strong>
-
 </div>
 
+<hr>
 
-<div class="message" id="message">
+<div>LONGITUD</div>
 
-Esperando una ubicación válida del teléfono...
-
-</div>
-
-
-<div class="card" style="margin-top:15px">
-
-<div class="title">
-🎯 Estrategia
-</div>
-
-<div class="description" id="strategy">
-Mantené un ritmo cómodo.
+<div id="longitud">
+--
 </div>
 
 </div>
-
-
-<button class="secondary"
-onclick="pauseTraining()"
-id="pauseButton">
-
-⏸ PAUSAR
-
-</button>
-
-
-<button class="danger"
-onclick="finishTraining(true)">
-
-🛑 FINALIZAR
-
-</button>
-
-
-</div>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- PAUSA -->
-<!-- ============================= -->
-
-<section id="pause" class="screen">
-
-<div class="container center"
-style="margin-top:20vh">
-
-<h1>⏸ PAUSA</h1>
-
-<p style="color:#777;margin:15px 0 30px">
-El GPS está pausado.
-</p>
-
-<button class="primary"
-onclick="resumeTraining()">
-
-▶ CONTINUAR
-
-</button>
-
-<button class="danger"
-onclick="finishTraining(true)">
-
-🛑 FINALIZAR
-
-</button>
-
-</div>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- RESULTADO -->
-<!-- ============================= -->
-
-<section id="summary" class="screen">
-
-<div class="container">
-
-<div class="center"
-style="margin-top:10vh">
-
-<h1 style="color:#00d4aa">
-ENTRENAMIENTO FINALIZADO
-</h1>
-
-<p style="color:#777;margin-top:8px">
-Chrono Winner 5K
-</p>
-
-</div>
-
-
-<div class="card" style="margin-top:30px">
-
-<div class="big-result"
-id="resultTime">
-00:00
-</div>
-
-<div class="center"
-style="color:#777">
-TIEMPO TOTAL
-</div>
-
-</div>
-
-
-<div class="stats">
-
-<div class="stat">
-
-<div class="stat-value"
-id="resultDistance">
-
-0 m
-
-</div>
-
-<div class="stat-label">
-Distancia
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-value"
-id="resultAverage">
-
-0.0
-
-</div>
-
-<div class="stat-label">
-Velocidad media
-</div>
-
-</div>
-
-</div>
-
-
-<div class="card" style="margin-top:15px">
-
-<div class="title">
-Nivel realizado
-</div>
-
-<div class="center"
-style="font-size:2rem;font-weight:900;color:#ff6b35">
-
-<span id="resultLevel">
-1
-</span>
-
-</div>
-
-</div>
-
-
-<button class="primary"
-onclick="resetApp()">
-
-VOLVER AL INICIO
-
-</button>
-
-</div>
-
-</section>
-
 
 
 <script>
 
+let anterior = null;
 
-/* =====================================
-   CONFIGURACIÓN DE NIVELES
-===================================== */
+let velocidadFiltrada = 0;
 
-const LEVELS = [
-
-{
-name:"Nivel 1",
-target:8.0
-},
-
-{
-name:"Nivel 2",
-target:8.5
-},
-
-{
-name:"Nivel 3",
-target:9.0
-},
-
-{
-name:"Nivel 4",
-target:9.5
-},
-
-{
-name:"Nivel 5",
-target:10.0
-},
-
-{
-name:"Nivel 6",
-target:10.5
-},
-
-{
-name:"Nivel 7",
-target:11.0
-},
-
-{
-name:"Nivel 8",
-target:11.5
-},
-
-{
-name:"Nivel 9",
-target:12.0
-},
-
-{
-name:"Nivel 10",
-target:13.0
-}
-
-];
-
-
-let selectedLevel = 0;
-
-
-/* =====================================
-   RUTINA
-===================================== */
-
-function createRoutine(target){
-
-return [
-
-{
-name:"Calentamiento",
-duration:300,
-speed:Math.max(5.5,target-2.5),
-message:"Comenzá suave. Prepará el cuerpo."
-},
-
-{
-name:"Ritmo inicial",
-duration:180,
-speed:Math.max(6,target-1.2),
-message:"Aumentá progresivamente el ritmo."
-},
-
-{
-name:"Aumento progresivo",
-duration:180,
-speed:Math.max(6.5,target-0.5),
-message:"Acercate al ritmo objetivo."
-},
-
-{
-name:"Mantener ritmo",
-duration:300,
-speed:target,
-message:"Mantené el ritmo de forma constante."
-},
-
-{
-name:"Tramo rápido",
-duration:120,
-speed:target+0.5,
-message:"Acelerá durante este tramo."
-},
-
-{
-name:"Recuperación",
-duration:120,
-speed:Math.max(5.5,target-2),
-message:"Reducí el ritmo y recuperate."
-}
-
-];
-
-}
-
-
-/* =====================================
-   ESTADO
-===================================== */
-
-let state = {
-
-running:false,
-
-paused:false,
-
-stage:0,
-
-startTime:0,
-
-stageStart:0,
-
-pauseStart:0,
-
-totalPaused:0,
-
-distance:0,
-
-lastPosition:null,
-
-watchId:null,
-
-filteredSpeed:0,
-
-lastVoice:0,
-
-speedSamples:[],
-
-gpsGood:false
-
-};
-
-
-let routine = [];
-
-
-/* =====================================
-   CREAR BOTONES DE NIVEL
-===================================== */
-
-const levelContainer =
-document.getElementById("levels");
-
-
-LEVELS.forEach((level,index)=>{
-
-const button =
-document.createElement("button");
-
-button.className =
-"level";
-
-button.innerHTML =
-level.name+
-"<small>"+
-level.target.toFixed(1)+
-" km/h</small>";
-
-button.onclick=function(){
-
-selectedLevel=index;
-
-document
-.querySelectorAll(".level")
-.forEach(x=>
-x.classList.remove("selected")
-);
-
-button.classList.add("selected");
-
-};
-
-levelContainer.appendChild(button);
-
-});
-
-
-levelContainer
-.children[0]
-.classList
-.add("selected");
-
-
-/* =====================================
-   CAMBIO DE PANTALLA
-===================================== */
-
-function showScreen(id){
-
-document
-.querySelectorAll(".screen")
-.forEach(screen=>{
-screen.classList.remove("active");
-});
-
-document
-.getElementById(id)
-.classList.add("active");
-
-}
-
-
-/* =====================================
-   PREPARACIÓN
-===================================== */
-
-function openPreparation(){
-
-const level =
-LEVELS[selectedLevel];
-
-routine =
-createRoutine(level.target);
-
-
-document
-.getElementById("prepLevel")
-.textContent =
-level.name;
-
-
-document
-.getElementById("prepTarget")
-.textContent =
-level.target.toFixed(1);
-
-
-const container =
-document.getElementById("routine");
-
-container.innerHTML="";
-
-
-routine.forEach((stage,index)=>{
-
-const row =
-document.createElement("div");
-
-row.className =
-"routine-row";
-
-row.innerHTML =
-
-"<span>"+
-(index+1)+
-". "+
-stage.name+
-" ("+
-formatTime(stage.duration)+
-")"+
-"</span>"+
-
-"<span class='routine-speed'>"+
-stage.speed.toFixed(1)+
-" km/h"+
-"</span>";
-
-container.appendChild(row);
-
-});
-
-
-showScreen("preparation");
-
-}
-
-
-/* =====================================
-   FORMATO TIEMPO
-===================================== */
-
-function formatTime(seconds){
-
-seconds =
-Math.max(0,Math.floor(seconds));
-
-const minutes =
-Math.floor(seconds/60);
-
-const sec =
-seconds%60;
-
-return String(minutes).padStart(2,"0")
-+
-":"
-+
-String(sec).padStart(2,"0");
-
-}
-
-
-/* =====================================
-   VOZ
-===================================== */
-
-function speak(text,force=false){
-
-if(!("speechSynthesis" in window))
-return;
-
-const now =
-Date.now();
-
-
-if(!force &&
-now-state.lastVoice<20000)
-return;
-
-
-speechSynthesis.cancel();
-
-
-const utterance =
-new SpeechSynthesisUtterance(text);
-
-utterance.lang="es-ES";
-
-utterance.rate=1.05;
-
-utterance.pitch=1;
-
-
-speechSynthesis.speak(utterance);
-
-state.lastVoice=now;
-
-}
-
-
-/* =====================================
-   INICIAR ENTRENAMIENTO
-===================================== */
-
-function startTraining(){
-
-routine =
-createRoutine(
-LEVELS[selectedLevel].target
-);
-
-
-state={
-
-running:true,
-
-paused:false,
-
-stage:0,
-
-startTime:Date.now(),
-
-stageStart:Date.now(),
-
-pauseStart:0,
-
-totalPaused:0,
-
-distance:0,
-
-lastPosition:null,
-
-watchId:null,
-
-filteredSpeed:0,
-
-lastVoice:0,
-
-speedSamples:[],
-
-gpsGood:false
-
-};
-
-
-showScreen("training");
-
-
-document
-.getElementById("status")
-.className="status wait";
-
-
-document
-.getElementById("status")
-.textContent=
-"📡 BUSCANDO GPS";
-
-
-document
-.getElementById("message")
-.textContent=
-"Solicitando ubicación del teléfono...";
-
-
-/*
-Solicitar GPS
-*/
+function iniciarGPS(){
 
 if(!navigator.geolocation){
 
-showGpsError(
-"Este navegador no permite utilizar GPS."
-);
+alert("Este teléfono no tiene geolocalización disponible.");
 
 return;
 
 }
 
-
-navigator.geolocation.getCurrentPosition(
-
-function(position){
-
-/*
-Primera posición válida.
-*/
-
-processGPS(position,true);
-
-
-state.watchId =
 navigator.geolocation.watchPosition(
 
-processGPS,
+gps,
 
-gpsError,
-
-{
-
-enableHighAccuracy:true,
-
-timeout:15000,
-
-maximumAge:1000
-
-}
-
-);
-
-},
-
-gpsError,
+error,
 
 {
-
 enableHighAccuracy:true,
-
-timeout:15000,
-
-maximumAge:0
-
+maximumAge:0,
+timeout:10000
 }
 
 );
 
-
-updateStageUI();
-
-
-speak(
-
-"Chrono Winner iniciado. "+
-routine[0].name+
-". Objetivo "+
-routine[0].speed.toFixed(1)+
-" kilómetros por hora.",
-
-true
-
-);
-
-
-requestAnimationFrame(trainingLoop);
-
 }
 
 
-/* =====================================
-   GPS
-===================================== */
+function gps(pos){
 
-function processGPS(position,first=false){
+let lat = pos.coords.latitude;
 
-if(!state.running || state.paused)
-return;
+let lon = pos.coords.longitude;
 
+let precision = pos.coords.accuracy;
 
-const coords =
-position.coords;
+document.getElementById("precision").innerText =
+Math.round(precision) + " metros";
 
+document.getElementById("latitud").innerText =
+lat.toFixed(6);
 
-const lat =
-coords.latitude;
-
-const lon =
-coords.longitude;
-
-const now =
-Date.now();
-
-
-const accuracy =
-coords.accuracy;
-
-
-document
-.getElementById("accuracy")
-.textContent =
-Math.round(accuracy)+
-" m";
+document.getElementById("longitud").innerText =
+lon.toFixed(6);
 
 
 /*
-No usamos ubicaciones
-con precisión extremadamente mala.
+Si la precisión es demasiado mala,
+no calculamos velocidad.
 */
 
-if(accuracy>100){
+if(precision > 30){
 
-document
-.getElementById("message")
-.textContent=
-"GPS con poca precisión. Buscando una señal mejor.";
+document.getElementById("velocidad").innerText =
+"--";
+
+anterior = null;
+
+velocidadFiltrada = 0;
 
 return;
 
 }
 
 
-state.gpsGood=true;
-
-
-document
-.getElementById("status")
-.className=
-"status good";
-
-
-document
-.getElementById("status")
-.textContent=
-"🟢 GPS ACTIVO";
-
-
 /*
-Primera posición:
-solo guardar posición.
+Primera medición.
 */
 
-if(first || !state.lastPosition){
+if(anterior === null){
 
-state.lastPosition={
+anterior = {
 
 lat:lat,
 
 lon:lon,
 
-time:now
+tiempo:Date.now()
 
 };
-
-document
-.getElementById("message")
-.textContent=
-"GPS encontrado. Comenzá a correr.";
 
 return;
 
 }
 
 
-/*
-Distancia entre posiciones.
-*/
+let ahora = Date.now();
 
-const distance =
-haversine(
+let segundos =
+(ahora - anterior.tiempo) / 1000;
 
-state.lastPosition.lat,
 
-state.lastPosition.lon,
+if(segundos <= 0){
 
+return;
+
+}
+
+
+let metros =
+distancia(
+anterior.lat,
+anterior.lon,
 lat,
-
 lon
-
 );
 
 
 /*
-Tiempo entre posiciones.
+IGNORAR MOVIMIENTOS PEQUEÑOS.
+
+Esto elimina gran parte del ruido GPS
+cuando estás quieto.
 */
 
-const deltaTime =
-(now-state.lastPosition.time)/1000;
+if(metros < 3){
 
+velocidadFiltrada *= 0.5;
 
-/*
-Ignorar datos imposibles.
+if(velocidadFiltrada < 0.2){
 
-No aceptamos desplazamientos
-enormes causados por errores GPS.
-*/
-
-if(
-
-deltaTime>0 &&
-
-distance>0 &&
-
-distance<100
-
-){
-
-state.distance += distance;
-
-
-/*
-Velocidad calculada mediante
-posición + tiempo.
-*/
-
-const calculatedSpeed =
-(distance/deltaTime)*3.6;
-
-
-/*
-Velocidad proporcionada
-directamente por GPS.
-*/
-
-let gpsSpeed=null;
-
-if(
-
-coords.speed !== null &&
-
-Number.isFinite(coords.speed) &&
-
-coords.speed>=0
-
-){
-
-gpsSpeed =
-coords.speed*3.6;
+velocidadFiltrada = 0;
 
 }
 
+document.getElementById("velocidad").innerText =
+velocidadFiltrada.toFixed(1);
 
-/*
-Elegimos una velocidad válida.
-
-Para correr, descartamos valores
-absurdamente altos.
-*/
-
-let rawSpeed =
-calculatedSpeed;
-
-
-if(
-
-gpsSpeed !== null &&
-
-gpsSpeed<30
-
-){
-
-/*
-Combinamos ambos valores
-cuando los dos existen.
-*/
-
-if(
-
-calculatedSpeed>0.5 &&
-
-calculatedSpeed<30
-
-){
-
-rawSpeed =
-(calculatedSpeed*0.5)+
-(gpsSpeed*0.5);
-
-}else{
-
-rawSpeed =
-gpsSpeed;
-
-}
-
-}
-
-
-/*
-Filtro de velocidad.
-
-Esto reduce saltos del GPS.
-*/
-
-if(rawSpeed<0.3){
-
-rawSpeed=0;
-
-}
-
-
-if(state.filteredSpeed===0){
-
-state.filteredSpeed=
-rawSpeed;
-
-}else{
-
-const alpha=0.20;
-
-state.filteredSpeed=
-(alpha*rawSpeed)+
-((1-alpha)*state.filteredSpeed);
-
-}
-
-
-/*
-Guardar muestras.
-*/
-
-if(state.filteredSpeed>0.5){
-
-state.speedSamples.push(
-state.filteredSpeed
-);
-
-if(state.speedSamples.length>60){
-
-state.speedSamples.shift();
-
-}
-
-}
-
-}
-
-
-/*
-Actualizar posición.
-*/
-
-state.lastPosition={
+anterior = {
 
 lat:lat,
 
 lon:lon,
 
-time:now
+tiempo:ahora
 
 };
 
+return;
 
 }
 
 
-/* =====================================
-   HAVERSINE
-===================================== */
+/*
+Velocidad calculada.
+*/
 
-function haversine(
-lat1,
-lon1,
-lat2,
-lon2
-){
+let velocidad =
+(metros / segundos) * 3.6;
 
-const R=6371000;
 
-const rad=Math.PI/180;
+/*
+Ignorar velocidades imposibles.
+*/
 
-const dLat=
+if(velocidad > 25){
+
+anterior = {
+
+lat:lat,
+
+lon:lon,
+
+tiempo:ahora
+
+};
+
+return;
+
+}
+
+
+/*
+Filtro fuerte.
+
+No permitimos cambios bruscos.
+*/
+
+velocidadFiltrada =
+(velocidadFiltrada * 0.75) +
+(velocidad * 0.25);
+
+
+/*
+Si estamos casi quietos,
+forzamos a 0.
+*/
+
+if(velocidadFiltrada < 0.7){
+
+velocidadFiltrada = 0;
+
+}
+
+
+document.getElementById("velocidad").innerText =
+velocidadFiltrada.toFixed(1);
+
+
+/*
+Guardar posición.
+*/
+
+anterior = {
+
+lat:lat,
+
+lon:lon,
+
+tiempo:ahora
+
+};
+
+}
+
+
+/*
+DISTANCIA GPS
+*/
+
+function distancia(lat1,lon1,lat2,lon2){
+
+const R = 6371000;
+
+const rad = Math.PI / 180;
+
+const dLat =
 (lat2-lat1)*rad;
 
-const dLon=
+const dLon =
 (lon2-lon1)*rad;
 
+const a =
+Math.sin(dLat/2) *
+Math.sin(dLat/2) +
 
-const a=
-
-Math.sin(dLat/2)*
-Math.sin(dLat/2)
-
-+
-
-Math.cos(lat1*rad)*
-Math.cos(lat2*rad)*
-Math.sin(dLon/2)*
+Math.cos(lat1*rad) *
+Math.cos(lat2*rad) *
+Math.sin(dLon/2) *
 Math.sin(dLon/2);
 
-
-const c=
-
-2*
+const c =
+2 *
 Math.atan2(
 Math.sqrt(a),
 Math.sqrt(1-a)
 );
-
 
 return R*c;
 
 }
 
 
-/* =====================================
-   ERROR GPS
-===================================== */
+function error(error){
 
-function gpsError(error){
-
-let message="Error de GPS.";
-
-
-if(error.code===1){
-
-message=
-"❌ Permiso de ubicación rechazado. Activá la ubicación para Chrome.";
+document.getElementById("velocidad").innerText =
+"GPS ERROR";
 
 }
-
-else if(error.code===2){
-
-message=
-"📡 No se pudo obtener la ubicación. Salí al aire libre.";
-
-}
-
-else if(error.code===3){
-
-message=
-"⏳ El GPS está tardando. Esperando señal...";
-
-}
-
-
-showGpsError(message);
-
-}
-
-
-/* =====================================
-   MOSTRAR ERROR
-===================================== */
-
-function showGpsError(message){
-
-state.gpsGood=false;
-
-
-const status =
-document.getElementById("status");
-
-
-status.className=
-"status bad";
-
-
-status.textContent=
-"⚠️ GPS";
-
-
-document
-.getElementById("message")
-.textContent=
-message;
-
-}
-
-
-/* =====================================
-   BUCLE DEL ENTRENAMIENTO
-===================================== */
-
-function trainingLoop(){
-
-if(!state.running)
-return;
-
-
-if(!state.paused){
-
-const now =
-Date.now();
-
-
-const stage =
-routine[state.stage];
-
-
-const stageElapsed =
-(now-state.stageStart)/1000;
-
-
-/*
-Cambio de etapa.
-*/
-
-if(stageElapsed>=stage.duration){
-
-state.stage++;
-
-
-/*
-Entrenamiento terminado.
-*/
-
-if(state.stage>=routine.length){
-
-finishTraining(false);
-
-return;
-
-}
-
-
-/*
-Nueva etapa.
-*/
-
-state.stageStart=now;
-
-
-const newStage =
-routine[state.stage];
-
-
-speak(
-
-"Etapa "+
-(state.stage+1)+
-". "+
-newStage.name+
-". Objetivo "+
-newStage.speed.toFixed(1)+
-" kilómetros por hora.",
-
-true
-
-);
-
-}
-
-
-/*
-Actualizar pantalla.
-*/
-
-updateStageUI();
-
-}
-
-
-requestAnimationFrame(trainingLoop);
-
-}
-
-
-/* =====================================
-   ACTUALIZAR PANTALLA
-===================================== */
-
-function updateStageUI(){
-
-if(!routine.length)
-return;
-
-
-const stage =
-routine[state.stage];
-
-
-const now =
-Date.now();
-
-
-const totalSeconds =
-Math.floor(
-
-(now-state.startTime-state.totalPaused)
-/1000
-
-);
-
-
-const stageSeconds =
-Math.floor(
-
-(now-state.stageStart)
-/1000
-
-);
-
-
-/*
-Tiempo.
-*/
-
-document
-.getElementById("totalTime")
-.textContent=
-formatTime(totalSeconds);
-
-
-document
-.getElementById("stageTime")
-.textContent=
-formatTime(stageSeconds);
-
-
-/*
-Etapa.
-*/
-
-document
-.getElementById("stageCounter")
-.textContent=
-
-"ETAPA "+
-(state.stage+1)+
-"/"+
-routine.length;
-
-
-document
-.getElementById("stageName")
-.textContent=
-stage.name.toUpperCase();
-
-
-/*
-Velocidad.
-*/
-
-if(state.gpsGood){
-
-document
-.getElementById("speed")
-.textContent=
-state.filteredSpeed.toFixed(1);
-
-}else{
-
-document
-.getElementById("speed")
-.textContent=
-"--";
-
-}
-
-
-/*
-Objetivo.
-*/
-
-document
-.getElementById("targetSpeed")
-.textContent=
-stage.speed.toFixed(1);
-
-
-/*
-Distancia.
-*/
-
-document
-.getElementById("distance")
-.textContent=
-formatDistance(state.distance);
-
-
-/*
-Progreso.
-*/
-
-const totalDuration =
-routine.reduce(
-(sum,item)=>sum+item.duration,
-0
-);
-
-
-let completed=0;
-
-
-for(
-let i=0;
-i<state.stage;
-i++
-){
-
-completed +=
-routine[i].duration;
-
-}
-
-
-completed +=
-Math.min(
-stageSeconds,
-stage.duration
-);
-
-
-const totalProgress =
-Math.min(
-100,
-(completed/totalDuration)*100
-);
-
-
-const stageProgress =
-Math.min(
-100,
-(stageSeconds/stage.duration)*100
-);
-
-
-document
-.getElementById("totalProgress")
-.style.width=
-totalProgress+"%";
-
-
-document
-.getElementById("stageProgress")
-.style.width=
-stageProgress+"%";
-
-
-/*
-Mensaje de estrategia.
-*/
-
-document
-.getElementById("strategy")
-.textContent=
-stage.message;
-
-
-/*
-Control de ritmo.
-*/
-
-if(!state.gpsGood){
-
-return;
-
-}
-
-
-const difference =
-state.filteredSpeed-stage.speed;
-
-
-const status =
-document.getElementById("status");
-
-
-if(state.filteredSpeed<0.5){
-
-status.className=
-"status wait";
-
-status.textContent=
-"📡 ESPERANDO VELOCIDAD";
-
-return;
-
-}
-
-
-if(Math.abs(difference)<=0.35){
-
-status.className=
-"status good";
-
-status.textContent=
-"🟢 VAS MUY BIEN";
-
-}
-
-else if(difference<-0.9){
-
-status.className=
-"status bad";
-
-status.textContent=
-"🔴 ACELERÁ";
-
-}
-
-else if(difference< -0.35){
-
-status.className=
-"status warn";
-
-status.textContent=
-"🟡 ACELERÁ LIGERAMENTE";
-
-}
-
-else if(difference>0.9){
-
-status.className=
-"status bad";
-
-status.textContent=
-"🔴 REDUCÍ EL RITMO";
-
-}
-
-else{
-
-status.className=
-"status warn";
-
-status.textContent=
-"🟡 REDUCÍ LIGERAMENTE";
-
-}
-
-
-/*
-Indicaciones por voz.
-
-No habla todo el tiempo.
-*/
-
-if(
-state.filteredSpeed>0.5 &&
-Math.abs(difference)>0.8
-){
-
-if(difference<0){
-
-speak(
-"Vas por debajo del objetivo. Acelerá ligeramente."
-);
-
-}else{
-
-speak(
-"Vas por encima del objetivo. Reducí ligeramente."
-);
-
-}
-
-}else if(
-state.filteredSpeed>0.5 &&
-Math.abs(difference)<=0.35
-){
-
-speak(
-"Vas muy bien. Mantené el ritmo."
-);
-
-}
-
-}
-
-
-/* =====================================
-   DISTANCIA
-===================================== */
-
-function formatDistance(meters){
-
-if(meters<1000){
-
-return Math.round(meters)+" m";
-
-}
-
-return (meters/1000).toFixed(2)+" km";
-
-}
-
-
-/* =====================================
-   PAUSAR
-===================================== */
-
-function pauseTraining(){
-
-if(!state.running)
-return;
-
-if(state.paused)
-return;
-
-
-state.paused=true;
-
-state.pauseStart=
-Date.now();
-
-
-if(state.watchId!==null){
-
-navigator.geolocation.clearWatch(
-state.watchId
-);
-
-state.watchId=null;
-
-}
-
-
-showScreen("pause");
-
-
-}
-
-
-/* =====================================
-   CONTINUAR
-===================================== */
-
-function resumeTraining(){
-
-if(!state.running)
-return;
-
-
-state.totalPaused +=
-Date.now()-
-state.pauseStart;
-
-
-state.paused=false;
-
-
-state.stageStart +=
-Date.now()-
-state.pauseStart;
-
-
-state.lastPosition=null;
-
-
-if(navigator.geolocation){
-
-state.watchId =
-navigator.geolocation.watchPosition(
-
-processGPS,
-
-gpsError,
-
-{
-
-enableHighAccuracy:true,
-
-timeout:15000,
-
-maximumAge:1000
-
-}
-
-);
-
-}
-
-
-showScreen("training");
-
-
-}
-
-
-/* =====================================
-   FINALIZAR
-===================================== */
-
-function finishTraining(manual){
-
-if(!state.running)
-return;
-
-
-state.running=false;
-
-state.paused=false;
-
-
-if(state.watchId!==null){
-
-navigator.geolocation.clearWatch(
-state.watchId
-);
-
-state.watchId=null;
-
-}
-
-
-if(
-window.speechSynthesis
-){
-
-speechSynthesis.cancel();
-
-}
-
-
-const totalSeconds =
-Math.floor(
-
-(Date.now()-
-state.startTime-
-state.totalPaused)
-/1000
-
-);
-
-
-/*
-Velocidad media basada
-en distancia real y tiempo.
-*/
-
-let average=0;
-
-
-if(totalSeconds>0){
-
-average =
-(state.distance/
-totalSeconds)*
-3.6;
-
-}
-
-
-document
-.getElementById("resultTime")
-.textContent=
-formatTime(totalSeconds);
-
-
-document
-.getElementById("resultDistance")
-.textContent=
-formatDistance(state.distance);
-
-
-document
-.getElementById("resultAverage")
-.textContent=
-average.toFixed(1);
-
-
-document
-.getElementById("resultLevel")
-.textContent=
-selectedLevel+1;
-
-
-if(manual){
-
-speak(
-"Entrenamiento finalizado.",
-true
-);
-
-}else{
-
-speak(
-"Entrenamiento completado. Excelente trabajo.",
-true
-);
-
-}
-
-
-showScreen("summary");
-
-}
-
-
-/* =====================================
-   REINICIAR
-===================================== */
-
-function resetApp(){
-
-state.running=false;
-
-state.paused=false;
-
-state.distance=0;
-
-state.filteredSpeed=0;
-
-state.lastPosition=null;
-
-showScreen("home");
-
-}
-
 
 </script>
 
 </body>
-
 </html>
