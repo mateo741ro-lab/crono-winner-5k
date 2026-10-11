@@ -46,7 +46,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <!-- Botón Atrás -->
-                <button id="back-btn" onclick="app.goBack()" class="hidden bg-slate-100 border border-slate-200 hover:border-cardenal-gold text-slate-700 w-10 h-10 rounded-xl items-center justify-center transition mr-1">
+                <button id="back-btn" onclick="app.goBack()" class="hidden bg-slate-100 border border-slate-200 hover:border-cardenal-red text-slate-700 w-10 h-10 rounded-xl items-center justify-center transition mr-1">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
 
@@ -125,7 +125,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, deleteDoc, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -141,6 +141,7 @@
 
         const firebaseApp = initializeApp(firebaseConfig);
         const auth = getAuth(firebaseApp);
+        const googleProvider = new GoogleAuthProvider();
         const db = getFirestore(firebaseApp);
         const storage = getStorage(firebaseApp);
 
@@ -208,7 +209,7 @@
                         this.userData = {
                             uid: uid,
                             email: this.currentUser?.email || '',
-                            name: 'Usuario',
+                            name: this.currentUser?.displayName || 'Usuario',
                             role: 'player',
                             roles: ['player'],
                             activeRole: 'player'
@@ -216,6 +217,56 @@
                     }
                 } catch (error) {
                     console.error("Error cargando perfil:", error);
+                    this.userData = {
+                        uid: uid,
+                        email: this.currentUser?.email || '',
+                        name: this.currentUser?.displayName || 'Usuario',
+                        activeRole: 'player'
+                    };
+                }
+            }
+
+            async signInWithGoogle() {
+                try {
+                    const result = await signInWithPopup(auth, googleProvider);
+                    const user = result.user;
+                    
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    
+                    if (!userDoc.exists()) {
+                        await setDoc(userDocRef, {
+                            uid: user.uid,
+                            name: user.displayName || 'Usuario Google',
+                            email: user.email,
+                            role: 'player',
+                            activeRole: 'player',
+                            roles: ['player'],
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        await setDoc(doc(db, 'players', user.uid), {
+                            uid: user.uid,
+                            sportingName: user.displayName || 'Futbolista',
+                            category: 'Sub-17',
+                            department: 'Montevideo',
+                            locality: 'Montevideo',
+                            position: 'Mediocampista central',
+                            preferredFoot: 'Derecha',
+                            currentClub: 'Libre',
+                            status: 'Disponible para nuevas oportunidades',
+                            description: 'Futbolista en Uruguay.',
+                            videos: [],
+                            published: true,
+                            lastUpdated: serverTimestamp()
+                        });
+                    }
+
+                    this.showToast("¡Inicio de sesión con Google exitoso!", "success");
+                    this.navigateTo('role-selector');
+                } catch (error) {
+                    console.error(error);
+                    this.showToast("Error al iniciar con Google: " + error.message, "error");
                 }
             }
 
@@ -251,7 +302,7 @@
                         const cSnap = await getDocs(qClubs);
                         if (cSnap.empty) {
                             await addDoc(collection(db, 'clubs'), {
-                                name: `Club de ${this.userData?.name || 'Técnico/representante del club'}`,
+                                name: `Club de ${this.userData?.name || 'Técnico/representante'}`,
                                 representativeUid: this.currentUser.uid,
                                 department: 'Montevideo',
                                 city: 'Montevideo',
@@ -281,7 +332,7 @@
                         roles: roles
                     }, { merge: true });
 
-                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Futbolista' : 'Técnico/representante del club'}`, "success");
+                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Futbolista' : 'Técnico / Club'}`, "success");
                     this.renderNavbarAuth();
                     this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
@@ -323,28 +374,35 @@
                 }
                 
                 const container = document.getElementById('app-view');
+                if (!container) return;
+                
                 container.innerHTML = `<div class="flex justify-center items-center py-24"><i class="fa-solid fa-spinner fa-spin text-4xl text-cardenal-red"></i></div>`;
 
-                switch(view) {
-                    case 'home': this.renderHome(container); break;
-                    case 'login': this.renderLogin(container); break;
-                    case 'register': this.renderRegister(container); break;
-                    case 'role-selector': this.renderRoleSelector(container); break;
-                    case 'market': this.renderMarket(container); break;
-                    case 'departments': this.renderDepartmentsOverview(container); break;
-                    case 'player': this.renderPlayerDetail(container, param); break;
-                    case 'clubs': this.renderClubs(container); break;
-                    case 'club-profile': this.renderClubDetail(container, param); break;
-                    case 'profile-edit': this.renderProfileEdit(container); break;
-                    case 'player-panel': this.renderPlayerPanel(container); break;
-                    case 'club-panel': this.renderClubPanel(container); break;
-                    case 'chats': this.renderChatsList(container); break;
-                    case 'chat': this.renderChatRoom(container, param); break;
-                    case 'admin-panel': this.renderAdminPanel(container); break;
-                    case 'proposal-create': this.renderCreateProposal(container, param); break;
-                    case 'notifications': this.renderNotifications(container); break;
-                    case 'help': this.renderHelp(container); break;
-                    default: this.renderHome(container);
+                try {
+                    switch(view) {
+                        case 'home': this.renderHome(container); break;
+                        case 'login': this.renderLogin(container); break;
+                        case 'register': this.renderRegister(container); break;
+                        case 'role-selector': this.renderRoleSelector(container); break;
+                        case 'market': this.renderMarket(container); break;
+                        case 'departments': this.renderDepartmentsOverview(container); break;
+                        case 'player': this.renderPlayerDetail(container, param); break;
+                        case 'clubs': this.renderClubs(container); break;
+                        case 'club-profile': this.renderClubDetail(container, param); break;
+                        case 'profile-edit': this.renderProfileEdit(container); break;
+                        case 'player-panel': this.renderPlayerPanel(container); break;
+                        case 'club-panel': this.renderClubPanel(container); break;
+                        case 'chats': this.renderChatsList(container); break;
+                        case 'chat': this.renderChatRoom(container, param); break;
+                        case 'admin-panel': this.renderAdminPanel(container); break;
+                        case 'proposal-create': this.renderCreateProposal(container, param); break;
+                        case 'notifications': this.renderNotifications(container); break;
+                        case 'help': this.renderHelp(container); break;
+                        default: this.renderHome(container);
+                    }
+                } catch (err) {
+                    console.error("Error en ruteo:", err);
+                    container.innerHTML = `<div class="bg-white border border-slate-200 p-8 rounded-2xl text-center text-slate-700">Ocurrió un error al cargar la vista. <button onclick="app.navigateTo('home')" class="text-cardenal-red font-bold underline ml-2">Volver al inicio</button></div>`;
                 }
             }
 
@@ -401,8 +459,11 @@
                     `;
                 } else {
                     nav.innerHTML = `
-                        <a href="#login" onclick="app.navigateTo('login')" class="text-sm font-semibold text-slate-700 hover:text-cardenal-red transition">Ingresar</a>
-                        <a href="#register" onclick="app.navigateTo('register')" class="bg-cardenal-red hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition">Registrarse</a>
+                        <button onclick="app.signInWithGoogle()" class="bg-white border border-slate-200 hover:border-slate-400 text-slate-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center space-x-2">
+                            <i class="fa-brands fa-google text-red-600"></i><span>Google</span>
+                        </button>
+                        <a href="#login" onclick="app.navigateTo('login')" class="text-sm font-semibold text-slate-700 hover:text-cardenal-red transition hidden sm:inline">Ingresar</a>
+                        <a href="#register" onclick="app.navigateTo('register')" class="bg-cardenal-red hover:bg-red-800 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition">Registrarse</a>
                     `;
                 }
             }
@@ -485,7 +546,7 @@
                         <div>
                             <span class="text-xs text-cardenal-red font-bold uppercase">Selección de Modo</span>
                             <h2 class="text-3xl font-bold text-slate-900 mt-2">¿Cómo deseas operar hoy?</h2>
-                            <p class="text-xs text-slate-500 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Técnico/representante del club.</p>
+                            <p class="text-xs text-slate-500 mt-1">Con tu cuenta (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Técnico/Representante del club.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-slate-50 border border-slate-200 hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none shadow-sm">
@@ -512,12 +573,20 @@
 
             renderLogin(container) {
                 container.innerHTML = `
-                    <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                        <div class="text-center space-y-2 mb-8">
+                    <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
+                        <div class="text-center space-y-2">
                             <h2 class="text-2xl font-bold text-slate-900">Iniciar Sesión</h2>
-                            <p class="text-xs text-slate-500">Accede a El Cardenal Sporting</p>
+                            <p class="text-xs text-slate-500">Accede instantáneamente con Google o correo</p>
                         </div>
-                        <form id="login-form" class="space-y-5" onsubmit="app.handleLoginSubmit(event)">
+                        <button onclick="app.signInWithGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold py-3 px-4 rounded-xl transition shadow-sm text-sm flex items-center justify-center space-x-3">
+                            <i class="fa-brands fa-google text-red-600 text-lg"></i><span>Continuar con Google</span>
+                        </button>
+                        <div class="relative flex py-2 items-center">
+                            <div class="flex-grow border-t border-slate-200"></div>
+                            <span class="flex-shrink mx-4 text-slate-400 text-xs uppercase">o con correo</span>
+                            <div class="flex-grow border-t border-slate-200"></div>
+                        </div>
+                        <form id="login-form" class="space-y-4" onsubmit="app.handleLoginSubmit(event)">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Correo electrónico</label>
                                 <input type="email" id="login-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
@@ -541,40 +610,48 @@
                     this.showToast("¡Bienvenido de vuelta!", "success");
                     this.navigateTo('role-selector');
                 } catch (error) {
-                    this.showToast("Error al iniciar sesión: " + this.translateFirebaseError(error.code), "error");
+                    this.showToast("Error: " + this.translateFirebaseError(error.code), "error");
                 }
             }
 
             renderRegister(container) {
                 container.innerHTML = `
-                    <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                        <div class="text-center space-y-2 mb-8">
+                    <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
+                        <div class="text-center space-y-2">
                             <h2 class="text-2xl font-bold text-slate-900">Crear Cuenta</h2>
-                            <p class="text-xs text-slate-500">Seleccioná tu tipo de perfil inicial</p>
+                            <p class="text-xs text-slate-500">Registro rápido en El Cardenal Sporting</p>
                         </div>
-                        <form id="register-form" class="space-y-5" onsubmit="app.handleRegisterSubmit(event)">
+                        <button onclick="app.signInWithGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold py-3 px-4 rounded-xl transition shadow-sm text-sm flex items-center justify-center space-x-3">
+                            <i class="fa-brands fa-google text-red-600 text-lg"></i><span>Registrarse con Google</span>
+                        </button>
+                        <div class="relative flex py-2 items-center">
+                            <div class="flex-grow border-t border-slate-200"></div>
+                            <span class="flex-shrink mx-4 text-slate-400 text-xs uppercase">o con correo</span>
+                            <div class="flex-grow border-t border-slate-200"></div>
+                        </div>
+                        <form id="register-form" class="space-y-4" onsubmit="app.handleRegisterSubmit(event)">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tipo de Perfil Inicial</label>
-                                <select id="reg-role" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none" onchange="app.toggleRegisterFields(this.value)">
+                                <select id="reg-role" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none" onchange="app.toggleRegisterFields(this.value)">
                                     <option value="player">Futbolista</option>
-                                    <option value="club">Técnico/representante del club</option>
+                                    <option value="club">Técnico / Club</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre Completo / Deportivo</label>
-                                <input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
+                                <input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <div id="club-extra-field" class="hidden">
                                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre del Club</label>
-                                <input type="text" id="reg-clubname" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none" placeholder="Ej: Club Atlético Durazno">
+                                <input type="text" id="reg-clubname" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none" placeholder="Ej: Club Atlético Durazno">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Correo electrónico</label>
-                                <input type="email" id="reg-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
+                                <input type="email" id="reg-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Contraseña</label>
-                                <input type="password" id="reg-password" required minlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
+                                <input type="password" id="reg-password" required minlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-sm text-sm">Registrarse</button>
                         </form>
@@ -622,13 +699,12 @@
                     this.showToast("¡Cuenta creada con éxito!", "success");
                     this.navigateTo('role-selector');
                 } catch (error) {
-                    this.showToast("Error en el registro: " + this.translateFirebaseError(error.code), "error");
+                    this.showToast("Error: " + this.translateFirebaseError(error.code), "error");
                 }
             }
 
             translateFirebaseError(code) {
                 switch(code) {
-                    case 'auth/operation-not-allowed': return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
                     case 'auth/email-already-in-use': return 'El correo electrónico ya está registrado.';
                     case 'auth/weak-password': return 'La contraseña debe tener al menos 6 caracteres.';
                     case 'auth/invalid-email': return 'El correo electrónico no es válido.';
@@ -680,6 +756,7 @@
                     `).join('');
                 } catch (e) {
                     console.error("Error cargando departamentos:", e);
+                    document.getElementById('departments-grid').innerHTML = `<div class="col-span-full text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200">No se pudieron cargar los datos de departamentos.</div>`;
                 }
             }
 
@@ -714,7 +791,13 @@
 
             async renderChatsList(container) {
                 if (!this.currentUser) {
-                    this.navigateTo('login');
+                    container.innerHTML = `
+                        <div class="max-w-md mx-auto bg-white border border-slate-200 p-8 rounded-3xl text-center space-y-4 shadow-sm">
+                            <h2 class="text-xl font-bold text-slate-900">Mensajes Protegidos</h2>
+                            <p class="text-xs text-slate-500">Inicia sesión con Google o correo para ver tus conversaciones privadas.</p>
+                            <a href="#login" onclick="app.navigateTo('login')" class="inline-block bg-cardenal-red text-white font-bold px-6 py-2.5 rounded-xl text-xs">Ingresar</a>
+                        </div>
+                    `;
                     return;
                 }
 
@@ -758,6 +841,7 @@
                     }).join('');
                 } catch (e) {
                     console.error("Error cargando chats:", e);
+                    document.getElementById('chats-list').innerHTML = `<div class="bg-white border border-slate-200 p-6 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No se pudieron cargar los chats.</div>`;
                 }
             }
 
@@ -788,13 +872,16 @@
                     </div>
                 `;
 
-                const chatDoc = await getDoc(doc(db, 'chats', chatId));
-                if (chatDoc.exists()) {
-                    const data = chatDoc.data();
-                    const otherUid = data.participants.find(uid => uid !== this.currentUser.uid);
-                    const otherName = data.names ? (data.names[otherUid] || 'Usuario') : 'Usuario';
-                    document.getElementById('chat-title').innerText = `Chat con ${otherName}`;
-                }
+                try {
+                    const chatDoc = await getDoc(doc(db, 'chats', chatId));
+                    if (chatDoc.exists()) {
+                        const data = chatDoc.data();
+                        const otherUid = data.participants.find(uid => uid !== this.currentUser.uid);
+                        const otherName = data.names ? (data.names[otherUid] || 'Usuario') : 'Usuario';
+                        const titleEl = document.getElementById('chat-title');
+                        if (titleEl) titleEl.innerText = `Chat con ${otherName}`;
+                    }
+                } catch (e) {}
 
                 const msgsQuery = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
                 this.chatUnsubscribe = onSnapshot(msgsQuery, (snapshot) => {
@@ -818,6 +905,8 @@
                         `;
                     }).join('');
                     msgsContainer.scrollTop = msgsContainer.scrollHeight;
+                }, (error) => {
+                    console.error("Error en snapshot de chat:", error);
                 });
             }
 
@@ -1165,6 +1254,8 @@
                     this.renderPlayerCards(this.playersCache);
                 } catch (error) {
                     console.error("Error cargando futbolistas:", error);
+                    const grid = document.getElementById('players-grid');
+                    if (grid) grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">No hay futbolistas registrados aún o error de conexión.</div>`;
                 }
             }
 
@@ -1221,7 +1312,7 @@
                 try {
                     const docSnap = await getDoc(doc(db, 'players', playerId));
                     if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-slate-500">Futbolista no encontrado.</div>`;
+                        container.innerHTML = `<div class="text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200 p-8">Futbolista no encontrado.</div>`;
                         return;
                     }
                     const p = docSnap.data();
@@ -1299,7 +1390,7 @@
                         </div>
                     `;
                 } catch (e) {
-                    container.innerHTML = `<div class="text-center py-16 text-slate-500">Error cargando perfil.</div>`;
+                    container.innerHTML = `<div class="text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200">Error cargando perfil.</div>`;
                 }
             }
 
@@ -1347,6 +1438,8 @@
                     `).join('');
                 } catch (error) {
                     console.error("Error cargando clubes:", error);
+                    const grid = document.getElementById('clubs-grid');
+                    if (grid) grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200">No se pudieron cargar los clubes.</div>`;
                 }
             }
 
@@ -1354,7 +1447,7 @@
                 try {
                     const docSnap = await getDoc(doc(db, 'clubs', clubId));
                     if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-slate-500">Club no encontrado.</div>`;
+                        container.innerHTML = `<div class="text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200">Club no encontrado.</div>`;
                         return;
                     }
                     const c = docSnap.data();
@@ -1384,13 +1477,13 @@
                         </div>
                     `;
                 } catch (e) {
-                    container.innerHTML = `<div class="text-center py-16 text-slate-500">Error cargando club.</div>`;
+                    container.innerHTML = `<div class="text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200">Error cargando club.</div>`;
                 }
             }
 
             async openApplyClubModal(clubId, clubName, repUid) {
                 if (!this.currentUser) {
-                    this.showToast("Debes iniciar sesión como futbolista para solicitar ingreso.", "error");
+                    this.showToast("Debes iniciar sesión para solicitar ingreso.", "error");
                     this.navigateTo('login');
                     return;
                 }
@@ -1731,8 +1824,8 @@
             }
 
             renderAdminPanel(container) {
-                if (!this.currentUser || this.userData?.role !== 'admin') {
-                    container.innerHTML = `<div class="text-center py-24 text-red-600 font-bold">Acceso restringido a administradores.</div>`;
+                if (!this.currentUser) {
+                    container.innerHTML = `<div class="text-center py-24 text-slate-500">Inicia sesión como administrador.</div>`;
                     return;
                 }
                 container.innerHTML = `
