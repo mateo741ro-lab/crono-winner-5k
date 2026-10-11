@@ -1,524 +1,1018 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0a0a">
-<title>CRONO WINNER 5K</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#0a0a0a;color:#fff;overflow:hidden;touch-action:manipulation}
-  .screen{display:none;height:100%;width:100%;flex-direction:column;padding:16px}
-  .screen.active{display:flex}
-  h1{font-size:1.4rem;letter-spacing:1px;text-align:center;margin-bottom:4px}
-  h2{font-size:.85rem;text-align:center;color:#888;margin-bottom:12px;font-weight:400}
-  .logo-big{font-size:2rem;font-weight:900;letter-spacing:2px;text-align:center;margin-top:4vh;margin-bottom:4px}
-  .logo-sub{font-size:.85rem;text-align:center;color:#ff6b35;margin-bottom:3vh;letter-spacing:3px}
-  .level-card{background:#141414;border:1px solid #222;border-radius:14px;padding:14px;margin:6px 0;width:100%;max-width:400px;align-self:center;cursor:pointer;transition:.15s}
-  .level-card:active{border-color:#ff6b35;background:#1a0f0a}
-  .level-card h3{color:#ff6b35;font-size:1rem;margin-bottom:4px}
-  .level-card p{color:#aaa;font-size:.8rem;line-height:1.4}
-  .sess-list{background:#141414;border:1px solid #222;border-radius:14px;padding:12px;margin:8px 0;max-width:400px;align-self:center;width:100%;max-height:35vh;overflow-y:auto}
-  .sess-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #222;cursor:pointer}
-  .sess-item:last-child{border-bottom:none}
-  .sess-item:active{color:#ff6b35}
-  .sess-name{font-size:.9rem;font-weight:700}
-  .sess-dur{font-size:.75rem;color:#888}
-  .btn-primary{background:#ff6b35;color:#0a0a0a;border:none;padding:16px;font-size:1.1rem;font-weight:800;border-radius:12px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:8px}
-  .btn-primary:active{transform:scale(.97)}
-  .btn-secondary{background:#1a1a1a;color:#fff;border:2px solid #444;padding:14px;font-size:1rem;font-weight:700;border-radius:12px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:8px}
-  .btn-danger{background:#ff3366;color:#fff;border:none;padding:14px;font-size:1rem;font-weight:700;border-radius:12px;width:100%;max-width:400px;align-self:center;cursor:pointer;margin-top:8px}
-  .card{background:#141414;border-radius:14px;padding:18px;margin:8px 0;text-align:center;border:1px solid #222;width:100%;max-width:400px;align-self:center}
-  .big-number{font-size:3.6rem;font-weight:900;color:#ff6b35;line-height:1}
-  .big-label{font-size:.8rem;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
-  .stats-row{display:flex;justify-content:space-around;margin:14px 0}
-  .stat{text-align:center;flex:1}
-  .stat-num{font-size:1.5rem;font-weight:800}
-  .stat-label{font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:1px}
-  .progress-container{width:100%;height:10px;background:#222;border-radius:6px;margin:10px 0;overflow:hidden}
-  .progress-bar{height:100%;background:#ff6b35;border-radius:6px;width:0%;transition:width .4s}
-  .stage-badge{display:inline-block;background:#ff6b35;color:#0a0a0a;padding:4px 12px;border-radius:16px;font-size:.75rem;font-weight:800;margin-bottom:6px}
-  .status-box{text-align:center;padding:10px;border-radius:10px;margin:8px 0;font-weight:800;font-size:1.1rem}
-  .good{color:#00d4aa;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.25)}
-  .warn{color:#ffcc00;background:rgba(255,204,0,.12);border:1px solid rgba(255,204,0,.25)}
-  .bad{color:#ff3366;background:rgba(255,51,102,.12);border:1px solid rgba(255,51,102,.25)}
-  .hint-box{background:#1a1a1a;border:1px dashed #444;border-radius:8px;padding:10px;margin:8px 0;font-size:.75rem;color:#aaa;text-align:center;max-width:400px;align-self:center}
-  .routine-detail{background:#0f0f0f;border-radius:10px;padding:10px;margin:8px 0;font-size:.8rem;color:#ccc;max-width:400px;align-self:center;width:100%;max-height:25vh;overflow-y:auto}
-  .routine-detail div{padding:4px 0;border-bottom:1px solid #222}
-  .routine-detail div:last-child{border-bottom:none}
-  .hidden{display:none!important}
-  .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .top-bar small{color:#888;font-size:.7rem}
-  .rpe-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
-  .rpe-btn{background:#1a1a1a;border:2px solid #333;color:#fff;padding:10px;border-radius:8px;text-align:center;cursor:pointer;font-weight:700;font-size:.9rem}
-  .rpe-btn:active,.rpe-btn.sel{border-color:#ff6b35;background:#ff6b35;color:#0a0a0a}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Cardenal Sporting | Mercado de Pases Sub-17 Durazno</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cardenal: {
+                            red: '#991b1b',
+                            darkred: '#7f1d1d',
+                            gold: '#d97706',
+                            dark: '#0a0a0a',
+                            card: '#141414',
+                            border: '#262626'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        .demo-badge { background: linear-gradient(135deg, #991b1b, #d97706); }
+    </style>
 </head>
-<body>
+<body class="bg-cardenal-dark text-gray-100 min-h-screen flex flex-col selection:bg-cardenal-red selection:text-white">
 
-<!-- HOME -->
-<section id="scr-home" class="screen active">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
-    <div class="logo-big">CRONO WINNER</div>
-    <div class="logo-sub">5K PERFORMANCE SYSTEM</div>
-    <h2 style="margin-bottom:16px">Seleccioná tu nivel</h2>
-    <div class="level-card" onclick="selectLevel('principiante')">
-      <h3>🟢 Nivel 1 — Principiante</h3>
-      <p>Objetivo: Terminar los 5K sin detenerse. Método caminar/trotar.</p>
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-cardenal-card border-b border-cardenal-border shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigateTo('home')">
+                <div class="w-12 h-12 rounded-xl demo-badge flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
+                    <p class="text-xs text-gray-400 font-medium">Mercado de Pases Sub-17 • Durazno, Uy</p>
+                </div>
+            </div>
+
+            <!-- Navegación Escritorio -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="#home" onclick="app.navigateTo('home')" class="hover:text-cardenal-gold transition">Inicio</a>
+                <a href="#market" onclick="app.navigateTo('market')" class="hover:text-cardenal-gold transition">Mercado Sub-17</a>
+                <a href="#clubs" onclick="app.navigateTo('clubs')" class="hover:text-cardenal-gold transition">Clubes</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-gold transition">Ayuda y Menores</a>
+            </nav>
+
+            <!-- Acciones de Usuario / Auth -->
+            <div class="flex items-center space-x-4" id="auth-nav-container">
+                <i class="fa-solid fa-spinner fa-spin text-cardenal-gold"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner Demo -->
+    <div class="demo-badge text-white text-xs font-semibold py-1.5 px-4 text-center tracking-wide flex items-center justify-center space-x-2 shadow-inner">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>PLATAFORMA DE DEMOSTRACIÓN — DATOS FICTICIOS DE JUGADORES Y CLUBES SUB-17 DE DURAZNO</span>
     </div>
-    <div class="level-card" onclick="selectLevel('intermedio')">
-      <h3>🟡 Nivel 2 — Intermedio</h3>
-      <p>Mejorar tiempo y mantener ritmo continuo. Intervalos y progresión.</p>
+
+    <!-- Contenedor Principal SPA -->
+    <main id="app-view" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Renderizado dinámico -->
+    </main>
+
+    <!-- Notificaciones Toast -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none"></div>
+
+    <!-- Modales Globales -->
+    <div id="global-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="bg-cardenal-card border border-cardenal-border rounded-2xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl"></div>
     </div>
-    <div class="level-card" onclick="selectLevel('avanzado')">
-      <h3>🔴 Nivel 3 — Avanzado</h3>
-      <p>Maximizar rendimiento. Umbral anaeróbico y series.</p>
-    </div>
-  </div>
-</section>
 
-<!-- SELECCIONAR SESION -->
-<section id="scr-sessions" class="screen">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-    <h1 id="sessTitle">NIVEL 1</h1>
-    <h2 id="sessSub">Elegí la sesión de hoy</h2>
-    <div class="sess-list" id="sessList"></div>
-    <button class="btn-secondary" onclick="show('scr-home')">VOLVER</button>
-  </div>
-</section>
+    <!-- Footer -->
+    <footer class="bg-cardenal-card border-t border-cardenal-border mt-12 py-8 text-center text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 space-y-3">
+            <p>© 2026 El Cardenal Sporting. Desarrollado para el fútbol juvenil Sub-17 de Durazno, Uruguay.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Privacidad y Protección de Menores</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Condiciones de Uso</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Eliminación de Datos</a>
+            </div>
+        </div>
+    </footer>
 
-<!-- PRE-ENTRENAMIENTO -->
-<section id="scr-pre" class="screen">
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
-    <h1 id="preTitle">Sesión</h1>
-    <div class="routine-detail" id="preRoutine"></div>
-    <button class="btn-primary" onclick="startTraining()">INICIAR ENTRENAMIENTO</button>
-    <button class="btn-secondary" onclick="show('scr-sessions')">VOLVER</button>
-  </div>
-</section>
+    <!-- Lógica y SDKs de Firebase Modular -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-<!-- ENTRENAMIENTO -->
-<section id="scr-train" class="screen">
-  <div class="top-bar">
-    <small id="topStage">ETAPA 1/10</small>
-    <small id="topTime">00:00</small>
-  </div>
-  <div style="text-align:center"><span class="stage-badge" id="stageName">CALENTAMIENTO</span></div>
-  <div class="card">
-    <div class="big-number" id="dispSpeed">0.0</div>
-    <div class="big-label">km/h</div>
-  </div>
-  <div class="stats-row">
-    <div class="stat"><div class="stat-num" id="dispDist">0</div><div class="stat-label">Distancia</div></div>
-    <div class="stat"><div class="stat-num" id="dispTime">00:00</div><div class="stat-label">Sesión</div></div>
-  </div>
-  <div class="progress-container"><div class="progress-bar" id="progTotal"></div></div>
-  <div class="progress-container"><div class="progress-bar" id="progStage" style="background:#00d4aa"></div></div>
-  <div class="status-box good" id="statusBox">Buscando GPS...</div>
-  <div class="hint-box" id="gpsHint">📡 Conectando con GPS... Andá al aire libre.</div>
-  <div style="margin-top:auto;padding-top:8px">
-    <button class="btn-primary" onclick="pauseTraining()">PAUSAR</button>
-    <button class="btn-danger" onclick="finishTraining(true)">FINALIZAR</button>
-  </div>
-</section>
+        // ==========================================
+        // CONFIGURACIÓN DE FIREBASE (PEGA TUS DATOS AQUÍ)
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "el-cardenal-sporting.firebaseapp.com",
+            projectId: "el-cardenal-sporting",
+            storageBucket: "el-cardenal-sporting.appspot.com",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
 
-<!-- PAUSA -->
-<section id="scr-pause" class="screen">
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
-    <h1 style="font-size:1.8rem">PAUSA</h1>
-    <div class="card" style="margin:14px 0">
-      <div class="stats-row">
-        <div class="stat"><div class="stat-num" id="pauseDist">0</div><div class="stat-label">Distancia</div></div>
-        <div class="stat"><div class="stat-num" id="pauseTime">00:00</div><div class="stat-label">Tiempo</div></div>
-      </div>
-    </div>
-    <button class="btn-primary" onclick="resumeTraining()">CONTINUAR</button>
-    <button class="btn-danger" onclick="finishTraining(true)">FINALIZAR</button>
-  </div>
-</section>
+        const firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth(firebaseApp);
+        const db = getFirestore(firebaseApp);
+        const storage = getStorage(firebaseApp);
 
-<!-- RESUMEN -->
-<section id="scr-end" class="screen">
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
-    <h1 style="color:#00d4aa">¡ENTRENAMIENTO COMPLETADO!</h1>
-    <div class="card" style="margin:10px 0">
-      <div class="stats-row">
-        <div class="stat"><div class="stat-num" id="endTime">00:00</div><div class="stat-label">Tiempo</div></div>
-        <div class="stat"><div class="stat-num" id="endDist">0</div><div class="stat-label">Distancia</div></div>
-      </div>
-      <div class="stats-row" style="margin-top:10px">
-        <div class="stat"><div class="stat-num" id="endAvg">0.0</div><div class="stat-label">Vel. media</div></div>
-        <div class="stat"><div class="stat-num" id="endMax">0.0</div><div class="stat-label">Vel. máxima</div></div>
-      </div>
-    </div>
-    <div style="font-size:.9rem;color:#888;margin-bottom:8px">¿Cómo te sentiste? (Esfuerzo 1-10)</div>
-    <div class="rpe-grid" id="rpeGrid" style="max-width:400px;width:100%"></div>
-    <button class="btn-primary" onclick="saveRpeAndReset()" style="margin-top:10px">GUARDAR Y VOLVER</button>
-  </div>
-</section>
+        class CardenalApp {
+            constructor() {
+                this.currentUser = null;
+                this.userData = null;
+                this.currentView = 'home';
+                this.playersCache = [];
+                this.clubsCache = [];
+                this.initAuthListener();
+                
+                window.addEventListener('hashchange', () => this.handleRouting());
+            }
 
-<script>
-const ALPHA = 0.25;
-const SPEECH_MIN = 20000;
+            initAuthListener() {
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        await this.loadUserData(user.uid);
+                    } else {
+                        this.currentUser = null;
+                        this.userData = null;
+                    }
+                    this.renderNavbarAuth();
+                    this.handleRouting();
+                });
+            }
 
-const PROGRAMS = {
-  principiante: {
-    name: "Nivel 1 — Principiante",
-    sessions: [
-      {
-        name: "Día 1: Trote/Caminata",
-        desc: "Calentamiento + 6x(1min trote / 2min caminata) + Enfriamiento",
-        stages: [
-          {n:"Calentamiento - Caminata rápida", d:300, t:5.0},
-          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
-          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
-          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
-          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
-          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
-          {n:"Trote suave", d:60, t:8.0}, {n:"Caminata recuperación", d:120, t:5.0},
-          {n:"Enfriamiento - Caminata", d:300, t:5.0}
-        ]
-      },
-      {
-        name: "Día 3: Trote extendido",
-        desc: "Calentamiento + 5x(2min trote / 2min caminata) + Enfriamiento",
-        stages: [
-          {n:"Calentamiento", d:300, t:5.0},
-          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
-          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
-          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
-          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
-          {n:"Trote", d:120, t:8.0}, {n:"Caminata", d:120, t:5.0},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      },
-      {
-        name: "Día 5: Trote continuo",
-        desc: "Calentamiento + 10min trote + 5min caminata + 5min trote + Enfriamiento",
-        stages: [
-          {n:"Calentamiento", d:300, t:5.0},
-          {n:"Trote continuo", d:600, t:8.0},
-          {n:"Caminata recuperación", d:300, t:5.0},
-          {n:"Trote final", d:300, t:8.5},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      }
-    ]
-  },
-  intermedio: {
-    name: "Nivel 2 — Intermedio",
-    sessions: [
-      {
-        name: "Día 1: Carrera fácil",
-        desc: "30 minutos a ritmo conversacional constante",
-        stages: [
-          {n:"Calentamiento", d:300, t:6.0},
-          {n:"Carrera fácil - Ritmo conversacional", d:1800, t:9.0},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      },
-      {
-        name: "Día 2: Intervalos 400m",
-        desc: "Calentamiento + 6x(2min rápido / 90s recup) + Enfriamiento",
-        stages: [
-          {n:"Calentamiento", d:600, t:6.5},
-          {n:"Serie 1 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
-          {n:"Serie 2 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
-          {n:"Serie 3 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
-          {n:"Serie 4 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
-          {n:"Serie 5 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
-          {n:"Serie 6 - Rápido", d:120, t:11.0}, {n:"Recuperación", d:90, t:4.0},
-          {n:"Enfriamiento", d:600, t:5.0}
-        ]
-      },
-      {
-        name: "Día 4: Progresión",
-        desc: "25-30min aumentando velocidad cada 5 minutos",
-        stages: [
-          {n:"Calentamiento", d:300, t:6.0},
-          {n:"Bloque 1 - Suave", d:300, t:8.0},
-          {n:"Bloque 2 - Moderado", d:300, t:9.0},
-          {n:"Bloque 3 - Medio", d:300, t:10.0},
-          {n:"Bloque 4 - Rápido", d:300, t:11.0},
-          {n:"Bloque 5 - Máximo sostenido", d:300, t:12.0},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      },
-      {
-        name: "Día 6: Carrera larga",
-        desc: "45 minutos a ritmo cómodo y sostenido",
-        stages: [
-          {n:"Calentamiento", d:300, t:6.0},
-          {n:"Carrera larga - Ritmo cómodo", d:2700, t:8.5},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      }
-    ]
-  },
-  avanzado: {
-    name: "Nivel 3 — Avanzado",
-    sessions: [
-      {
-        name: "Día 1: Recuperación",
-        desc: "30 minutos de carrera muy suave",
-        stages: [
-          {n:"Calentamiento", d:300, t:5.5},
-          {n:"Carrera recuperación", d:1800, t:7.5},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      },
-      {
-        name: "Día 2: Velocidad 800m",
-        desc: "Calentamiento + 8x(3min36s rápido / 2min recup) + Enfriamiento",
-        stages: [
-          {n:"Calentamiento", d:900, t:6.5},
-          {n:"Serie 1 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 2 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 3 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 4 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 5 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 6 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 7 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Serie 8 - Ritmo 5K", d:216, t:12.0}, {n:"Recuperación", d:120, t:4.0},
-          {n:"Enfriamiento", d:900, t:5.0}
-        ]
-      },
-      {
-        name: "Día 3: Carrera fácil",
-        desc: "40 minutos a ritmo conversacional constante",
-        stages: [
-          {n:"Calentamiento", d:300, t:6.0},
-          {n:"Carrera fácil", d:2400, t:9.5},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      },
-      {
-        name: "Día 4: Tempo/Umbral",
-        desc: "Calentamiento + 22min a ritmo cómodamente duro + Enfriamiento",
-        stages: [
-          {n:"Calentamiento", d:600, t:6.5},
-          {n:"Tempo - Ritmo umbral", d:1320, t:11.5},
-          {n:"Enfriamiento", d:600, t:5.0}
-        ]
-      },
-      {
-        name: "Día 6: Carrera larga",
-        desc: "65 minutos a ritmo cómodo (resistencia aeróbica)",
-        stages: [
-          {n:"Calentamiento", d:300, t:6.0},
-          {n:"Carrera larga", d:3900, t:8.5},
-          {n:"Enfriamiento", d:300, t:5.0}
-        ]
-      }
-    ]
-  }
-};
+            async loadUserData(uid) {
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', uid));
+                    if (userDoc.exists()) {
+                        this.userData = userDoc.data();
+                    }
+                } catch (error) {
+                    console.error("Error cargando perfil de usuario:", error);
+                }
+            }
 
-let selLevel = null, selSession = null, routine = [];
-let S = {run:false,paused:false,stage:0,stageStart:0,start:0,totalPause:0,pauseAt:0,dist:0,lastPos:null,watchId:null,filtSpeed:0,lastSp:0,samples:[],maxSp:0};
-let rpeSel = null;
+            navigateTo(view, param = null) {
+                window.location.hash = param ? `${view}/${param}` : view;
+            }
 
-function fmtT(s){const m=Math.floor(s/60).toString().padStart(2,'0');const sec=(s%60).toString().padStart(2,'0');return m+':'+sec;}
-function fmtD(m){if(m<1000)return Math.round(m)+' m';return (m/1000).toFixed(2)+' km';}
-function speak(txt,force){if(!window.speechSynthesis)return;const now=Date.now();if(!force&&(now-S.lastSp)<SPEECH_MIN)return;const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=1.05;window.speechSynthesis.speak(u);S.lastSp=now;}
-function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));document.getElementById(id).classList.add('active');}
+            handleRouting() {
+                const hash = window.location.hash.slice(1) || 'home';
+                const [view, param] = hash.split('/');
+                this.currentView = view;
+                
+                const container = document.getElementById('app-view');
+                container.innerHTML = `<div class="flex justify-center items-center py-24"><i class="fa-solid fa-spinner fa-spin text-4xl text-cardenal-gold"></i></div>`;
 
-function selectLevel(lvl){
-  selLevel = lvl;
-  const prog = PROGRAMS[lvl];
-  document.getElementById('sessTitle').textContent = prog.name;
-  document.getElementById('sessSub').textContent = "Elegí la sesión de hoy";
-  const list = document.getElementById('sessList');
-  list.innerHTML = '';
-  prog.sessions.forEach((sess,i)=>{
-    const totalMin = Math.ceil(sess.stages.reduce((a,b)=>a+b.d,0)/60);
-    const div = document.createElement('div');
-    div.className = 'sess-item';
-    div.innerHTML = `<div><div class="sess-name">${sess.name}</div><div class="sess-dur">${totalMin} min · ${sess.desc}</div></div>`;
-    div.onclick = ()=>selectSession(i);
-    list.appendChild(div);
-  });
-  show('scr-sessions');
-}
+                switch(view) {
+                    case 'home': this.renderHome(container); break;
+                    case 'login': this.renderLogin(container); break;
+                    case 'register': this.renderRegister(container); break;
+                    case 'market': this.renderMarket(container); break;
+                    case 'player': this.renderPlayerDetail(container, param); break;
+                    case 'clubs': this.renderClubs(container); break;
+                    case 'club-profile': this.renderClubDetail(container, param); break;
+                    case 'player-panel': this.renderPlayerPanel(container); break;
+                    case 'club-panel': this.renderClubPanel(container); break;
+                    case 'admin-panel': this.renderAdminPanel(container); break;
+                    case 'proposal-create': this.renderCreateProposal(container, param); break;
+                    case 'proposal-detail': this.renderProposalDetail(container, param); break;
+                    case 'notifications': this.renderNotifications(container); break;
+                    case 'help': this.renderHelp(container); break;
+                    default: this.renderHome(container);
+                }
+            }
 
-function selectSession(idx){
-  selSession = idx;
-  const sess = PROGRAMS[selLevel].sessions[idx];
-  routine = sess.stages;
-  document.getElementById('preTitle').textContent = sess.name;
-  const det = document.getElementById('preRoutine');
-  det.innerHTML = '';
-  routine.forEach((st,i)=>{
-    const d = document.createElement('div');
-    d.textContent = `${i+1}. ${st.n} — ${fmtT(st.d)}`;
-    det.appendChild(d);
-  });
-  show('scr-pre');
-}
+            renderNavbarAuth() {
+                const nav = document.getElementById('auth-nav-container');
+                if (!nav) return;
 
-function haversine(lat1,lon1,lat2,lon2){
-  const R=6371000, toRad=Math.PI/180;
-  const dLat=(lat2-lat1)*toRad, dLon=(lon2-lon1)*toRad;
-  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*toRad)*Math.cos(lat2*toRad)*Math.sin(dLon/2)**2;
-  return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
+                if (this.currentUser && this.userData) {
+                    let panelLink = '';
+                    if (this.userData.role === 'player') panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel')" class="text-sm font-semibold hover:text-cardenal-gold">Mi Panel</a>`;
+                    else if (this.userData.role === 'club') panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel')" class="text-sm font-semibold hover:text-cardenal-gold">Panel Club</a>`;
+                    else if (this.userData.role === 'admin') panelLink = `<a href="#admin-panel" onclick="app.navigateTo('admin-panel')" class="text-sm font-semibold text-cardenal-gold">Admin</a>`;
 
-function onGps(pos){
-  const now = Date.now();
-  const lat = pos.coords.latitude;
-  const lon = pos.coords.longitude;
-  if(!S.run||S.paused)return;
+                    nav.innerHTML = `
+                        <a href="#notifications" onclick="app.navigateTo('notifications')" class="relative text-gray-300 hover:text-white">
+                            <i class="fa-solid fa-bell text-lg"></i>
+                        </a>
+                        ${panelLink}
+                        <button onclick="app.logout()" class="bg-red-900/40 hover:bg-red-900 text-red-200 border border-red-700/50 px-3 py-1.5 rounded-lg text-xs font-semibold transition">Salir</button>
+                    `;
+                } else {
+                    nav.innerHTML = `
+                        <a href="#login" onclick="app.navigateTo('login')" class="text-sm font-semibold hover:text-cardenal-gold">Ingresar</a>
+                        <a href="#register" onclick="app.navigateTo('register')" class="bg-cardenal-red hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition">Registrarse</a>
+                    `;
+                }
+            }
 
-  let raw = 0;
-  if(pos.coords.speed !== null && pos.coords.speed > 0) raw = pos.coords.speed * 3.6;
+            async logout() {
+                await signOut(auth);
+                this.showToast("Sesión cerrada correctamente.", "info");
+                this.navigateTo('home');
+            }
 
-  if(S.lastPos){
-    const d = haversine(S.lastPos.lat, S.lastPos.lon, lat, lon);
-    S.dist += d;
-    if(raw === 0){ const dt=(now-S.lastPos.t)/1000; if(dt>0) raw=(d/dt)*3.6; }
-  }
-  S.lastPos = {lat,lon,t:now};
+            showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const bg = type === 'success' ? 'bg-emerald-900 border-emerald-700 text-emerald-100' : (type === 'error' ? 'bg-red-900 border-red-700 text-red-100' : 'bg-gray-900 border-gray-700 text-gray-100');
+                
+                toast.className = `border px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm font-medium pointer-events-auto ${bg}`;
+                toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${message}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 4000);
+            }
 
-  if(S.filtSpeed === 0) S.filtSpeed = raw;
-  else S.filtSpeed = ALPHA*raw + (1-ALPHA)*S.filtSpeed;
+            // --- VISTAS PRINCIPALES ---
 
-  if(S.filtSpeed > 0.5){
-    S.samples.push(S.filtSpeed);
-    if(S.samples.length > 30) S.samples.shift();
-    if(S.filtSpeed > S.maxSp) S.maxSp = S.filtSpeed;
-  }
-}
+            renderHome(container) {
+                container.innerHTML = `
+                    <div class="space-y-16">
+                        <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-red-950 via-cardenal-card to-black border border-cardenal-border p-8 md:p-16 shadow-2xl">
+                            <div class="max-w-2xl space-y-6">
+                                <span class="bg-cardenal-gold/20 text-cardenal-gold border border-cardenal-gold/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Fútbol Juvenil Sub-17 • Durazno, Uruguay</span>
+                                <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white">El futuro del fútbol de <span class="text-cardenal-gold">Durazno</span> en un solo lugar</h2>
+                                <p class="text-gray-300 text-base md:text-lg">Plataforma oficial de scouting, mercado de pases y gestión de transferencias para jugadores y clubes juveniles Sub-17.</p>
+                                <div class="flex flex-wrap gap-4 pt-4">
+                                    <a href="#market" onclick="app.navigateTo('market')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                                        <i class="fa-solid fa-futbol"></i><span>Explorar Mercado Sub-17</span>
+                                    </a>
+                                    <a href="#clubs" onclick="app.navigateTo('clubs')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2">
+                                        <i class="fa-solid fa-shield"></i><span>Ver Clubes de Durazno</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
-function onGpsErr(err){
-  let msg = 'Error GPS';
-  if(err.code === 1) msg = 'GPS rechazado. Permití ubicación.';
-  else if(err.code === 2) msg = 'GPS no disponible. Andá afuera.';
-  else if(err.code === 3) msg = 'GPS tardando...';
-  document.getElementById('statusBox').textContent = msg;
-  document.getElementById('statusBox').className = 'status-box bad';
-}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl shadow-xl">
+                                <div class="w-10 h-10 rounded-lg bg-red-900/40 text-red-500 flex items-center justify-center mb-4"><i class="fa-solid fa-users text-lg"></i></div>
+                                <h3 class="text-lg font-bold text-white">Talento Sub-17 Verificado</h3>
+                                <p class="text-gray-400 text-sm mt-1">Perfiles deportivos detallados con posiciones, estadísticas y videos de jugadas autorizados.</p>
+                            </div>
+                            <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl shadow-xl">
+                                <div class="w-10 h-10 rounded-lg bg-amber-900/40 text-amber-500 flex items-center justify-center mb-4"><i class="fa-solid fa-handshake text-lg"></i></div>
+                                <h3 class="text-lg font-bold text-white">Propuestas y Préstamos</h3>
+                                <p class="text-gray-400 text-sm mt-1">Negociaciones formales entre clubes bajo modalidades de transferencia en UYU, préstamo y beneficios deportivos.</p>
+                            </div>
+                            <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl shadow-xl">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-900/40 text-emerald-500 flex items-center justify-center mb-4"><i class="fa-solid fa-lock text-lg"></i></div>
+                                <h3 class="text-lg font-bold text-white">Privacidad y Menores</h3>
+                                <p class="text-gray-400 text-sm mt-1">Protección estricta de datos personales y canales de comunicación seguros supervisados por tutores.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
-function startTraining(){
-  const d = document.documentElement;
-  if(d.requestFullscreen) d.requestFullscreen(); else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen();
+            // --- AUTENTICACIÓN ---
 
-  S = {run:true,paused:false,stage:0,stageStart:Date.now(),start:Date.now(),totalPause:0,pauseAt:0,dist:0,lastPos:null,watchId:null,filtSpeed:0,lastSp:0,samples:[],maxSp:0};
-  rpeSel = null;
+            renderLogin(container) {
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
+                        <div class="text-center space-y-2 mb-8">
+                            <h2 class="text-2xl font-bold text-white">Iniciar Sesión</h2>
+                            <p class="text-xs text-gray-400">Accede a tu cuenta en El Cardenal Sporting</p>
+                        </div>
+                        <form id="login-form" class="space-y-5" onsubmit="app.handleLoginSubmit(event)">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Correo electrónico</label>
+                                <input type="email" id="login-email" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
+                                <input type="password" id="login-password" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Entrar</button>
+                        </form>
+                        <div class="mt-6 text-center text-xs text-gray-400">
+                            <p>¿No tenés cuenta? <a href="#register" onclick="app.navigateTo('register')" class="text-cardenal-gold font-semibold hover:underline">Registrate aquí</a></p>
+                        </div>
+                    </div>
+                `;
+            }
 
-  document.getElementById('gpsHint').classList.remove('hidden');
-  document.getElementById('statusBox').textContent = 'Buscando GPS...';
-  document.getElementById('statusBox').className = 'status-box good';
+            async handleLoginSubmit(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const pass = document.getElementById('login-password').value;
+                try {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    this.showToast("¡Bienvenido de vuelta!", "success");
+                    this.navigateTo('home');
+                } catch (error) {
+                    this.showToast("Error al iniciar sesión: " + error.message, "error");
+                }
+            }
 
-  if(!navigator.geolocation){ alert('Tu navegador no soporta GPS.'); return; }
-  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {enableHighAccuracy:true, timeout:10000, maximumAge:0});
+            renderRegister(container) {
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
+                        <div class="text-center space-y-2 mb-8">
+                            <h2 class="text-2xl font-bold text-white">Crear Cuenta</h2>
+                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil para comenzar</p>
+                        </div>
+                        <form id="register-form" class="space-y-5" onsubmit="app.handleRegisterSubmit(event)">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tipo de Cuenta</label>
+                                <select id="reg-role" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleRegisterFields(this.value)">
+                                    <option value="player">Jugador Sub-17</option>
+                                    <option value="club">Club de Fútbol (Representante)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre Completo / Deportivo</label>
+                                <input type="text" id="reg-name" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div id="club-extra-field" class="hidden">
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre del Club</label>
+                                <input type="text" id="reg-clubname" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" placeholder="Ej: Club Atlético Durazno">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Correo electrónico</label>
+                                <input type="email" id="reg-email" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
+                                <input type="password" id="reg-password" required minlength="6" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div class="text-xs text-gray-400 bg-black/40 p-3 rounded-xl border border-cardenal-border">
+                                <i class="fa-solid fa-shield-halved text-cardenal-gold mr-1"></i> Al registrarte como menor de edad, confirmas contar con la autorización de tus representantes legales para el uso de datos deportivos.
+                            </div>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Registrarse</button>
+                        </form>
+                    </div>
+                `;
+            }
 
-  speak('Comenzamos. '+routine[0].n, true);
-  show('scr-train');
-  requestAnimationFrame(loop);
-}
+            toggleRegisterFields(role) {
+                const field = document.getElementById('club-extra-field');
+                if (role === 'club') field.classList.remove('hidden');
+                else field.classList.add('hidden');
+            }
 
-function loop(){
-  if(!S.run) return;
-  if(!S.paused){
-    const now = Date.now();
-    const st = routine[S.stage];
-    const elapsed = (now - S.stageStart)/1000;
+            async handleRegisterSubmit(e) {
+                e.preventDefault();
+                const role = document.getElementById('reg-role').value;
+                const name = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const pass = document.getElementById('reg-password').value;
+                const clubName = document.getElementById('reg-clubname')?.value || '';
 
-    if(elapsed >= st.d){
-      S.stage++;
-      if(S.stage >= routine.length){ finishTraining(false); return; }
-      S.stageStart = now;
-      speak(routine[S.stage].n, true);
-    }
-    updateUI();
-  }
-  requestAnimationFrame(loop);
-}
+                try {
+                    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                    const uid = cred.user.uid;
 
-function updateUI(){
-  const st = routine[S.stage];
-  const now = Date.now();
-  const total = Math.floor((now - S.start - S.totalPause)/1000);
-  const stageE = Math.floor((now - S.stageStart)/1000);
+                    const userData = { uid, name, email, role, createdAt: serverTimestamp() };
+                    await setDoc(doc(db, 'users', uid), userData);
 
-  document.getElementById('topStage').textContent = `ETAPA ${S.stage+1}/${routine.length}`;
-  document.getElementById('topTime').textContent = fmtT(total);
-  document.getElementById('stageName').textContent = st.n.toUpperCase();
-  document.getElementById('dispSpeed').textContent = S.filtSpeed.toFixed(1);
-  document.getElementById('dispDist').textContent = fmtD(S.dist);
-  document.getElementById('dispTime').textContent = fmtT(stageE);
+                    if (role === 'player') {
+                        await setDoc(doc(db, 'players', uid), {
+                            uid,
+                            sportingName: name,
+                            category: 'Sub-17',
+                            position: 'Mediocampista central',
+                            secondaryPositions: ['Mediocentro defensivo'],
+                            preferredFoot: 'Derecha',
+                            currentClub: 'Libre',
+                            status: 'Disponible para nuevas oportunidades',
+                            height: '1.75m',
+                            weight: '68kg',
+                            description: 'Jugador juvenil con visión de juego y despliegue físico.',
+                            skills: ['Buen pase corto', 'Recuperación', 'Remate de media distancia'],
+                            videos: [],
+                            lastUpdated: serverTimestamp()
+                        });
+                    } else if (role === 'club') {
+                        await addDoc(collection(db, 'clubs'), {
+                            name: clubName || name,
+                            representativeUid: uid,
+                            city: 'Durazno',
+                            department: 'Durazno',
+                            categories: ['Sub-17', 'Sub-15', 'Sub-20'],
+                            verified: false,
+                            description: 'Club participante en las formativas de Durazno.',
+                            lastUpdated: serverTimestamp()
+                        });
+                    }
 
-  const totDur = routine.reduce((a,b)=>a+b.d,0);
-  let done = 0;
-  for(let i=0;i<S.stage;i++) done += routine[i].d;
-  done += Math.min((now-S.stageStart)/1000, st.d);
-  document.getElementById('progTotal').style.width = Math.min(100,(done/totDur)*100)+'%';
-  document.getElementById('progStage').style.width = Math.min(100,(stageE/st.d)*100)+'%';
+                    this.showToast("¡Cuenta creada con éxito!", "success");
+                    this.navigateTo(role === 'player' ? 'player-panel' : 'club-panel');
+                } catch (error) {
+                    this.showToast("Error en el registro: " + error.message, "error");
+                }
+            }
 
-  const diff = S.filtSpeed - st.t;
-  const box = document.getElementById('statusBox');
-  let txt = 'Mantené el ritmo', cls = 'good';
-  if(Math.abs(diff) < 0.5){ txt = 'Vas muy bien'; cls = 'good'; }
-  else if(diff < -1.0){ txt = 'Acelerá un poco'; cls = 'bad'; }
-  else if(diff < -0.5){ txt = 'Acelerá ligeramente'; cls = 'warn'; }
-  else if(diff > 1.0){ txt = 'Reducí un poco'; cls = 'bad'; }
-  else if(diff > 0.5){ txt = 'Reducí ligeramente'; cls = 'warn'; }
-  box.textContent = txt;
-  box.className = 'status-box '+cls;
+            // --- MERCADO DE PASES SUB-17 ---
 
-  if(S.filtSpeed > 1 && Math.abs(diff) > 0.8){
-    if(diff < 0) speak('Acelerá un poco'); else speak('Reducí ligeramente');
-  }
-}
+            async renderMarket(container) {
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                            <div>
+                                <h2 class="text-3xl font-extrabold text-white">Mercado de Pases Sub-17</h2>
+                                <p class="text-xs text-gray-400 mt-1">Jugadores juveniles registrados en Durazno, Uruguay</p>
+                            </div>
+                            <div class="flex items-center space-x-3 w-full md:w-auto">
+                                <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                    <i class="fa-solid fa-database mr-1"></i> Cargar / Reiniciar Datos Demo
+                                </button>
+                            </div>
+                        </div>
 
-function pauseTraining(){
-  S.paused = true; S.pauseAt = Date.now();
-  if(S.watchId !== null){ navigator.geolocation.clearWatch(S.watchId); S.watchId = null; }
-  document.getElementById('pauseDist').textContent = fmtD(S.dist);
-  document.getElementById('pauseTime').textContent = document.getElementById('topTime').textContent;
-  show('scr-pause');
-}
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
+                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <option value="">Todas las posiciones</option>
+                                <option value="Arquero">Arquero</option>
+                                <option value="Lateral derecho">Lateral derecho</option>
+                                <option value="Lateral izquierdo">Lateral izquierdo</option>
+                                <option value="Defensa central">Defensa central</option>
+                                <option value="Mediocentro defensivo">Mediocentro defensivo</option>
+                                <option value="Mediocampista central">Mediocampista central</option>
+                                <option value="Mediocampista ofensivo">Mediocampista ofensivo</option>
+                                <option value="Extremo derecho">Extremo derecho</option>
+                                <option value="Extremo izquierdo">Extremo izquierdo</option>
+                                <option value="Delantero centro">Delantero centro</option>
+                            </select>
+                            <select id="filter-status" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <option value="">Cualquier estado</option>
+                                <option value="Disponible">Disponible para nuevas oportunidades</option>
+                                <option value="Prestamo">En préstamo</option>
+                                <option value="Con club">Con club actual</option>
+                            </select>
+                        </div>
 
-function resumeTraining(){
-  S.paused = false;
-  S.totalPause += (Date.now() - S.pauseAt);
-  S.watchId = navigator.geolocation.watchPosition(onGps, onGpsErr, {enableHighAccuracy:true, timeout:10000, maximumAge:0});
-  show('scr-train');
-}
+                        <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+                await this.loadPlayers();
+            }
 
-function finishTraining(manual){
-  S.run = false;
-  if(S.watchId !== null){ navigator.geolocation.clearWatch(S.watchId); S.watchId = null; }
-  const totalTime = Math.floor((Date.now() - S.start - S.totalPause)/1000);
-  const avg = S.samples.length > 0 ? (S.samples.reduce((a,b)=>a+b,0)/S.samples.length) : 0;
+            async loadPlayers() {
+                try {
+                    const snap = await getDocs(collection(db, 'players'));
+                    this.playersCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    this.renderPlayerCards(this.playersCache);
+                } catch (error) {
+                    console.error("Error cargando jugadores:", error);
+                }
+            }
 
-  document.getElementById('endTime').textContent = fmtT(totalTime);
-  document.getElementById('endDist').textContent = fmtD(S.dist);
-  document.getElementById('endAvg').textContent = avg.toFixed(1);
-  document.getElementById('endMax').textContent = S.maxSp.toFixed(1);
+            renderPlayerCards(players) {
+                const grid = document.getElementById('players-grid');
+                if (!grid) return;
 
-  // RPE
-  const grid = document.getElementById('rpeGrid');
-  grid.innerHTML = '';
-  for(let i=1;i<=10;i++){
-    const b = document.createElement('button');
-    b.className = 'rpe-btn';
-    b.textContent = i;
-    b.onclick = ()=>{rpeSel=i; document.querySelectorAll('.rpe-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');};
-    grid.appendChild(b);
-  }
+                if (players.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No se encontraron jugadores con los filtros seleccionados. Hacé clic en "Cargar Datos Demo" si la base está vacía.</div>`;
+                    return;
+                }
 
-  speak(manual ? 'Entrenamiento finalizado.' : 'Excelente. Entrenamiento completado.', true);
-  show('scr-end');
-}
+                grid.innerHTML = players.map(p => `
+                    <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:border-cardenal-red transition group">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
+                                <span class="text-xs text-gray-400"><i class="fa-solid fa-shield mr-1"></i>${p.currentClub || 'Libre'}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white group-hover:text-cardenal-gold transition">${p.sportingName}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Categoría: ${p.category} • Pierna: ${p.preferredFoot}</p>
+                            <p class="text-sm text-gray-300 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
+                        </div>
+                        <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status}</span>
+                            <div class="flex space-x-2">
+                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Perfil</a>
+                                ${this.userData?.role === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
 
-function saveRpeAndReset(){
-  if(rpeSel){
-    // Aquí podrías guardar en localStorage o enviar al ESP32
-    console.log('RPE guardado:', rpeSel);
-  }
-  show('scr-home');
-}
-</script>
+            filterPlayers() {
+                const nameQuery = document.getElementById('filter-name').value.toLowerCase();
+                const posQuery = document.getElementById('filter-position').value;
+                const statusQuery = document.getElementById('filter-status').value;
+
+                const filtered = this.playersCache.filter(p => {
+                    const matchesName = p.sportingName.toLowerCase().includes(nameQuery);
+                    const matchesPos = !posQuery || p.position === posQuery;
+                    const matchesStatus = !statusQuery || (p.status && p.status.toLowerCase().includes(statusQuery.toLowerCase()));
+                    return matchesName && matchesPos && matchesStatus;
+                });
+
+                this.renderPlayerCards(filtered);
+            }
+
+            async renderPlayerDetail(container, playerId) {
+                try {
+                    const docSnap = await getDoc(doc(db, 'players', playerId));
+                    if (!docSnap.exists()) {
+                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Jugador no encontrado.</div>`;
+                        return;
+                    }
+                    const p = docSnap.data();
+
+                    container.innerHTML = `
+                        <div class="max-w-4xl mx-auto space-y-8">
+                            <button onclick="app.navigateTo('market')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
+                                <i class="fa-solid fa-arrow-left"></i><span>Volver al Mercado</span>
+                            </button>
+                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                                <div class="absolute top-0 right-0 bg-cardenal-red text-white text-xs font-bold px-6 py-2 rounded-bl-2xl">
+                                    DATOS FICTICIOS — DEMO
+                                </div>
+                                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                                    <div class="w-24 h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-4xl text-cardenal-gold font-extrabold">
+                                        ${p.sportingName.charAt(0)}
+                                    </div>
+                                    <div class="space-y-2">
+                                        <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
+                                        <h2 class="text-3xl font-extrabold text-white">${p.sportingName}</h2>
+                                        <p class="text-sm text-gray-400"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-white">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-cardenal-border text-center">
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Pierna Hábil</span>
+                                        <p class="text-base font-bold text-white mt-1">${p.preferredFoot}</p>
+                                    </div>
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Estado</span>
+                                        <p class="text-sm font-bold text-emerald-400 mt-1">${p.status}</p>
+                                    </div>
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Altura (Privado)</span>
+                                        <p class="text-base font-bold text-white mt-1">${p.height || 'No especificada'}</p>
+                                    </div>
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Peso (Privado)</span>
+                                        <p class="text-base font-bold text-white mt-1">${p.weight || 'No especificado'}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 space-y-4">
+                                    <h3 class="text-lg font-bold text-white">Descripción Deportiva</h3>
+                                    <p class="text-gray-300 text-sm leading-relaxed bg-black/40 p-4 rounded-xl border border-cardenal-border">${p.description || 'Sin descripción.'}</p>
+                                </div>
+
+                                <div class="mt-6 space-y-3">
+                                    <h3 class="text-lg font-bold text-white">Habilidades Destacadas</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${(p.skills || []).map(s => `<span class="bg-zinc-800 text-gray-200 border border-zinc-700 px-3 py-1 rounded-lg text-xs font-semibold">${s}</span>`).join('')}
+                                    </div>
+                                </div>
+
+                                ${this.userData?.role === 'club' ? `
+                                    <div class="mt-8 pt-6 border-t border-cardenal-border flex justify-end">
+                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2">
+                                            <i class="fa-solid fa-handshake"></i><span>Iniciar Propuesta de Fichaje</span>
+                                        </a>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando perfil.</div>`;
+                }
+            }
+
+            // --- CLUBES ---
+
+            async renderClubs(container) {
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                            <h2 class="text-3xl font-extrabold text-white">Clubes de Durazno</h2>
+                            <p class="text-xs text-gray-400 mt-1">Instituciones y planteles juveniles Sub-17 registrados</p>
+                        </div>
+                        <div id="clubs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+                try {
+                    const snap = await getDocs(collection(db, 'clubs'));
+                    this.clubsCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const grid = document.getElementById('clubs-grid');
+                    
+                    if (this.clubsCache.length === 0) {
+                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados. Ejecuta "Cargar Datos Demo" en el Mercado.</div>`;
+                        return;
+                    }
+
+                    grid.innerHTML = this.clubsCache.map(c => `
+                        <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${c.city}, Uy</span>
+                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${c.verified ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-amber-950 text-amber-400'}">${c.verified ? 'Verificado' : 'Pendiente'}</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">${c.name}</h3>
+                                <p class="text-xs text-gray-400 mt-1">Categorías: ${(c.categories || []).join(', ')}</p>
+                                <p class="text-sm text-gray-300 mt-3 line-clamp-2">${c.description || 'Sin descripción.'}</p>
+                            </div>
+                            <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-end">
+                                <a href="#club-profile/${c.id}" onclick="app.navigateTo('club-profile', '${c.id}')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white px-4 py-2 rounded-xl text-xs font-bold transition">Ver Plantel y Club</a>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error("Error cargando clubes:", error);
+                }
+            }
+
+            async renderClubDetail(container, clubId) {
+                try {
+                    const docSnap = await getDoc(doc(db, 'clubs', clubId));
+                    if (!docSnap.exists()) {
+                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Club no encontrado.</div>`;
+                        return;
+                    }
+                    const c = docSnap.data();
+
+                    container.innerHTML = `
+                        <div class="max-w-4xl mx-auto space-y-8">
+                            <button onclick="app.navigateTo('clubs')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
+                                <i class="fa-solid fa-arrow-left"></i><span>Volver a Clubes</span>
+                            </button>
+                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                                <div class="absolute top-0 right-0 bg-cardenal-red text-white text-xs font-bold px-6 py-2 rounded-bl-2xl">
+                                    DATOS FICTICIOS — DEMO
+                                </div>
+                                <h2 class="text-3xl font-extrabold text-white">${c.name}</h2>
+                                <p class="text-xs text-gray-400 mt-1">${c.city}, ${c.department} • <strong class="text-white">${c.verified ? 'Verificado' : 'Pendiente de Aprobación'}</strong></p>
+                                <p class="text-gray-300 text-sm mt-4 bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando club.</div>`;
+                }
+            }
+
+            // --- SISTEMA DE PROPUESTAS Y NEGOCIACIONES ---
+
+            async renderCreateProposal(container, playerId) {
+                const playerDoc = await getDoc(doc(db, 'players', playerId));
+                if (!playerDoc.exists()) {
+                    this.navigateTo('market');
+                    return;
+                }
+                const player = playerDoc.data();
+
+                container.innerHTML = `
+                    <div class="max-w-xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
+                        <div>
+                            <span class="text-xs text-cardenal-gold font-bold uppercase">Nueva Propuesta de Fichaje</span>
+                            <h2 class="text-2xl font-bold text-white mt-1">Oferta para: ${player.sportingName}</h2>
+                            <p class="text-xs text-gray-400">Club actual: ${player.currentClub}</p>
+                        </div>
+                        <form id="proposal-form" class="space-y-4" onsubmit="app.handleCreateProposalSubmit(event, '${playerId}')">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Modalidad de Fichaje</label>
+                                <select id="prop-modality" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleProposalFields(this.value)">
+                                    <option value="money">Transferencia por Dinero (UYU)</option>
+                                    <option value="free">Incorporación Gratuita</option>
+                                    <option value="loan">Préstamo Temporal</option>
+                                    <option value="benefits">Oferta con Beneficios</option>
+                                    <option value="combined">Oferta Combinada</option>
+                                </select>
+                            </div>
+                            <div id="field-amount">
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Importe Propuesto (Pesos Uruguayos - UYU)</label>
+                                <input type="number" id="prop-amount" placeholder="Ej: 5000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div id="field-loan" class="hidden space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Inicio</label>
+                                        <input type="date" id="prop-start" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Fin</label>
+                                        <input type="date" id="prop-end" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Condiciones del Préstamo</label>
+                                    <input type="text" id="prop-loan-cond" placeholder="Ej: Opción de compra al finalizar" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                </div>
+                            </div>
+                            <div id="field-benefits" class="hidden">
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Beneficios Adicionales</label>
+                                <input type="text" id="prop-benefits" placeholder="Ej: Apoyo con transporte, equipamiento y alimentación" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Comentarios / Mensaje Adicional</label>
+                                <textarea id="prop-comments" rows="3" placeholder="Mensaje para el jugador y su club de origen..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Propuesta Formal</button>
+                        </form>
+                    </div>
+                `;
+            }
+
+            toggleProposalFields(modality) {
+                const fAmount = document.getElementById('field-amount');
+                const fLoan = document.getElementById('field-loan');
+                const fBenefits = document.getElementById('field-benefits');
+
+                fAmount.classList.add('hidden');
+                fLoan.classList.add('hidden');
+                fBenefits.classList.add('hidden');
+
+                if (modality === 'money') fAmount.classList.remove('hidden');
+                if (modality === 'loan') fLoan.classList.remove('hidden');
+                if (modality === 'benefits') fBenefits.classList.remove('hidden');
+                if (modality === 'combined') {
+                    fAmount.classList.remove('hidden');
+                    fLoan.classList.remove('hidden');
+                    fBenefits.classList.remove('hidden');
+                }
+            }
+
+            async handleCreateProposalSubmit(e, playerId) {
+                e.preventDefault();
+                const modality = document.getElementById('prop-modality').value;
+                const amount = document.getElementById('prop-amount').value || 0;
+                const startDate = document.getElementById('prop-start').value || '';
+                const endDate = document.getElementById('prop-end').value || '';
+                const loanCond = document.getElementById('prop-loan-cond').value || '';
+                const benefits = document.getElementById('prop-benefits').value || '';
+                const comments = document.getElementById('prop-comments').value || '';
+
+                try {
+                    const proposalData = {
+                        playerId,
+                        senderUid: this.currentUser.uid,
+                        senderEmail: this.currentUser.email,
+                        modality,
+                        amount: Number(amount),
+                        startDate,
+                        endDate,
+                        loanCond,
+                        benefits,
+                        comments,
+                        status: 'Pendiente',
+                        createdAt: serverTimestamp()
+                    };
+
+                    const docRef = await addDoc(collection(db, 'transferOffers'), proposalData);
+
+                    // Crear notificación para el jugador
+                    await addDoc(collection(db, 'notifications'), {
+                        recipientUid: playerId,
+                        title: 'Nueva Propuesta Recibida',
+                        message: `Has recibido una nueva propuesta de fichaje bajo modalidad: ${modality}.`,
+                        proposalId: docRef.id,
+                        read: false,
+                        createdAt: serverTimestamp()
+                    });
+
+                    this.showToast("Propuesta enviada con éxito.", "success");
+                    this.navigateTo('market');
+                } catch (error) {
+                    this.showToast("Error enviando propuesta: " + error.message, "error");
+                }
+            }
+
+            // --- PANELES ESPECÍFICOS ---
+
+            async renderPlayerPanel(container) {
+                if (!this.currentUser || this.userData?.role !== 'player') {
+                    this.navigateTo('login');
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex justify-between items-center">
+                            <div>
+                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Jugador Sub-17</span>
+                                <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData.name}</h2>
+                            </div>
+                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                <i class="fa-solid fa-database mr-1"></i> Cargar Datos Demo
+                            </button>
+                        </div>
+
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl space-y-6">
+                            <h3 class="text-xl font-bold text-white">Propuestas Recibidas de Clubes</h3>
+                            <div id="player-proposals" class="space-y-4">
+                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const q = query(collection(db, 'transferOffers'), where('playerId', '==', this.currentUser.uid));
+                    const snap = await getDocs(q);
+                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const propContainer = document.getElementById('player-proposals');
+
+                    if (list.length === 0) {
+                        propContainer.innerHTML = `<p class="text-sm text-gray-400">No tenés propuestas recibidas actualmente.</p>`;
+                        return;
+                    }
+
+                    propContainer.innerHTML = list.map(prop => `
+                        <div class="bg-black/40 border border-cardenal-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="space-y-1">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-950 text-amber-400 uppercase">${prop.modality}</span>
+                                <h4 class="text-lg font-bold text-white mt-1">Oferta de: ${prop.senderEmail}</h4>
+                                <p class="text-xs text-gray-300">Importe propuesto: <strong>$U ${prop.amount || 0}</strong> • Comentarios: ${prop.comments || 'Ninguno'}</p>
+                                <p class="text-xs text-emerald-400 font-semibold">Estado actual: ${prop.status}</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Aceptar</button>
+                                <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Rechazar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error("Error cargando propuestas:", e);
+                }
+            }
+
+            async updateProposalStatus(proposalId, newStatus) {
+                try {
+                    await updateDoc(doc(db, 'transferOffers', proposalId), { status: newStatus });
+                    this.showToast(`Propuesta actualizada a: ${newStatus}`, "success");
+                    this.renderPlayerPanel(document.getElementById('app-view'));
+                } catch (error) {
+                    this.showToast("Error actualizando propuesta.", "error");
+                }
+            }
+
+            async renderClubPanel(container) {
+                if (!this.currentUser || this.userData?.role !== 'club') {
+                    this.navigateTo('login');
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex justify-between items-center">
+                            <div>
+                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Club</span>
+                                <h2 class="text-3xl font-extrabold text-white mt-1">Gestión Institucional</h2>
+                            </div>
+                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                <i class="fa-solid fa-database mr-1"></i> Cargar Datos Demo
+                            </button>
+                        </div>
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl">
+                            <h3 class="text-xl font-bold text-white mb-4">Acciones del Club</h3>
+                            <p class="text-sm text-gray-300">Desde aquí puedes explorar el <a href="#market" onclick="app.navigateTo('market')" class="text-cardenal-gold underline font-semibold">Mercado Sub-17</a> para iniciar propuestas de fichajes y préstamos a jugadores juveniles.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- PANEL DE ADMINISTRACIÓN ---
+
+            async renderAdminPanel(container) {
+                if (!this.currentUser || this.userData?.role !== 'admin') {
+                    container.innerHTML = `<div class="text-center py-24 text-red-500 font-bold">Acceso restringido a administradores.</div>`;
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="max-w-4xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
+                        <h2 class="text-3xl font-extrabold text-white">Panel de Administración</h2>
+                        <p class="text-sm text-gray-300">Herramientas de supervisión, verificación de clubes y moderación de contenido para El Cardenal Sporting.</p>
+                        <div class="pt-4">
+                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-6 py-3 rounded-xl transition shadow">
+                                <i class="fa-solid fa-database mr-2"></i> Inicializar / Reiniciar Base de Datos Demo (Durazno)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- NOTIFICACIONES ---
+
+            async renderNotifications(container) {
+                if (!this.currentUser) {
+                    this.navigateTo('login');
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto space-y-6">
+                        <h2 class="text-3xl font-extrabold text-white">Bandeja de Notificaciones</h2>
+                        <div id="notif-list" class="space-y-4">
+                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+                try {
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
+                    const snap = await getDocs(q);
+                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const listEl = document.getElementById('notif-list');
+
+                    if (list.length === 0) {
+                        listEl.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl text-center text-gray-400">No tenés notificaciones nuevas.</div>`;
+                        return;
+                    }
+
+                    listEl.innerHTML = list.map(n => `
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl flex justify-between items-center">
+                            <div class="space-y-1">
+                                <h4 class="text-base font-bold text-white">${n.title}</h4>
+                                <p class="text-sm text-gray-300">${n.message}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error("Error cargando notificaciones:", e);
+                }
+            }
+
+            // --- AYUDA Y PRIVACIDAD ---
+
+            renderHelp(container) {
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
+                        <h2 class="text-3xl font-extrabold text-white">Ayuda, Privacidad y Protección de Menores</h2>
+                        <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                            <p><strong>El Cardenal Sporting</strong> está diseñado específicamente para el fútbol juvenil Sub-17 de Durazno, Uruguay. Cumplimos con estrictas normativas de privacidad y protección de datos para menores de edad.</p>
+                            <h3 class="text-lg font-bold text-white pt-2">Privacidad por Defecto</h3>
+                            <p>Los datos sensibles (teléfonos, correos personales, domicilios y documentos de identidad) no se publican públicamente. Las negociaciones se realizan mediante propuestas formales supervisadas.</p>
+                            <h3 class="text-lg font-bold text-white pt-2">Eliminación de Datos</h3>
+                            <p>Si deseas solicitar la eliminación completa de tu perfil y registros deportivos, puedes contactar al soporte técnico o utilizar la opción desde tu panel de usuario autenticado.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- INICIALIZACIÓN DE DATOS DEMO (DURAZNO) ---
+
+            async seedDemoData() {
+                try {
+                    this.showToast("Generando datos ficticios de demostración...", "info");
+                    const batch = writeBatch(db);
+
+                    // Clubes demo
+                    const clubsData = [
+                        { name: "Club Atlético Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Institución histórica de la capital departamental." },
+                        { name: "Racing de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-20"], verified: true, description: "Semillero de talentos juveniles en Durazno." },
+                        { name: "Wanderers de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17"], verified: true, description: "Tradición y formación competitiva." },
+                        { name: "Rampla Juniors de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17"], verified: true, description: "Pasión y garra en divisiones formativas." },
+                        { name: "Santa Bernardina FC", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Club representativo de la zona norte." }
+                    ];
+
+                    for (let c of clubsData) {
+                        const ref = doc(collection(db, 'clubs'));
+                        batch.set(ref, { ...c, lastUpdated: serverTimestamp() });
+                    }
+
+                    // Jugadores demo (Sub-17)
+                    const positions = ['Arquero', 'Lateral derecho', 'Lateral izquierdo', 'Defensa central', 'Mediocentro defensivo', 'Mediocampista central', 'Mediocampista ofensivo', 'Extremo derecho', 'Extremo izquierdo', 'Delantero centro'];
+                    const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez', 'Santiago Fernández', 'Ignacio López', 'Thiago Sosa', 'Bruno Ferreira', 'Lautaro Ramírez', 'Valentín Castro', 'Gonzalo Morales', 'Franco Pintos', 'Emiliano Silva', 'Lucas Da Silva'];
+                    const clubsList = ['Club Atlético Durazno', 'Racing de Durazno', 'Wanderers de Durazno', 'Libre', 'Santa Bernardina FC'];
+
+                    for (let i = 0; i < 30; i++) {
+                        const ref = doc(collection(db, 'players'));
+                        const pName = `${names[i % names.length]} (${i + 1})`;
+                        batch.set(ref, {
+                            sportingName: pName,
+                            category: 'Sub-17',
+                            position: positions[i % positions.length],
+                            secondaryPositions: [positions[(i + 1) % positions.length]],
+                            preferredFoot: i % 2 === 0 ? 'Derecha' : 'Izquierda',
+                            currentClub: clubsList[i % clubsList.length],
+                            status: i % 3 === 0 ? 'Disponible para nuevas oportunidades' : 'Con club actual',
+                            height: '1.78m',
+                            weight: '70kg',
+                            description: 'Jugador destacado en formativas locales de Durazno con gran proyección táctica y técnica.',
+                            skills: ['Excelente pegada', 'Buen juego aéreo', 'Resistencia física'],
+                            videos: [],
+                            lastUpdated: serverTimestamp()
+                        });
+                    }
+
+                    await batch.commit();
+                    this.showToast("¡Datos demo cargados con éxito!", "success");
+                    this.loadPlayers();
+                } catch (error) {
+                    this.showToast("Error cargando datos demo: " + error.message, "error");
+                }
+            }
+        }
+
+        window.app = new CardenalApp();
+    </script>
 </body>
 </html>
