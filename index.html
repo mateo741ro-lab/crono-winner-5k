@@ -98,10 +98,9 @@
     <!-- Lógica y SDKs de Firebase Modular -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         // Configuración de Firebase conectada con tu proyecto cardenal-sporting
         const firebaseConfig = {
@@ -118,7 +117,6 @@
         const auth = getAuth(firebaseApp);
         const db = getFirestore(firebaseApp);
         const storage = getStorage(firebaseApp);
-        const analytics = getAnalytics(firebaseApp);
 
         class CardenalApp {
             constructor() {
@@ -181,7 +179,6 @@
                     case 'club-panel': this.renderClubPanel(container); break;
                     case 'admin-panel': this.renderAdminPanel(container); break;
                     case 'proposal-create': this.renderCreateProposal(container, param); break;
-                    case 'proposal-detail': this.renderProposalDetail(container, param); break;
                     case 'notifications': this.renderNotifications(container); break;
                     case 'help': this.renderHelp(container); break;
                     default: this.renderHome(container);
@@ -227,10 +224,8 @@
                 toast.className = `border px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm font-medium pointer-events-auto ${bg}`;
                 toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${message}</span>`;
                 container.appendChild(toast);
-                setTimeout(() => toast.remove(), 4000);
+                setTimeout(() => toast.remove(), 5000);
             }
-
-            // --- VISTAS PRINCIPALES ---
 
             renderHome(container) {
                 container.innerHTML = `
@@ -250,29 +245,9 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl shadow-xl">
-                                <div class="w-10 h-10 rounded-lg bg-red-900/40 text-red-500 flex items-center justify-center mb-4"><i class="fa-solid fa-users text-lg"></i></div>
-                                <h3 class="text-lg font-bold text-white">Talento Sub-17 Verificado</h3>
-                                <p class="text-gray-400 text-sm mt-1">Perfiles deportivos detallados con posiciones, estadísticas y videos de jugadas autorizados.</p>
-                            </div>
-                            <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl shadow-xl">
-                                <div class="w-10 h-10 rounded-lg bg-amber-900/40 text-amber-500 flex items-center justify-center mb-4"><i class="fa-solid fa-handshake text-lg"></i></div>
-                                <h3 class="text-lg font-bold text-white">Propuestas y Préstamos</h3>
-                                <p class="text-gray-400 text-sm mt-1">Negociaciones formales entre clubes bajo modalidades de transferencia en UYU, préstamo y beneficios deportivos.</p>
-                            </div>
-                            <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl shadow-xl">
-                                <div class="w-10 h-10 rounded-lg bg-emerald-900/40 text-emerald-500 flex items-center justify-center mb-4"><i class="fa-solid fa-lock text-lg"></i></div>
-                                <h3 class="text-lg font-bold text-white">Privacidad y Menores</h3>
-                                <p class="text-gray-400 text-sm mt-1">Protección estricta de datos personales y canales de comunicación seguros supervisados por tutores.</p>
-                            </div>
-                        </div>
                     </div>
                 `;
             }
-
-            // --- AUTENTICACIÓN ---
 
             renderLogin(container) {
                 container.innerHTML = `
@@ -292,9 +267,6 @@
                             </div>
                             <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Entrar</button>
                         </form>
-                        <div class="mt-6 text-center text-xs text-gray-400">
-                            <p>¿No tenés cuenta? <a href="#register" onclick="app.navigateTo('register')" class="text-cardenal-gold font-semibold hover:underline">Registrate aquí</a></p>
-                        </div>
                     </div>
                 `;
             }
@@ -308,7 +280,7 @@
                     this.showToast("¡Bienvenido de vuelta!", "success");
                     this.navigateTo('home');
                 } catch (error) {
-                    this.showToast("Error al iniciar sesión: " + error.message, "error");
+                    this.showToast("Error al iniciar sesión: " + this.translateFirebaseError(error.code), "error");
                 }
             }
 
@@ -343,9 +315,6 @@
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
                                 <input type="password" id="reg-password" required minlength="6" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
                             </div>
-                            <div class="text-xs text-gray-400 bg-black/40 p-3 rounded-xl border border-cardenal-border">
-                                <i class="fa-solid fa-shield-halved text-cardenal-gold mr-1"></i> Al registrarte como menor de edad, confirmas contar con la autorización de tus representantes legales para el uso de datos deportivos.
-                            </div>
                             <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Registrarse</button>
                         </form>
                     </div>
@@ -370,86 +339,60 @@
                     const cred = await createUserWithEmailAndPassword(auth, email, pass);
                     const uid = cred.user.uid;
 
-                    const userData = { uid, name, email, role, createdAt: serverTimestamp() };
-                    await setDoc(doc(db, 'users', uid), userData);
+                    await setDoc(doc(db, 'users', uid), { uid, name, email, role, createdAt: serverTimestamp() });
 
                     if (role === 'player') {
                         await setDoc(doc(db, 'players', uid), {
-                            uid,
-                            sportingName: name,
-                            category: 'Sub-17',
-                            position: 'Mediocampista central',
-                            secondaryPositions: ['Mediocentro defensivo'],
-                            preferredFoot: 'Derecha',
-                            currentClub: 'Libre',
-                            status: 'Disponible para nuevas oportunidades',
-                            height: '1.75m',
-                            weight: '68kg',
-                            description: 'Jugador juvenil con visión de juego y despliegue físico.',
-                            skills: ['Buen pase corto', 'Recuperación', 'Remate de media distancia'],
-                            videos: [],
-                            lastUpdated: serverTimestamp()
+                            uid, sportingName: name, category: 'Sub-17', position: 'Mediocampista central',
+                            preferredFoot: 'Derecha', currentClub: 'Libre', status: 'Disponible para nuevas oportunidades',
+                            description: 'Jugador juvenil de Durazno.', skills: ['Buen pase'], videos: [], lastUpdated: serverTimestamp()
                         });
                     } else if (role === 'club') {
                         await addDoc(collection(db, 'clubs'), {
-                            name: clubName || name,
-                            representativeUid: uid,
-                            city: 'Durazno',
-                            department: 'Durazno',
-                            categories: ['Sub-17', 'Sub-15', 'Sub-20'],
-                            verified: false,
-                            description: 'Club participante en las formativas de Durazno.',
-                            lastUpdated: serverTimestamp()
+                            name: clubName || name, representativeUid: uid, city: 'Durazno', verified: false,
+                            description: 'Club participante en las formativas de Durazno.', lastUpdated: serverTimestamp()
                         });
                     }
 
                     this.showToast("¡Cuenta creada con éxito!", "success");
                     this.navigateTo(role === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
-                    this.showToast("Error en el registro: " + error.message, "error");
+                    console.error("Error exacto de Firebase:", error);
+                    this.showToast("Error en el registro: " + this.translateFirebaseError(error.code), "error");
                 }
             }
 
-            // --- MERCADO DE PASES SUB-17 ---
+            translateFirebaseError(code) {
+                switch(code) {
+                    case 'auth/operation-not-allowed':
+                        return 'Debes activar "Correo electrónico/contraseña" en la pestaña Authentication > Sign-in method en tu consola de Firebase.';
+                    case 'auth/email-already-in-use':
+                        return 'El correo electrónico ya está registrado. Intenta iniciar sesión.';
+                    case 'auth/weak-password':
+                        return 'La contraseña es muy débil. Usa al menos 6 caracteres.';
+                    case 'auth/invalid-email':
+                        return 'El correo electrónico ingresado no es válido.';
+                    case 'auth/wrong-password':
+                    case 'auth/user-not-found':
+                    case 'auth/invalid-credential':
+                        return 'Correo o contraseña incorrectos.';
+                    default:
+                        return code || 'Error de conexión con Firebase.';
+                }
+            }
 
             async renderMarket(container) {
                 container.innerHTML = `
                     <div class="space-y-8">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                        <div class="flex justify-between items-center bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
                             <div>
                                 <h2 class="text-3xl font-extrabold text-white">Mercado de Pases Sub-17</h2>
                                 <p class="text-xs text-gray-400 mt-1">Jugadores juveniles registrados en Durazno, Uruguay</p>
                             </div>
-                            <div class="flex items-center space-x-3 w-full md:w-auto">
-                                <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                                    <i class="fa-solid fa-database mr-1"></i> Cargar / Reiniciar Datos Demo
-                                </button>
-                            </div>
+                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                <i class="fa-solid fa-database mr-1"></i> Cargar / Reiniciar Datos Demo
+                            </button>
                         </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
-                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                                <option value="">Todas las posiciones</option>
-                                <option value="Arquero">Arquero</option>
-                                <option value="Lateral derecho">Lateral derecho</option>
-                                <option value="Lateral izquierdo">Lateral izquierdo</option>
-                                <option value="Defensa central">Defensa central</option>
-                                <option value="Mediocentro defensivo">Mediocentro defensivo</option>
-                                <option value="Mediocampista central">Mediocampista central</option>
-                                <option value="Mediocampista ofensivo">Mediocampista ofensivo</option>
-                                <option value="Extremo derecho">Extremo derecho</option>
-                                <option value="Extremo izquierdo">Extremo izquierdo</option>
-                                <option value="Delantero centro">Delantero centro</option>
-                            </select>
-                            <select id="filter-status" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                                <option value="">Cualquier estado</option>
-                                <option value="Disponible">Disponible para nuevas oportunidades</option>
-                                <option value="Prestamo">En préstamo</option>
-                                <option value="Con club">Con club actual</option>
-                            </select>
-                        </div>
-
                         <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
                         </div>
@@ -462,541 +405,46 @@
                 try {
                     const snap = await getDocs(collection(db, 'players'));
                     this.playersCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    this.renderPlayerCards(this.playersCache);
+                    const grid = document.getElementById('players-grid');
+                    if (this.playersCache.length === 0) {
+                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay jugadores. Haz clic en "Cargar Datos Demo".</div>`;
+                        return;
+                    }
+                    grid.innerHTML = this.playersCache.map(p => `
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+                            <div>
+                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
+                                <h3 class="text-xl font-bold text-white mt-3">${p.sportingName}</h3>
+                                <p class="text-xs text-gray-400 mt-1">Club: ${p.currentClub || 'Libre'}</p>
+                            </div>
+                            <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-400">${p.status}</span>
+                            </div>
+                        </div>
+                    `).join('');
                 } catch (error) {
                     console.error("Error cargando jugadores:", error);
                 }
             }
 
-            renderPlayerCards(players) {
-                const grid = document.getElementById('players-grid');
-                if (!grid) return;
-
-                if (players.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No se encontraron jugadores con los filtros seleccionados. Hacé clic en "Cargar Datos Demo" si la base está vacía.</div>`;
-                    return;
-                }
-
-                grid.innerHTML = players.map(p => `
-                    <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:border-cardenal-red transition group">
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
-                                <span class="text-xs text-gray-400"><i class="fa-solid fa-shield mr-1"></i>${p.currentClub || 'Libre'}</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white group-hover:text-cardenal-gold transition">${p.sportingName}</h3>
-                            <p class="text-xs text-gray-400 mt-1">Categoría: ${p.category} • Pierna: ${p.preferredFoot}</p>
-                            <p class="text-sm text-gray-300 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
-                        </div>
-                        <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status}</span>
-                            <div class="flex space-x-2">
-                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Perfil</a>
-                                ${this.userData?.role === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            filterPlayers() {
-                const nameQuery = document.getElementById('filter-name').value.toLowerCase();
-                const posQuery = document.getElementById('filter-position').value;
-                const statusQuery = document.getElementById('filter-status').value;
-
-                const filtered = this.playersCache.filter(p => {
-                    const matchesName = p.sportingName.toLowerCase().includes(nameQuery);
-                    const matchesPos = !posQuery || p.position === posQuery;
-                    const matchesStatus = !statusQuery || (p.status && p.status.toLowerCase().includes(statusQuery.toLowerCase()));
-                    return matchesName && matchesPos && matchesStatus;
-                });
-
-                this.renderPlayerCards(filtered);
-            }
-
-            async renderPlayerDetail(container, playerId) {
-                try {
-                    const docSnap = await getDoc(doc(db, 'players', playerId));
-                    if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Jugador no encontrado.</div>`;
-                        return;
-                    }
-                    const p = docSnap.data();
-
-                    container.innerHTML = `
-                        <div class="max-w-4xl mx-auto space-y-8">
-                            <button onclick="app.navigateTo('market')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
-                                <i class="fa-solid fa-arrow-left"></i><span>Volver al Mercado</span>
-                            </button>
-                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                                <div class="absolute top-0 right-0 bg-cardenal-red text-white text-xs font-bold px-6 py-2 rounded-bl-2xl">
-                                    DATOS FICTICIOS — DEMO
-                                </div>
-                                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-                                    <div class="w-24 h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-4xl text-cardenal-gold font-extrabold">
-                                        ${p.sportingName.charAt(0)}
-                                    </div>
-                                    <div class="space-y-2">
-                                        <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
-                                        <h2 class="text-3xl font-extrabold text-white">${p.sportingName}</h2>
-                                        <p class="text-sm text-gray-400"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-white">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-cardenal-border text-center">
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Pierna Hábil</span>
-                                        <p class="text-base font-bold text-white mt-1">${p.preferredFoot}</p>
-                                    </div>
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Estado</span>
-                                        <p class="text-sm font-bold text-emerald-400 mt-1">${p.status}</p>
-                                    </div>
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Altura (Privado)</span>
-                                        <p class="text-base font-bold text-white mt-1">${p.height || 'No especificada'}</p>
-                                    </div>
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Peso (Privado)</span>
-                                        <p class="text-base font-bold text-white mt-1">${p.weight || 'No especificado'}</p>
-                                    </div>
-                                </div>
-
-                                <div class="mt-8 space-y-4">
-                                    <h3 class="text-lg font-bold text-white">Descripción Deportiva</h3>
-                                    <p class="text-gray-300 text-sm leading-relaxed bg-black/40 p-4 rounded-xl border border-cardenal-border">${p.description || 'Sin descripción.'}</p>
-                                </div>
-
-                                <div class="mt-6 space-y-3">
-                                    <h3 class="text-lg font-bold text-white">Habilidades Destacadas</h3>
-                                    <div class="flex flex-wrap gap-2">
-                                        ${(p.skills || []).map(s => `<span class="bg-zinc-800 text-gray-200 border border-zinc-700 px-3 py-1 rounded-lg text-xs font-semibold">${s}</span>`).join('')}
-                                    </div>
-                                </div>
-
-                                ${this.userData?.role === 'club' ? `
-                                    <div class="mt-8 pt-6 border-t border-cardenal-border flex justify-end">
-                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2">
-                                            <i class="fa-solid fa-handshake"></i><span>Iniciar Propuesta de Fichaje</span>
-                                        </a>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `;
-                } catch (e) {
-                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando perfil.</div>`;
-                }
-            }
-
-            // --- CLUBES ---
-
-            async renderClubs(container) {
-                container.innerHTML = `
-                    <div class="space-y-8">
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
-                            <h2 class="text-3xl font-extrabold text-white">Clubes de Durazno</h2>
-                            <p class="text-xs text-gray-400 mt-1">Instituciones y planteles juveniles Sub-17 registrados</p>
-                        </div>
-                        <div id="clubs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
-                        </div>
-                    </div>
-                `;
-                try {
-                    const snap = await getDocs(collection(db, 'clubs'));
-                    this.clubsCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const grid = document.getElementById('clubs-grid');
-                    
-                    if (this.clubsCache.length === 0) {
-                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados. Ejecuta "Cargar Datos Demo" en el Mercado.</div>`;
-                        return;
-                    }
-
-                    grid.innerHTML = this.clubsCache.map(c => `
-                        <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${c.city}, Uy</span>
-                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${c.verified ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-amber-950 text-amber-400'}">${c.verified ? 'Verificado' : 'Pendiente'}</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-white">${c.name}</h3>
-                                <p class="text-xs text-gray-400 mt-1">Categorías: ${(c.categories || []).join(', ')}</p>
-                                <p class="text-sm text-gray-300 mt-3 line-clamp-2">${c.description || 'Sin descripción.'}</p>
-                            </div>
-                            <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-end">
-                                <a href="#club-profile/${c.id}" onclick="app.navigateTo('club-profile', '${c.id}')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white px-4 py-2 rounded-xl text-xs font-bold transition">Ver Plantel y Club</a>
-                            </div>
-                        </div>
-                    `).join('');
-                } catch (error) {
-                    console.error("Error cargando clubes:", error);
-                }
-            }
-
-            async renderClubDetail(container, clubId) {
-                try {
-                    const docSnap = await getDoc(doc(db, 'clubs', clubId));
-                    if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Club no encontrado.</div>`;
-                        return;
-                    }
-                    const c = docSnap.data();
-
-                    container.innerHTML = `
-                        <div class="max-w-4xl mx-auto space-y-8">
-                            <button onclick="app.navigateTo('clubs')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
-                                <i class="fa-solid fa-arrow-left"></i><span>Volver a Clubes</span>
-                            </button>
-                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                                <div class="absolute top-0 right-0 bg-cardenal-red text-white text-xs font-bold px-6 py-2 rounded-bl-2xl">
-                                    DATOS FICTICIOS — DEMO
-                                </div>
-                                <h2 class="text-3xl font-extrabold text-white">${c.name}</h2>
-                                <p class="text-xs text-gray-400 mt-1">${c.city}, ${c.department} • <strong class="text-white">${c.verified ? 'Verificado' : 'Pendiente de Aprobación'}</strong></p>
-                                <p class="text-gray-300 text-sm mt-4 bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
-                            </div>
-                        </div>
-                    `;
-                } catch (e) {
-                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando club.</div>`;
-                }
-            }
-
-            // --- SISTEMA DE PROPUESTAS Y NEGOCIACIONES ---
-
-            async renderCreateProposal(container, playerId) {
-                const playerDoc = await getDoc(doc(db, 'players', playerId));
-                if (!playerDoc.exists()) {
-                    this.navigateTo('market');
-                    return;
-                }
-                const player = playerDoc.data();
-
-                container.innerHTML = `
-                    <div class="max-w-xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
-                        <div>
-                            <span class="text-xs text-cardenal-gold font-bold uppercase">Nueva Propuesta de Fichaje</span>
-                            <h2 class="text-2xl font-bold text-white mt-1">Oferta para: ${player.sportingName}</h2>
-                            <p class="text-xs text-gray-400">Club actual: ${player.currentClub}</p>
-                        </div>
-                        <form id="proposal-form" class="space-y-4" onsubmit="app.handleCreateProposalSubmit(event, '${playerId}')">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Modalidad de Fichaje</label>
-                                <select id="prop-modality" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleProposalFields(this.value)">
-                                    <option value="money">Transferencia por Dinero (UYU)</option>
-                                    <option value="free">Incorporación Gratuita</option>
-                                    <option value="loan">Préstamo Temporal</option>
-                                    <option value="benefits">Oferta con Beneficios</option>
-                                    <option value="combined">Oferta Combinada</option>
-                                </select>
-                            </div>
-                            <div id="field-amount">
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Importe Propuesto (Pesos Uruguayos - UYU)</label>
-                                <input type="number" id="prop-amount" placeholder="Ej: 5000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
-                            </div>
-                            <div id="field-loan" class="hidden space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Inicio</label>
-                                        <input type="date" id="prop-start" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Fin</label>
-                                        <input type="date" id="prop-end" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Condiciones del Préstamo</label>
-                                    <input type="text" id="prop-loan-cond" placeholder="Ej: Opción de compra al finalizar" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
-                                </div>
-                            </div>
-                            <div id="field-benefits" class="hidden">
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Beneficios Adicionales</label>
-                                <input type="text" id="prop-benefits" placeholder="Ej: Apoyo con transporte, equipamiento y alimentación" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Comentarios / Mensaje Adicional</label>
-                                <textarea id="prop-comments" rows="3" placeholder="Mensaje para el jugador y su club de origen..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none"></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Propuesta Formal</button>
-                        </form>
-                    </div>
-                `;
-            }
-
-            toggleProposalFields(modality) {
-                const fAmount = document.getElementById('field-amount');
-                const fLoan = document.getElementById('field-loan');
-                const fBenefits = document.getElementById('field-benefits');
-
-                fAmount.classList.add('hidden');
-                fLoan.classList.add('hidden');
-                fBenefits.classList.add('hidden');
-
-                if (modality === 'money') fAmount.classList.remove('hidden');
-                if (modality === 'loan') fLoan.classList.remove('hidden');
-                if (modality === 'benefits') fBenefits.classList.remove('hidden');
-                if (modality === 'combined') {
-                    fAmount.classList.remove('hidden');
-                    fLoan.classList.remove('hidden');
-                    fBenefits.classList.remove('hidden');
-                }
-            }
-
-            async handleCreateProposalSubmit(e, playerId) {
-                e.preventDefault();
-                const modality = document.getElementById('prop-modality').value;
-                const amount = document.getElementById('prop-amount').value || 0;
-                const startDate = document.getElementById('prop-start').value || '';
-                const endDate = document.getElementById('prop-end').value || '';
-                const loanCond = document.getElementById('prop-loan-cond').value || '';
-                const benefits = document.getElementById('prop-benefits').value || '';
-                const comments = document.getElementById('prop-comments').value || '';
-
-                try {
-                    const proposalData = {
-                        playerId,
-                        senderUid: this.currentUser.uid,
-                        senderEmail: this.currentUser.email,
-                        modality,
-                        amount: Number(amount),
-                        startDate,
-                        endDate,
-                        loanCond,
-                        benefits,
-                        comments,
-                        status: 'Pendiente',
-                        createdAt: serverTimestamp()
-                    };
-
-                    const docRef = await addDoc(collection(db, 'transferOffers'), proposalData);
-
-                    await addDoc(collection(db, 'notifications'), {
-                        recipientUid: playerId,
-                        title: 'Nueva Propuesta Recibida',
-                        message: `Has recibido una nueva propuesta de fichaje bajo modalidad: ${modality}.`,
-                        proposalId: docRef.id,
-                        read: false,
-                        createdAt: serverTimestamp()
-                    });
-
-                    this.showToast("Propuesta enviada con éxito.", "success");
-                    this.navigateTo('market');
-                } catch (error) {
-                    this.showToast("Error enviando propuesta: " + error.message, "error");
-                }
-            }
-
-            // --- PANELES ESPECÍFICOS ---
-
-            async renderPlayerPanel(container) {
-                if (!this.currentUser || this.userData?.role !== 'player') {
-                    this.navigateTo('login');
-                    return;
-                }
-
-                container.innerHTML = `
-                    <div class="space-y-8">
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex justify-between items-center">
-                            <div>
-                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Jugador Sub-17</span>
-                                <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData.name}</h2>
-                            </div>
-                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                                <i class="fa-solid fa-database mr-1"></i> Cargar Datos Demo
-                            </button>
-                        </div>
-
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl space-y-6">
-                            <h3 class="text-xl font-bold text-white">Propuestas Recibidas de Clubes</h3>
-                            <div id="player-proposals" class="space-y-4">
-                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                try {
-                    const q = query(collection(db, 'transferOffers'), where('playerId', '==', this.currentUser.uid));
-                    const snap = await getDocs(q);
-                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const propContainer = document.getElementById('player-proposals');
-
-                    if (list.length === 0) {
-                        propContainer.innerHTML = `<p class="text-sm text-gray-400">No tenés propuestas recibidas actualmente.</p>`;
-                        return;
-                    }
-
-                    propContainer.innerHTML = list.map(prop => `
-                        <div class="bg-black/40 border border-cardenal-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div class="space-y-1">
-                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-950 text-amber-400 uppercase">${prop.modality}</span>
-                                <h4 class="text-lg font-bold text-white mt-1">Oferta de: ${prop.senderEmail}</h4>
-                                <p class="text-xs text-gray-300">Importe propuesto: <strong>$U ${prop.amount || 0}</strong> • Comentarios: ${prop.comments || 'Ninguno'}</p>
-                                <p class="text-xs text-emerald-400 font-semibold">Estado actual: ${prop.status}</p>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Aceptar</button>
-                                <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Rechazar</button>
-                            </div>
-                        </div>
-                    `).join('');
-                } catch (e) {
-                    console.error("Error cargando propuestas:", e);
-                }
-            }
-
-            async updateProposalStatus(proposalId, newStatus) {
-                try {
-                    await updateDoc(doc(db, 'transferOffers', proposalId), { status: newStatus });
-                    this.showToast(`Propuesta actualizada a: ${newStatus}`, "success");
-                    this.renderPlayerPanel(document.getElementById('app-view'));
-                } catch (error) {
-                    this.showToast("Error actualizando propuesta.", "error");
-                }
-            }
-
-            async renderClubPanel(container) {
-                if (!this.currentUser || this.userData?.role !== 'club') {
-                    this.navigateTo('login');
-                    return;
-                }
-                container.innerHTML = `
-                    <div class="space-y-8">
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex justify-between items-center">
-                            <div>
-                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Club</span>
-                                <h2 class="text-3xl font-extrabold text-white mt-1">Gestión Institucional</h2>
-                            </div>
-                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                                <i class="fa-solid fa-database mr-1"></i> Cargar Datos Demo
-                            </button>
-                        </div>
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl">
-                            <h3 class="text-xl font-bold text-white mb-4">Acciones del Club</h3>
-                            <p class="text-sm text-gray-300">Desde aquí puedes explorar el <a href="#market" onclick="app.navigateTo('market')" class="text-cardenal-gold underline font-semibold">Mercado Sub-17</a> para iniciar propuestas de fichajes y préstamos a jugadores juveniles.</p>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // --- PANEL DE ADMINISTRACIÓN ---
-
-            async renderAdminPanel(container) {
-                if (!this.currentUser || this.userData?.role !== 'admin') {
-                    container.innerHTML = `<div class="text-center py-24 text-red-500 font-bold">Acceso restringido a administradores.</div>`;
-                    return;
-                }
-                container.innerHTML = `
-                    <div class="max-w-4xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
-                        <h2 class="text-3xl font-extrabold text-white">Panel de Administración</h2>
-                        <p class="text-sm text-gray-300">Herramientas de supervisión, verificación de clubes y moderación de contenido para El Cardenal Sporting.</p>
-                        <div class="pt-4">
-                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-6 py-3 rounded-xl transition shadow">
-                                <i class="fa-solid fa-database mr-2"></i> Inicializar / Reiniciar Base de Datos Demo (Durazno)
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // --- NOTIFICACIONES ---
-
-            async renderNotifications(container) {
-                if (!this.currentUser) {
-                    this.navigateTo('login');
-                    return;
-                }
-                container.innerHTML = `
-                    <div class="max-w-2xl mx-auto space-y-6">
-                        <h2 class="text-3xl font-extrabold text-white">Bandeja de Notificaciones</h2>
-                        <div id="notif-list" class="space-y-4">
-                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
-                        </div>
-                    </div>
-                `;
-                try {
-                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
-                    const snap = await getDocs(q);
-                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const listEl = document.getElementById('notif-list');
-
-                    if (list.length === 0) {
-                        listEl.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl text-center text-gray-400">No tenés notificaciones nuevas.</div>`;
-                        return;
-                    }
-
-                    listEl.innerHTML = list.map(n => `
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl flex justify-between items-center">
-                            <div class="space-y-1">
-                                <h4 class="text-base font-bold text-white">${n.title}</h4>
-                                <p class="text-sm text-gray-300">${n.message}</p>
-                            </div>
-                        </div>
-                    `).join('');
-                } catch (e) {
-                    console.error("Error cargando notificaciones:", e);
-                }
-            }
-
-            // --- AYUDA Y PRIVACIDAD ---
-
-            renderHelp(container) {
-                container.innerHTML = `
-                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
-                        <h2 class="text-3xl font-extrabold text-white">Ayuda, Privacidad y Protección de Menores</h2>
-                        <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
-                            <p><strong>El Cardenal Sporting</strong> está diseñado específicamente para el fútbol juvenil Sub-17 de Durazno, Uruguay. Cumplimos con estrictas normativas de privacidad y protección de datos para menores de edad.</p>
-                            <h3 class="text-lg font-bold text-white pt-2">Privacidad por Defecto</h3>
-                            <p>Los datos sensibles (teléfonos, correos personales, domicilios y documentos de identidad) no se publican públicamente. Las negociaciones se realizan mediante propuestas formales supervisadas.</p>
-                            <h3 class="text-lg font-bold text-white pt-2">Eliminación de Datos</h3>
-                            <p>Si deseas solicitar la eliminación completa de tu perfil y registros deportivos, puedes contactar al soporte técnico o utilizar la opción desde tu panel de usuario autenticado.</p>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // --- INICIALIZACIÓN DE DATOS DEMO (DURAZNO) ---
-
             async seedDemoData() {
                 try {
                     this.showToast("Generando datos ficticios de demostración...", "info");
                     const batch = writeBatch(db);
+                    const positions = ['Arquero', 'Defensa central', 'Mediocampista central', 'Delantero centro'];
+                    const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez'];
 
-                    const clubsData = [
-                        { name: "Club Atlético Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Institución histórica de la capital departamental." },
-                        { name: "Racing de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-20"], verified: true, description: "Semillero de talentos juveniles en Durazno." },
-                        { name: "Wanderers de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17"], verified: true, description: "Tradición y formación competitiva." },
-                        { name: "Rampla Juniors de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17"], verified: true, description: "Pasión y garra en divisiones formativas." },
-                        { name: "Santa Bernardina FC", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Club representativo de la zona norte." }
-                    ];
-
-                    for (let c of clubsData) {
-                        const ref = doc(collection(db, 'clubs'));
-                        batch.set(ref, { ...c, lastUpdated: serverTimestamp() });
-                    }
-
-                    const positions = ['Arquero', 'Lateral derecho', 'Lateral izquierdo', 'Defensa central', 'Mediocentro defensivo', 'Mediocampista central', 'Mediocampista ofensivo', 'Extremo derecho', 'Extremo izquierdo', 'Delantero centro'];
-                    const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez', 'Santiago Fernández', 'Ignacio López', 'Thiago Sosa', 'Bruno Ferreira', 'Lautaro Ramírez', 'Valentín Castro', 'Gonzalo Morales', 'Franco Pintos', 'Emiliano Silva', 'Lucas Da Silva'];
-                    const clubsList = ['Club Atlético Durazno', 'Racing de Durazno', 'Wanderers de Durazno', 'Libre', 'Santa Bernardina FC'];
-
-                    for (let i = 0; i < 30; i++) {
+                    for (let i = 0; i < 10; i++) {
                         const ref = doc(collection(db, 'players'));
-                        const pName = `${names[i % names.length]} (${i + 1})`;
                         batch.set(ref, {
-                            sportingName: pName,
+                            sportingName: `${names[i % names.length]} (${i + 1})`,
                             category: 'Sub-17',
                             position: positions[i % positions.length],
-                            secondaryPositions: [positions[(i + 1) % positions.length]],
-                            preferredFoot: i % 2 === 0 ? 'Derecha' : 'Izquierda',
-                            currentClub: clubsList[i % clubsList.length],
-                            status: i % 3 === 0 ? 'Disponible para nuevas oportunidades' : 'Con club actual',
-                            height: '1.78m',
-                            weight: '70kg',
-                            description: 'Jugador destacado en formativas locales de Durazno con gran proyección táctica y técnica.',
-                            skills: ['Excelente pegada', 'Buen juego aéreo', 'Resistencia física'],
-                            videos: [],
+                            preferredFoot: 'Derecha',
+                            currentClub: 'Club Atlético Durazno',
+                            status: 'Disponible para nuevas oportunidades',
+                            description: 'Jugador destacado en formativas locales de Durazno.',
+                            skills: ['Buen pase', 'Resistencia'],
                             lastUpdated: serverTimestamp()
                         });
                     }
@@ -1008,6 +456,13 @@
                     this.showToast("Error cargando datos demo: " + error.message, "error");
                 }
             }
+
+            renderClubs(container) { container.innerHTML = `<div class="text-center py-16 text-white">Sección de Clubes</div>`; }
+            renderHelp(container) { container.innerHTML = `<div class="text-center py-16 text-white">Ayuda y Protección de Menores</div>`; }
+            renderNotifications(container) { container.innerHTML = `<div class="text-center py-16 text-white">Notificaciones</div>`; }
+            renderPlayerPanel(container) { container.innerHTML = `<div class="text-center py-16 text-white">Panel de Jugador</div>`; }
+            renderClubPanel(container) { container.innerHTML = `<div class="text-center py-16 text-white">Panel de Club</div>`; }
+            renderAdminPanel(container) { container.innerHTML = `<div class="text-center py-16 text-white">Panel Admin</div>`; }
         }
 
         window.app = new CardenalApp();
