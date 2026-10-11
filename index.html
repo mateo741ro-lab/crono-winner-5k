@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Cardenal Sporting | Mercado de Pases Sub-17 Durazno</title>
+    <title>El Cardenal Sporting | Mercado Nacional de Pases — Uruguay</title>
     <!-- Favicon con el Logo Oficial -->
     <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" type="image/jpeg">
     <!-- Tailwind CSS CDN -->
@@ -34,11 +34,14 @@
     <style>
         body { font-family: 'Outfit', sans-serif; }
         .demo-badge { background: linear-gradient(135deg, #991b1b, #d97706); }
+        /* Ocultar barra de desplazamiento en contenedores horizontales móviles */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-cardenal-dark text-gray-100 min-h-screen flex flex-col selection:bg-cardenal-red selection:text-white">
+<body class="bg-cardenal-dark text-gray-100 min-h-screen flex flex-col selection:bg-cardenal-red selection:text-white pb-20 md:pb-0">
 
-    <!-- Header / Navbar -->
+    <!-- Header / Navbar Escritorio y Tablet -->
     <header class="sticky top-0 z-50 bg-cardenal-card border-b border-cardenal-border shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigateTo('home')">
@@ -46,39 +49,59 @@
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" alt="Logo El Cardenal Sporting" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <h1 class="text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
-                    <p class="text-xs text-gray-400 font-medium">Mercado de Pases Sub-17 • Durazno, Uy</p>
+                    <h1 class="text-lg sm:text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
+                    <p class="text-[10px] sm:text-xs text-gray-400 font-medium">Scouting & Mercado Nacional • Uruguay</p>
                 </div>
             </div>
 
             <!-- Navegación Escritorio -->
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+            <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
                 <a href="#home" onclick="app.navigateTo('home')" class="hover:text-cardenal-gold transition">Inicio</a>
-                <a href="#market" onclick="app.navigateTo('market')" class="hover:text-cardenal-gold transition">Mercado Sub-17</a>
+                <a href="#market" onclick="app.navigateTo('market')" class="hover:text-cardenal-gold transition">Mercado</a>
+                <a href="#departments" onclick="app.navigateTo('departments')" class="hover:text-cardenal-gold transition">Departamentos</a>
                 <a href="#clubs" onclick="app.navigateTo('clubs')" class="hover:text-cardenal-gold transition">Clubes</a>
-                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-gold transition">Ayuda y Menores</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-gold transition">Privacidad y Menores</a>
             </nav>
 
             <!-- Acciones de Usuario / Menú Dinámico -->
-            <div class="flex items-center space-x-4 relative" id="auth-nav-container">
+            <div class="flex items-center space-x-3 relative" id="auth-nav-container">
                 <i class="fa-solid fa-spinner fa-spin text-cardenal-gold"></i>
             </div>
         </div>
     </header>
 
-    <!-- Banner Demo -->
+    <!-- Barra de Navegación Inferior Móvil (Mobile-First) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-cardenal-card border-t border-cardenal-border px-4 py-2 flex justify-around items-center text-xs">
+        <a href="#home" onclick="app.navigateTo('home')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
+            <i class="fa-solid fa-house text-base"></i><span>Inicio</span>
+        </a>
+        <a href="#market" onclick="app.navigateTo('market')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
+            <i class="fa-solid fa-futbol text-base"></i><span>Mercado</span>
+        </a>
+        <a href="#departments" onclick="app.navigateTo('departments')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
+            <i class="fa-solid fa-map text-base"></i><span>Uy</span>
+        </a>
+        <a href="#clubs" onclick="app.navigateTo('clubs')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
+            <i class="fa-solid fa-shield text-base"></i><span>Clubes</span>
+        </a>
+        <a href="#notifications" onclick="app.navigateTo('notifications')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold relative">
+            <i class="fa-solid fa-bell text-base"></i><span>Alertas</span>
+        </a>
+    </div>
+
+    <!-- Banner Demo / Nacional -->
     <div class="demo-badge text-white text-xs font-semibold py-1.5 px-4 text-center tracking-wide flex items-center justify-center space-x-2 shadow-inner">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span>PLATAFORMA DE DEMOSTRACIÓN — DATOS FICTICIOS DE JUGADORES Y CLUBES SUB-17 DE DURAZNO</span>
+        <i class="fa-solid fa-flag"></i>
+        <span>PLATAFORMA NACIONAL DE SCOUTING Y MERCADO DE PASES — URUGUAY (19 DEPARTAMENTOS)</span>
     </div>
 
     <!-- Contenedor Principal SPA -->
-    <main id="app-view" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main id="app-view" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <!-- Renderizado dinámico -->
     </main>
 
     <!-- Notificaciones Toast -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none"></div>
+    <div id="toast-container" class="fixed bottom-16 md:bottom-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none"></div>
 
     <!-- Modales Globales -->
     <div id="global-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -86,11 +109,11 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-cardenal-card border-t border-cardenal-border mt-12 py-8 text-center text-xs text-gray-400">
+    <footer class="bg-cardenal-card border-t border-cardenal-border mt-12 py-8 text-center text-xs text-gray-400 mb-12 md:mb-0">
         <div class="max-w-7xl mx-auto px-4 space-y-3">
-            <p>© 2026 El Cardenal Sporting. Desarrollado para el fútbol juvenil Sub-17 de Durazno, Uruguay.</p>
+            <p>© 2026 El Cardenal Sporting. Plataforma Nacional de Fútbol Juvenil y Profesional — Uruguay.</p>
             <div class="flex justify-center space-x-6">
-                <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Privacidad y Protección de Menores</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Protección de Menores y Privacidad</a>
                 <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Condiciones de Uso</a>
                 <a href="#help" onclick="app.navigateTo('help')" class="hover:underline">Eliminación de Datos</a>
             </div>
@@ -101,8 +124,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAN6fuDBCSLKNFB6w9VGKqlPRCqpyATxb0",
@@ -118,6 +141,18 @@
         const auth = getAuth(firebaseApp);
         const db = getFirestore(firebaseApp);
         const storage = getStorage(firebaseApp);
+
+        const URUGUAY_DEPARTMENTS = [
+            "Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", "Florida",
+            "Lavalleja", "Maldonado", "Montevideo", "Paysandú", "Río Negro", "Rivera", "Rocha",
+            "Salto", "San José", "Soriano", "Tacuarembó", "Treinta y Tres"
+        ];
+
+        const CATEGORIES_LIST = [
+            "Sub-14", "Sub-15", "Sub-16", "Sub-17", "Sub-18", "Sub-19",
+            "Sub-20", "Sub-23", "Primera División", "Fútbol Amateur",
+            "Fútbol Universitario", "Fútbol Femenino", "Fútsal"
+        ];
 
         class CardenalApp {
             constructor() {
@@ -195,11 +230,14 @@
                                 uid: this.currentUser.uid,
                                 sportingName: this.userData?.name || 'Jugador',
                                 category: 'Sub-17',
+                                department: 'Montevideo',
+                                locality: 'Montevideo',
                                 position: 'Mediocampista central',
                                 preferredFoot: 'Derecha',
                                 currentClub: 'Libre',
                                 status: 'Disponible para nuevas oportunidades',
-                                description: 'Jugador juvenil de Durazno.',
+                                description: 'Futbolista en desarrollo en Uruguay.',
+                                videos: [],
                                 published: true,
                                 lastUpdated: serverTimestamp()
                             }, { merge: true });
@@ -211,9 +249,11 @@
                             await addDoc(collection(db, 'clubs'), {
                                 name: `Club de ${this.userData?.name || 'Representante'}`,
                                 representativeUid: this.currentUser.uid,
-                                city: 'Durazno',
+                                department: 'Montevideo',
+                                city: 'Montevideo',
+                                categories: ['Sub-17', 'Primera División'],
                                 verified: true,
-                                description: 'Club participante en las formativas de Durazno.',
+                                description: 'Institución deportiva afiliada.',
                                 lastUpdated: serverTimestamp()
                             });
                         }
@@ -229,7 +269,6 @@
                     this.userData.activeRole = newRole;
                     this.userData.roles = roles;
 
-                    // setDoc con { merge: true } previene el error "No document to update"
                     await setDoc(doc(db, 'users', this.currentUser.uid), {
                         uid: this.currentUser.uid,
                         email: this.currentUser.email,
@@ -238,7 +277,7 @@
                         roles: roles
                     }, { merge: true });
 
-                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
+                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Futbolista' : 'Representante de Club'}`, "success");
                     this.renderNavbarAuth();
                     this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
@@ -265,6 +304,7 @@
                     case 'register': this.renderRegister(container); break;
                     case 'role-selector': this.renderRoleSelector(container); break;
                     case 'market': this.renderMarket(container); break;
+                    case 'departments': this.renderDepartmentsOverview(container); break;
                     case 'player': this.renderPlayerDetail(container, param); break;
                     case 'clubs': this.renderClubs(container); break;
                     case 'club-profile': this.renderClubDetail(container, param); break;
@@ -291,13 +331,13 @@
                     if (this.activeRole === 'player') {
                         panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Jugador</a>`;
                     } else if (this.activeRole === 'club') {
-                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Representante Club</a>`;
+                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Club</a>`;
                     }
                     
                     let adminLink = this.userData.role === 'admin' ? `<a href="#admin-panel" onclick="app.navigateTo('admin-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-cardenal-gold hover:bg-zinc-800"><i class="fa-solid fa-lock mr-2"></i> Admin</a>` : '';
 
                     const otherRole = this.activeRole === 'player' ? 'club' : 'player';
-                    const otherRoleLabel = this.activeRole === 'player' ? 'Cambiar a Modo Representante de Club' : 'Cambiar a Modo Jugador Sub-17';
+                    const otherRoleLabel = this.activeRole === 'player' ? 'Cambiar a Modo Club' : 'Cambiar a Modo Futbolista';
 
                     nav.innerHTML = `
                         <div class="relative">
@@ -307,7 +347,7 @@
                                 </div>
                                 <div class="text-left hidden sm:block">
                                     <p class="text-sm font-semibold text-gray-200 leading-tight">${this.userData.name}</p>
-                                    <p class="text-[10px] font-bold text-cardenal-gold uppercase">${this.activeRole === 'player' ? 'Jugador' : 'Club'}</p>
+                                    <p class="text-[10px] font-bold text-cardenal-gold uppercase">${this.activeRole === 'player' ? 'Futbolista' : 'Club'}</p>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                             </button>
@@ -352,6 +392,7 @@
 
             showToast(message, type = 'success') {
                 const container = document.getElementById('toast-container');
+                if (!container) return;
                 const toast = document.createElement('div');
                 const bg = type === 'success' ? 'bg-emerald-900 border-emerald-700 text-emerald-100' : (type === 'error' ? 'bg-red-900 border-red-700 text-red-100' : 'bg-gray-900 border-gray-700 text-gray-100');
                 
@@ -363,29 +404,52 @@
 
             renderHome(container) {
                 container.innerHTML = `
-                    <div class="space-y-16">
+                    <div class="space-y-12">
                         <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-red-950 via-cardenal-card to-black border border-cardenal-border p-8 md:p-16 shadow-2xl">
                             <div class="max-w-2xl space-y-6">
-                                <span class="bg-cardenal-gold/20 text-cardenal-gold border border-cardenal-gold/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Fútbol Juvenil Sub-17 • Durazno, Uruguay</span>
-                                <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white">El futuro del fútbol de <span class="text-cardenal-gold">Durazno</span> en un solo lugar</h2>
-                                <p class="text-gray-300 text-base md:text-lg">Plataforma oficial de scouting, mercado de pases y gestión de transferencias para jugadores y clubes juveniles Sub-17.</p>
-                                <div class="flex flex-wrap gap-4 pt-4">
-                                    <a href="#market" onclick="app.navigateTo('market')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
-                                        <i class="fa-solid fa-futbol"></i><span>Explorar Mercado Sub-17</span>
+                                <span class="bg-cardenal-gold/20 text-cardenal-gold border border-cardenal-gold/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Plataforma Nacional de Scouting • Uruguay</span>
+                                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">El talento de los <span class="text-cardenal-gold">19 departamentos</span> conectado</h2>
+                                <p class="text-gray-300 text-sm md:text-base">El Cardenal Sporting conecta futbolistas de todo Uruguay con clubes profesionales, juveniles y amateurs. Publica tu perfil, sube tus videos y recibe propuestas.</p>
+                                <div class="flex flex-wrap gap-4 pt-2">
+                                    <a href="#market" onclick="app.navigateTo('market')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2 text-sm">
+                                        <i class="fa-solid fa-futbol"></i><span>Explorar Mercado Nacional</span>
                                     </a>
-                                    <a href="#clubs" onclick="app.navigateTo('clubs')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2">
-                                        <i class="fa-solid fa-shield"></i><span>Ver Clubes de Durazno</span>
+                                    <a href="#departments" onclick="app.navigateTo('departments')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2 text-sm">
+                                        <i class="fa-solid fa-map"></i><span>Ver por Departamentos</span>
                                     </a>
                                     ${this.currentUser ? `
-                                        <button onclick="app.navigateTo('role-selector')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2">
-                                            <i class="fa-solid fa-users-gear"></i><span>Elegir Modo (Jugador o Club)</span>
+                                        <button onclick="app.navigateTo('role-selector')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2 text-sm">
+                                            <i class="fa-solid fa-users-gear"></i><span>Elegir Modo</span>
                                         </button>
                                     ` : ''}
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Departamentos Destacados Accesos Rápidos -->
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-bold text-white">Explorar por Departamento</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                                ${['Montevideo', 'Canelones', 'Maldonado', 'Salto', 'Paysandú', 'Colonia', 'Durazno', 'San José', 'Rivera', 'Tacuarembó', 'Rocha', 'Florida'].map(dep => `
+                                    <button onclick="app.navigateToMarketWithDepartment('${dep}')" class="bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold p-3 rounded-2xl text-center transition group">
+                                        <p class="text-xs font-bold text-white group-hover:text-cardenal-gold">${dep}</p>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
                     </div>
                 `;
+            }
+
+            navigateToMarketWithDepartment(dep) {
+                window.location.hash = `market`;
+                setTimeout(() => {
+                    const select = document.getElementById('filter-department');
+                    if (select) {
+                        select.value = dep;
+                        this.filterPlayers();
+                    }
+                }, 300);
             }
 
             renderRoleSelector(container) {
@@ -394,24 +458,24 @@
                         <div>
                             <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
                             <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
-                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Jugador y Club en cualquier momento.</p>
+                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Club en cualquier momento.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
                                 <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                                     <i class="fa-solid fa-shirt"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-white text-center">Modo Jugador Sub-17</h3>
-                                <p class="text-xs text-gray-400 text-center">Publica tu perfil, sube videos de jugadas, solicita ingreso a clubes y recibe ofertas de fichaje.</p>
-                                <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Jugador</span>
+                                <h3 class="text-xl font-bold text-white text-center">Modo Futbolista</h3>
+                                <p class="text-xs text-gray-400 text-center">Publica tu perfil nacional, sube videos directamente, solicita ingreso a clubes y recibe propuestas.</p>
+                                <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Futbolista</span>
                             </button>
 
                             <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
                                 <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-white text-center">Modo Representante de Club</h3>
-                                <p class="text-xs text-gray-400 text-center">Busca talentos juveniles en el mercado, gestiona solicitudes de aspirantes y envía propuestas de fichaje.</p>
+                                <h3 class="text-xl font-bold text-white text-center">Modo Club / Scouting</h3>
+                                <p class="text-xs text-gray-400 text-center">Busca talentos en todo Uruguay, filtra por departamento y envía ofertas profesionales.</p>
                                 <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Club</span>
                             </button>
                         </div>
@@ -424,7 +488,7 @@
                     <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
                         <div class="text-center space-y-2 mb-8">
                             <h2 class="text-2xl font-bold text-white">Iniciar Sesión</h2>
-                            <p class="text-xs text-gray-400">Accede a tu cuenta en El Cardenal Sporting</p>
+                            <p class="text-xs text-gray-400">Accede a El Cardenal Sporting</p>
                         </div>
                         <form id="login-form" class="space-y-5" onsubmit="app.handleLoginSubmit(event)">
                             <div>
@@ -435,7 +499,7 @@
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
                                 <input type="password" id="login-password" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Entrar</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">Entrar</button>
                         </form>
                     </div>
                 `;
@@ -459,14 +523,14 @@
                     <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
                         <div class="text-center space-y-2 mb-8">
                             <h2 class="text-2xl font-bold text-white">Crear Cuenta</h2>
-                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil inicial para comenzar</p>
+                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil inicial</p>
                         </div>
                         <form id="register-form" class="space-y-5" onsubmit="app.handleRegisterSubmit(event)">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tipo de Perfil Inicial</label>
                                 <select id="reg-role" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleRegisterFields(this.value)">
-                                    <option value="player">Jugador Sub-17</option>
-                                    <option value="club">Club de Fútbol (Representante)</option>
+                                    <option value="player">Futbolista</option>
+                                    <option value="club">Club / Representante</option>
                                 </select>
                             </div>
                             <div>
@@ -485,7 +549,7 @@
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
                                 <input type="password" id="reg-password" required minlength="6" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Registrarse</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">Registrarse</button>
                         </form>
                     </div>
                 `;
@@ -515,14 +579,16 @@
 
                     if (role === 'player') {
                         await setDoc(doc(db, 'players', uid), {
-                            uid, sportingName: name, category: 'Sub-17', position: 'Mediocampista central',
-                            preferredFoot: 'Derecha', currentClub: 'Libre', status: 'Disponible para nuevas oportunidades',
-                            description: 'Jugador juvenil de Durazno.', skills: ['Buen pase'], videos: [], published: true, lastUpdated: serverTimestamp()
+                            uid, sportingName: name, category: 'Sub-17', department: 'Montevideo', locality: 'Montevideo',
+                            position: 'Mediocampista central', preferredFoot: 'Derecha', currentClub: 'Libre',
+                            status: 'Disponible para nuevas oportunidades', description: 'Futbolista en Uruguay.',
+                            videos: [], published: true, lastUpdated: serverTimestamp()
                         });
                     } else if (role === 'club') {
                         await addDoc(collection(db, 'clubs'), {
-                            name: clubName || name, representativeUid: uid, city: 'Durazno', verified: true,
-                            description: 'Club participante en las formativas de Durazno.', lastUpdated: serverTimestamp()
+                            name: clubName || name, representativeUid: uid, department: 'Montevideo', city: 'Montevideo',
+                            categories: ['Sub-17', 'Primera División'], verified: true,
+                            description: 'Institución afiliada en Uruguay.', lastUpdated: serverTimestamp()
                         });
                     }
 
@@ -536,24 +602,63 @@
 
             translateFirebaseError(code) {
                 switch(code) {
-                    case 'auth/operation-not-allowed':
-                        return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
-                    case 'auth/email-already-in-use':
-                        return 'El correo electrónico ya está registrado. Si ya te registraste, inicia sesión.';
-                    case 'auth/weak-password':
-                        return 'La contraseña es muy débil. Usa al menos 6 caracteres.';
-                    case 'auth/invalid-email':
-                        return 'El correo electrónico ingresado no es válido.';
+                    case 'auth/operation-not-allowed': return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
+                    case 'auth/email-already-in-use': return 'El correo electrónico ya está registrado. Inicia sesión.';
+                    case 'auth/weak-password': return 'La contraseña es muy débil. Usa al menos 6 caracteres.';
+                    case 'auth/invalid-email': return 'El correo electrónico ingresado no es válido.';
                     case 'auth/wrong-password':
                     case 'auth/user-not-found':
-                    case 'auth/invalid-credential':
-                        return 'Correo o contraseña incorrectos.';
-                    default:
-                        return code || 'Error de conexión con Firebase.';
+                    case 'auth/invalid-credential': return 'Correo o contraseña incorrectos.';
+                    default: return code || 'Error de conexión con Firebase.';
                 }
             }
 
-            // --- PERFIL FUTBOLÍSTICO Y PUBLICACIÓN ---
+            // --- DEPARTAMENTOS OVERVIEW ---
+            async renderDepartmentsOverview(container) {
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl flex justify-between items-center">
+                            <div>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Scouting por Departamento</h2>
+                                <p class="text-xs text-gray-400 mt-1">Explora futbolistas publicados en los 19 departamentos de Uruguay</p>
+                            </div>
+                        </div>
+                        <div id="departments-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const snap = await getDocs(collection(db, 'players'));
+                    const players = snap.docs.map(doc => doc.data()).filter(p => p.published !== false);
+                    
+                    const counts = {};
+                    URUGUAY_DEPARTMENTS.forEach(d => counts[d] = 0);
+                    players.forEach(p => {
+                        if (p.department && counts[p.department] !== undefined) {
+                            counts[p.department]++;
+                        }
+                    });
+
+                    const grid = document.getElementById('departments-grid');
+                    grid.innerHTML = URUGUAY_DEPARTMENTS.map(dep => `
+                        <div onclick="app.navigateToMarketWithDepartment('${dep}')" class="bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold p-6 rounded-3xl shadow-xl cursor-pointer transition flex justify-between items-center group">
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-cardenal-gold transition">${dep}</h3>
+                                <p class="text-xs text-gray-400 mt-1"><strong class="text-white">${counts[dep]}</strong> futbolistas publicados</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-black border border-cardenal-border flex items-center justify-center text-cardenal-gold group-hover:scale-110 transition">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error("Error cargando departamentos:", e);
+                }
+            }
+
+            // --- PERFIL FUTBOLÍSTICO Y SUBIDA DE VIDEOS A STORAGE ---
             async renderProfileEdit(container) {
                 if (!this.currentUser) {
                     this.navigateTo('login');
@@ -562,14 +667,17 @@
 
                 let pData = {
                     sportingName: this.userData?.name || '',
+                    category: 'Sub-17',
+                    department: 'Montevideo',
+                    locality: 'Montevideo',
                     position: 'Mediocampista central',
                     preferredFoot: 'Derecha',
                     currentClub: 'Libre',
                     height: '1.75m',
                     weight: '68kg',
-                    description: 'Jugador juvenil destacado de Durazno.',
-                    videoUrl: '',
+                    description: 'Futbolista en desarrollo en Uruguay.',
                     status: 'Disponible para nuevas oportunidades',
+                    videos: [],
                     published: true
                 };
 
@@ -583,13 +691,13 @@
                 }
 
                 container.innerHTML = `
-                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
+                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
                         <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-xs text-cardenal-gold font-bold uppercase">Gestión de Talento Sub-17</span>
+                                <span class="text-xs text-cardenal-gold font-bold uppercase">Scouting Nacional Uruguay</span>
                                 <h2 class="text-2xl font-bold text-white mt-1">Mi Perfil Futbolístico</h2>
                             </div>
-                            <a href="#player-panel" onclick="app.navigateTo('player-panel')" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> Volver al Panel</a>
+                            <a href="#player-panel" onclick="app.navigateTo('player-panel')" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> Panel</a>
                         </div>
                         <form id="profile-form" onsubmit="app.handleProfileSave(event)" class="space-y-4">
                             <div>
@@ -597,6 +705,24 @@
                                 <input type="text" id="p-name" value="${pData.sportingName}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Departamento (Uruguay)</label>
+                                    <select id="p-dep" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                        ${URUGUAY_DEPARTMENTS.map(d => `<option value="${d}" ${pData.department === d ? 'selected' : ''}>${d}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Localidad / Ciudad</label>
+                                    <input type="text" id="p-loc" value="${pData.locality || ''}" placeholder="Ej: Durazno, Las Piedras, Salto..." required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Categoría</label>
+                                    <select id="p-cat" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                        ${CATEGORIES_LIST.map(c => `<option value="${c}" ${pData.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+                                    </select>
+                                </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Posición Principal</label>
                                     <select id="p-pos" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
@@ -644,93 +770,212 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Enlace de Video de Jugadas (YouTube)</label>
-                                <input type="url" id="p-video" value="${pData.videoUrl || ''}" placeholder="https://youtube.com/watch?v=..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                            </div>
-                            <div>
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Descripción y Características Técnicas</label>
                                 <textarea id="p-desc" rows="3" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">${pData.description}</textarea>
                             </div>
+
+                            <!-- Sección Subida Directa de Videos a Firebase Storage -->
+                            <div class="border-t border-cardenal-border pt-4 space-y-3">
+                                <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-video text-cardenal-gold mr-2"></i>Mis Videos de Jugadas (Firebase Storage)</h3>
+                                <p class="text-xs text-gray-400">Sube videos cortos (MP4/WebM, máx 50MB) directamente desde tu dispositivo.</p>
+                                
+                                <div class="flex flex-col sm:flex-row gap-3 items-center bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                    <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/quicktime" class="text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cardenal-red file:text-white hover:file:bg-red-800 cursor-pointer">
+                                    <input type="text" id="video-title-input" placeholder="Título del video (Ej: Gol de tiro libre)" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                    <button type="button" onclick="app.uploadVideoToStorage()" class="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition whitespace-nowrap">Subir Video</button>
+                                </div>
+                                <div id="upload-progress-container" class="hidden space-y-1">
+                                    <div class="w-full bg-black rounded-full h-2.5 overflow-hidden border border-cardenal-border">
+                                        <div id="upload-progress-bar" class="bg-cardenal-gold h-2.5 transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                    <p id="upload-progress-text" class="text-[10px] text-gray-400 text-right">Subiendo video...</p>
+                                </div>
+
+                                <div id="profile-videos-list" class="space-y-2 pt-2">
+                                    <!-- Listado de videos subidos -->
+                                </div>
+                            </div>
+
                             <div class="flex items-center space-x-3 pt-2">
                                 <input type="checkbox" id="p-published" ${pData.published ? 'checked' : ''} class="w-4 h-4 accent-cardenal-red">
-                                <label for="p-published" class="text-sm font-medium text-gray-300">Publicar mi perfil en el Mercado Sub-17</label>
+                                <label for="p-published" class="text-sm font-medium text-gray-300">Publicar mi perfil en el Mercado Nacional</label>
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Guardar y Publicar Perfil</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">Guardar y Publicar Perfil</button>
                         </form>
                     </div>
                 `;
+                this.renderExistingVideosList(pData.videos || []);
+            }
+
+            renderExistingVideosList(videos) {
+                const listEl = document.getElementById('profile-videos-list');
+                if (!listEl) return;
+                if (!videos || videos.length === 0) {
+                    listEl.innerHTML = `<p class="text-xs text-gray-400 italic">No hay videos subidos todavía.</p>`;
+                    return;
+                }
+                listEl.innerHTML = videos.map((v, idx) => `
+                    <div class="flex justify-between items-center bg-black/60 border border-cardenal-border p-3 rounded-xl text-xs">
+                        <div class="flex items-center space-x-3 truncate">
+                            <i class="fa-solid fa-play text-cardenal-gold"></i>
+                            <span class="font-bold text-white truncate">${v.title || `Video ${idx + 1}`}</span>
+                        </div>
+                        <button type="button" onclick="app.removeVideo(${idx})" class="text-red-400 hover:text-red-300 font-semibold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            async uploadVideoToStorage() {
+                const fileInput = document.getElementById('video-file-input');
+                const titleInput = document.getElementById('video-title-input');
+                const file = fileInput.files[0];
+                const title = titleInput.value.trim() || 'Jugada Destacada';
+
+                if (!file) {
+                    this.showToast("Selecciona un archivo de video válido.", "error");
+                    return;
+                }
+                if (file.size > 50 * 1024 * 1024) {
+                    this.showToast("El video supera el límite de 50MB.", "error");
+                    return;
+                }
+
+                const progressContainer = document.getElementById('upload-progress-container');
+                const progressBar = document.getElementById('upload-progress-bar');
+                const progressText = document.getElementById('upload-progress-text');
+                progressContainer.classList.remove('hidden');
+
+                const storageRef = ref(storage, `playerVideos/${this.currentUser.uid}/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progressBar.style.width = progress + '%';
+                        progressText.innerText = `Subiendo: ${Math.round(progress)}%`;
+                    }, 
+                    (error) => {
+                        console.error("Error subiendo video:", error);
+                        progressContainer.classList.add('hidden');
+                        this.showToast("Error al subir el video a Storage.", "error");
+                    }, 
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        progressContainer.classList.add('hidden');
+                        fileInput.value = '';
+                        titleInput.value = '';
+
+                        // Agregar al documento de jugador
+                        try {
+                            const docRef = doc(db, 'players', this.currentUser.uid);
+                            const snap = await getDoc(docRef);
+                            let currentVideos = snap.exists() ? (snap.data().videos || []) : [];
+                            currentVideos.push({ title, url: downloadURL, createdAt: new Date().toISOString() });
+                            await setDoc(docRef, { videos: currentVideos }, { merge: true });
+                            this.renderExistingVideosList(currentVideos);
+                            this.showToast("¡Video subido con éxito!", "success");
+                        } catch (err) {
+                            this.showToast("Error guardando referencia del video.", "error");
+                        }
+                    }
+                );
+            }
+
+            async removeVideo(index) {
+                try {
+                    const docRef = doc(db, 'players', this.currentUser.uid);
+                    const snap = await getDoc(docRef);
+                    if (!snap.exists()) return;
+                    let currentVideos = snap.data().videos || [];
+                    currentVideos.splice(index, 1);
+                    await setDoc(docRef, { videos: currentVideos }, { merge: true });
+                    this.renderExistingVideosList(currentVideos);
+                    this.showToast("Video eliminado.", "info");
+                } catch (e) {
+                    this.showToast("Error eliminando video.", "error");
+                }
             }
 
             async handleProfileSave(e) {
                 e.preventDefault();
                 const sportingName = document.getElementById('p-name').value;
+                const department = document.getElementById('p-dep').value;
+                const locality = document.getElementById('p-loc').value;
+                const category = document.getElementById('p-cat').value;
                 const position = document.getElementById('p-pos').value;
                 const preferredFoot = document.getElementById('p-foot').value;
                 const currentClub = document.getElementById('p-club').value;
                 const height = document.getElementById('p-height').value;
                 const weight = document.getElementById('p-weight').value;
                 const status = document.getElementById('p-status').value;
-                const videoUrl = document.getElementById('p-video').value;
                 const description = document.getElementById('p-desc').value;
                 const published = document.getElementById('p-published').checked;
 
                 try {
+                    const docSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
+                    let existingVideos = docSnap.exists() ? (docSnap.data().videos || []) : [];
+
                     const profileData = {
                         uid: this.currentUser.uid,
                         sportingName,
-                        category: 'Sub-17',
+                        department,
+                        locality,
+                        category,
                         position,
                         preferredFoot,
                         currentClub,
                         height,
                         weight,
                         status,
-                        videoUrl,
                         description,
+                        videos: existingVideos,
                         published,
                         lastUpdated: serverTimestamp()
                     };
 
                     await setDoc(doc(db, 'players', this.currentUser.uid), profileData, { merge: true });
-                    this.showToast("¡Perfil futbolístico actualizado con éxito!", "success");
+                    this.showToast("¡Perfil nacional actualizado con éxito!", "success");
                     this.navigateTo('player-panel');
                 } catch (error) {
                     this.showToast("Error guardando perfil: " + error.message, "error");
                 }
             }
 
-            // --- MERCADO DE PASES SUB-17 ---
+            // --- MERCADO NACIONAL DE FUTBOLISTAS ---
             async renderMarket(container) {
                 container.innerHTML = `
-                    <div class="space-y-8">
+                    <div class="space-y-6">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
                             <div>
-                                <h2 class="text-3xl font-extrabold text-white">Mercado de Pases Sub-17</h2>
-                                <p class="text-xs text-gray-400 mt-1">Jugadores juveniles registrados y publicados en Durazno, Uruguay</p>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Mercado Nacional de Futbolistas</h2>
+                                <p class="text-xs text-gray-400 mt-1">Talentos publicados en todo el territorio uruguayo</p>
                             </div>
                             <div class="flex items-center space-x-3">
                                 ${this.currentUser ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
-                                <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                                    <i class="fa-solid fa-database mr-1"></i> Cargar Datos Demo
+                                <button onclick="app.seedNationalDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                    <i class="fa-solid fa-database mr-1"></i> Cargar Datos País
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Filtros Avanzados -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
-                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                        <!-- Filtros Avanzados Nacionales -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
+                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                            <select id="filter-department" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                <option value="">Todos los departamentos</option>
+                                ${URUGUAY_DEPARTMENTS.map(d => `<option value="${d}">${d}</option>`).join('')}
+                            </select>
+                            <select id="filter-category" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                <option value="">Todas las categorías</option>
+                                ${CATEGORIES_LIST.map(c => `<option value="${c}">${c}</option>`).join('')}
+                            </select>
+                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
                                 <option value="">Todas las posiciones</option>
                                 <option value="Arquero">Arquero</option>
                                 <option value="Defensa central">Defensa central</option>
                                 <option value="Mediocampista central">Mediocampista central</option>
                                 <option value="Extremo derecho">Extremo derecho</option>
                                 <option value="Delantero centro">Delantero centro</option>
-                            </select>
-                            <select id="filter-status" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                                <option value="">Cualquier disponibilidad</option>
-                                <option value="Disponible">Disponible para nuevas oportunidades</option>
-                                <option value="Prestamo">En préstamo</option>
                             </select>
                         </div>
 
@@ -748,7 +993,7 @@
                     this.playersCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => p.published !== false);
                     this.renderPlayerCards(this.playersCache);
                 } catch (error) {
-                    console.error("Error cargando jugadores:", error);
+                    console.error("Error cargando futbolistas:", error);
                 }
             }
 
@@ -757,25 +1002,26 @@
                 if (!grid) return;
 
                 if (players.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay jugadores publicados. Haz clic en "Cargar Datos Demo" o publica tu perfil.</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay futbolistas publicados con esos filtros. Haz clic en "Cargar Datos País".</div>`;
                     return;
                 }
 
                 grid.innerHTML = players.map(p => `
                     <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:border-cardenal-red transition group">
                         <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
-                                <span class="text-xs text-gray-400"><i class="fa-solid fa-shield mr-1"></i>${p.currentClub || 'Libre'}</span>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${p.position}</span>
+                                <span class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>${p.department || 'Uruguay'}</span>
                             </div>
-                            <h3 class="text-xl font-bold text-white group-hover:text-cardenal-gold transition">${p.sportingName}</h3>
-                            <p class="text-xs text-gray-400 mt-1">Categoría: ${p.category || 'Sub-17'} • Pierna: ${p.preferredFoot || 'Derecha'}</p>
-                            <p class="text-sm text-gray-300 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
+                            <h3 class="text-lg font-bold text-white group-hover:text-cardenal-gold transition">${p.sportingName}</h3>
+                            <p class="text-xs text-gray-400 mt-1">${p.category || 'Sub-17'} • Club: ${p.currentClub || 'Libre'}</p>
+                            <p class="text-xs text-gray-300 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
+                            ${p.videos && p.videos.length > 0 ? `<p class="text-[10px] text-emerald-400 mt-2"><i class="fa-solid fa-video mr-1"></i>${p.videos.length} video(s) de jugadas</p>` : ''}
                         </div>
-                        <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status || 'Disponible'}</span>
+                        <div class="pt-4 mt-4 border-t border-cardenal-border flex justify-between items-center">
+                            <span class="text-[10px] font-semibold px-2 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status || 'Disponible'}</span>
                             <div class="flex space-x-2">
-                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Perfil</a>
+                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ver Perfil</a>
                                 ${this.activeRole === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
                             </div>
                         </div>
@@ -784,15 +1030,17 @@
             }
 
             filterPlayers() {
-                const nameQuery = document.getElementById('filter-name').value.toLowerCase();
-                const posQuery = document.getElementById('filter-position').value;
-                const statusQuery = document.getElementById('filter-status').value;
+                const nameQuery = document.getElementById('filter-name')?.value.toLowerCase() || '';
+                const depQuery = document.getElementById('filter-department')?.value || '';
+                const catQuery = document.getElementById('filter-category')?.value || '';
+                const posQuery = document.getElementById('filter-position')?.value || '';
 
                 const filtered = this.playersCache.filter(p => {
                     const matchesName = p.sportingName.toLowerCase().includes(nameQuery);
+                    const matchesDep = !depQuery || p.department === depQuery;
+                    const matchesCat = !catQuery || p.category === catQuery;
                     const matchesPos = !posQuery || p.position === posQuery;
-                    const matchesStatus = !statusQuery || (p.status && p.status.toLowerCase().includes(statusQuery.toLowerCase()));
-                    return matchesName && matchesPos && matchesStatus;
+                    return matchesName && matchesDep && matchesCat && matchesPos;
                 });
 
                 this.renderPlayerCards(filtered);
@@ -802,7 +1050,7 @@
                 try {
                     const docSnap = await getDoc(doc(db, 'players', playerId));
                     if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Jugador no encontrado.</div>`;
+                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Futbolista no encontrado.</div>`;
                         return;
                     }
                     const p = docSnap.data();
@@ -812,46 +1060,66 @@
                             <button onclick="app.navigateTo('market')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
                                 <i class="fa-solid fa-arrow-left"></i><span>Volver al Mercado</span>
                             </button>
-                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-                                    <div class="w-24 h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-4xl text-cardenal-gold font-extrabold">
+                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-3xl sm:text-4xl text-cardenal-gold font-extrabold shadow">
                                         ${p.sportingName.charAt(0)}
                                     </div>
-                                    <div class="space-y-2">
-                                        <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
-                                        <h2 class="text-3xl font-extrabold text-white">${p.sportingName}</h2>
-                                        <p class="text-sm text-gray-400"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-white">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
+                                    <div class="space-y-1">
+                                        <div class="flex gap-2">
+                                            <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase">${p.position}</span>
+                                            <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase">${p.department || 'Uruguay'}</span>
+                                        </div>
+                                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">${p.sportingName}</h2>
+                                        <p class="text-xs text-gray-400"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-white">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-cardenal-border text-center">
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Pierna Hábil</span>
-                                        <p class="text-base font-bold text-white mt-1">${p.preferredFoot}</p>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
+                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Pierna Hábil</span>
+                                        <p class="text-sm font-bold text-white mt-1">${p.preferredFoot}</p>
                                     </div>
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Estado</span>
-                                        <p class="text-sm font-bold text-emerald-400 mt-1">${p.status}</p>
+                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
+                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Estado</span>
+                                        <p class="text-xs font-bold text-emerald-400 mt-1">${p.status}</p>
                                     </div>
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Altura</span>
-                                        <p class="text-base font-bold text-white mt-1">${p.height || 'No especificada'}</p>
+                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
+                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Altura</span>
+                                        <p class="text-sm font-bold text-white mt-1">${p.height || 'No especificada'}</p>
                                     </div>
-                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                        <span class="text-xs text-gray-400 uppercase font-semibold">Peso</span>
-                                        <p class="text-base font-bold text-white mt-1">${p.weight || 'No especificado'}</p>
+                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
+                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Peso</span>
+                                        <p class="text-sm font-bold text-white mt-1">${p.weight || 'No especificado'}</p>
                                     </div>
                                 </div>
 
-                                <div class="mt-8 space-y-4">
-                                    <h3 class="text-lg font-bold text-white">Descripción Deportiva</h3>
-                                    <p class="text-gray-300 text-sm leading-relaxed bg-black/40 p-4 rounded-xl border border-cardenal-border">${p.description || 'Sin descripción.'}</p>
-                                    ${p.videoUrl ? `<div class="pt-4"><a href="${p.videoUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 border border-cardenal-border text-white px-4 py-2.5 rounded-xl text-xs font-bold inline-flex items-center space-x-2"><i class="fa-brands fa-youtube text-red-500 text-base"></i><span>Ver Video de Jugadas Destacadas</span></a></div>` : ''}
+                                <div class="space-y-3">
+                                    <h3 class="text-base font-bold text-white">Descripción Deportiva</h3>
+                                    <p class="text-gray-300 text-xs sm:text-sm leading-relaxed bg-black/40 p-4 rounded-xl border border-cardenal-border">${p.description || 'Sin descripción.'}</p>
+                                </div>
+
+                                <!-- Galería de Videos de Jugadas (HTML5 Player) -->
+                                <div class="space-y-4 pt-2">
+                                    <h3 class="text-base font-bold text-white"><i class="fa-solid fa-video text-cardenal-gold mr-2"></i>Videos y Jugadas Destacadas</h3>
+                                    ${p.videos && p.videos.length > 0 ? `
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            ${p.videos.map(v => `
+                                                <div class="bg-black border border-cardenal-border rounded-2xl p-4 space-y-2 shadow-lg">
+                                                    <p class="text-xs font-bold text-white">${v.title || 'Jugada'}</p>
+                                                    <video controls class="w-full rounded-xl max-h-60 bg-black">
+                                                        <source src="${v.url}" type="video/mp4">
+                                                        Tu navegador no soporta reproducción de video.
+                                                    </video>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    ` : `<p class="text-xs text-gray-400 italic">Este futbolista aún no ha publicado videos de jugadas.</p>`}
                                 </div>
 
                                 ${this.activeRole === 'club' ? `
-                                    <div class="mt-8 pt-6 border-t border-cardenal-border flex justify-end">
-                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2">
+                                    <div class="pt-6 border-t border-cardenal-border flex justify-end">
+                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2 text-sm">
                                             <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje / Préstamo</span>
                                         </a>
                                     </div>
@@ -864,14 +1132,14 @@
                 }
             }
 
-            // --- CLUBES Y SOLICITUDES DE INGRESO ---
+            // --- CLUBES DE URUGUAY Y SOLICITUDES ---
             async renderClubs(container) {
                 container.innerHTML = `
-                    <div class="space-y-8">
+                    <div class="space-y-6">
                         <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl flex justify-between items-center">
                             <div>
-                                <h2 class="text-3xl font-extrabold text-white">Clubes de Durazno</h2>
-                                <p class="text-xs text-gray-400 mt-1">Instituciones y planteles juveniles Sub-17 registrados (Datos Ficticios - Demostración)</p>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Directorio de Clubes</h2>
+                                <p class="text-xs text-gray-400 mt-1">Instituciones y formativas en Uruguay</p>
                             </div>
                         </div>
                         <div id="clubs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -885,22 +1153,22 @@
                     const grid = document.getElementById('clubs-grid');
                     
                     if (this.clubsCache.length === 0) {
-                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados. Carga los datos demo desde el Mercado.</div>`;
+                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados. Carga los datos país desde el Mercado.</div>`;
                         return;
                     }
 
                     grid.innerHTML = this.clubsCache.map(c => `
                         <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between">
                             <div>
-                                <div class="flex justify-between items-start mb-4">
-                                    <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${c.city || 'Durazno'}</span>
-                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-900">Demostración</span>
+                                <div class="flex justify-between items-start mb-3">
+                                    <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${c.department || 'Uruguay'}</span>
+                                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-900">Afiliado</span>
                                 </div>
-                                <h3 class="text-xl font-bold text-white">${c.name}</h3>
-                                <p class="text-xs text-gray-400 mt-1">Categorías: Sub-17 • Sub-15</p>
-                                <p class="text-sm text-gray-300 mt-3 line-clamp-2">${c.description || 'Sin descripción institucional.'}</p>
+                                <h3 class="text-lg font-bold text-white">${c.name}</h3>
+                                <p class="text-xs text-gray-400 mt-1">Categorías: ${c.categories?.join(', ') || 'Juveniles y Primera'}</p>
+                                <p class="text-xs text-gray-300 mt-3 line-clamp-2">${c.description || 'Sin descripción institucional.'}</p>
                             </div>
-                            <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
+                            <div class="pt-4 mt-4 border-t border-cardenal-border flex justify-between items-center">
                                 <a href="#club-profile/${c.id}" onclick="app.navigateTo('club-profile', '${c.id}')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white px-4 py-2 rounded-xl text-xs font-bold transition">Ver Club</a>
                                 <button onclick="app.openApplyClubModal('${c.id}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Solicitar Ingreso</button>
                             </div>
@@ -921,22 +1189,22 @@
                     const c = docSnap.data();
 
                     container.innerHTML = `
-                        <div class="max-w-4xl mx-auto space-y-8">
+                        <div class="max-w-4xl mx-auto space-y-6">
                             <button onclick="app.navigateTo('clubs')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
                                 <i class="fa-solid fa-arrow-left"></i><span>Volver a Clubes</span>
                             </button>
-                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
-                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                     <div>
-                                        <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-xs font-bold uppercase">Demostración</span>
-                                        <h2 class="text-3xl font-extrabold text-white mt-2">${c.name}</h2>
-                                        <p class="text-xs text-gray-400 mt-1">${c.city || 'Durazno'} • Institución deportiva juvenil</p>
+                                        <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${c.department || 'Uruguay'}</span>
+                                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">${c.name}</h2>
+                                        <p class="text-xs text-gray-400 mt-1">Institución deportiva oficial en Uruguay</p>
                                     </div>
                                     <button onclick="app.openApplyClubModal('${clubId}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow">
                                         <i class="fa-solid fa-file-signature mr-1"></i> SOLICITAR INGRESAR AL CLUB
                                     </button>
                                 </div>
-                                <p class="text-gray-300 text-sm bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
+                                <p class="text-gray-300 text-xs sm:text-sm bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
                             </div>
                         </div>
                     `;
@@ -947,7 +1215,7 @@
 
             async openApplyClubModal(clubId, clubName, repUid) {
                 if (!this.currentUser) {
-                    this.showToast("Debes iniciar sesión para solicitar ingreso.", "error");
+                    this.showToast("Debes iniciar sesión como futbolista para solicitar ingreso.", "error");
                     this.navigateTo('login');
                     return;
                 }
@@ -964,29 +1232,25 @@
                 content.innerHTML = `
                     <div class="space-y-6">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-white">Solicitud de Ingreso a ${clubName}</h3>
+                            <h3 class="text-lg font-bold text-white">Solicitud de Ingreso a ${clubName}</h3>
                             <button onclick="app.closeModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
                         </div>
                         <form onsubmit="app.handleApplyClubSubmit(event, '${clubId}', '${repUid}')" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre Deportivo</label>
-                                <input type="text" id="app-name" value="${pData.sportingName}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <input type="text" id="app-name" value="${pData.sportingName}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Posición Principal</label>
-                                    <input type="text" id="app-pos" value="${pData.position}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <input type="text" id="app-pos" value="${pData.position}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Enlace de Video (Opcional)</label>
-                                    <input type="url" id="app-video" value="${pData.videoUrl || ''}" placeholder="https://youtube.com/..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Motivo / Mensaje</label>
+                                    <input type="text" id="app-msg" required placeholder="Deseo sumarme a las formativas..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Mensaje para el Entrenador / Motivo</label>
-                                <textarea id="app-msg" required rows="3" placeholder="Explica por qué deseas sumarte a las formativas..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">${pData.description || ''}</textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Solicitud Formal</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-xs">Enviar Solicitud Formal</button>
                         </form>
                     </div>
                 `;
@@ -1001,7 +1265,6 @@
                 e.preventDefault();
                 const name = document.getElementById('app-name').value;
                 const position = document.getElementById('app-pos').value;
-                const videoUrl = document.getElementById('app-video').value;
                 const message = document.getElementById('app-msg').value;
 
                 try {
@@ -1011,7 +1274,6 @@
                         playerUid: this.currentUser.uid,
                         playerName: name,
                         position,
-                        videoUrl,
                         message,
                         status: 'Pendiente',
                         createdAt: serverTimestamp()
@@ -1020,8 +1282,8 @@
                     if (repUid) {
                         await addDoc(collection(db, 'notifications'), {
                             recipientUid: repUid,
-                            title: 'Nueva Solicitud de Ingreso Sub-17',
-                            message: `El jugador ${name} solicitó ingresar al plantel.`,
+                            title: 'Nueva Solicitud de Ingreso',
+                            message: `El futbolista ${name} solicitó ingresar al plantel.`,
                             read: false,
                             createdAt: serverTimestamp()
                         });
@@ -1034,7 +1296,7 @@
                 }
             }
 
-            // --- SISTEMA DE FICHAJES Y PRÉSTAMOS ---
+            // --- SISTEMA DE FICHAJES Y PRÉSTAMOS EN UYU ---
             async renderCreateProposal(container, playerId) {
                 const playerDoc = await getDoc(doc(db, 'players', playerId));
                 if (!playerDoc.exists()) {
@@ -1044,16 +1306,16 @@
                 const player = playerDoc.data();
 
                 container.innerHTML = `
-                    <div class="max-w-xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
+                    <div class="max-w-xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
                         <div>
                             <span class="text-xs text-cardenal-gold font-bold uppercase">Propuesta Oficial de Fichaje</span>
                             <h2 class="text-2xl font-bold text-white mt-1">Oferta para: ${player.sportingName}</h2>
-                            <p class="text-xs text-gray-400">Club actual: ${player.currentClub || 'Libre'}</p>
+                            <p class="text-xs text-gray-400">Departamento: ${player.department || 'Uruguay'} • Club actual: ${player.currentClub || 'Libre'}</p>
                         </div>
                         <form id="proposal-form" class="space-y-4" onsubmit="app.handleCreateProposalSubmit(event, '${playerId}')">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Modalidad de Operación</label>
-                                <select id="prop-modality" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleProposalFields(this.value)">
+                                <select id="prop-modality" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none" onchange="app.toggleProposalFields(this.value)">
                                     <option value="money">Transferencia Económica (Pesos Uruguayos - UYU)</option>
                                     <option value="free">Incorporación Gratuita</option>
                                     <option value="loan">Préstamo Temporal con Fechas</option>
@@ -1063,29 +1325,25 @@
                             </div>
                             <div id="field-amount">
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Importe en Pesos Uruguayos ($U)</label>
-                                <input type="number" id="prop-amount" placeholder="Ej: 5000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                <input type="number" id="prop-amount" placeholder="Ej: 15000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none">
                             </div>
-                            <div id="field-loan" class="hidden space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
+                            <div id="field-loan" class="hidden space-y-3">
+                                <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Inicio</label>
-                                        <input type="date" id="prop-start" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                        <input type="date" id="prop-start" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Finalización</label>
-                                        <input type="date" id="prop-end" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Fin</label>
+                                        <input type="date" id="prop-end" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
                                     </div>
                                 </div>
                             </div>
-                            <div id="field-benefits" class="hidden">
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Beneficios (Transporte, Materiales, etc.)</label>
-                                <input type="text" id="prop-benefits" placeholder="Ej: Equipamiento deportivo y traslado" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
-                            </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Mensaje para el Jugador y Tutores</label>
-                                <textarea id="prop-comments" rows="3" placeholder="Detalles de la propuesta..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none"></textarea>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Mensaje y Condiciones</label>
+                                <textarea id="prop-comments" rows="3" placeholder="Detalles de la propuesta..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none"></textarea>
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Propuesta Formal</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-xs">Enviar Propuesta Formal</button>
                         </form>
                     </div>
                 `;
@@ -1094,20 +1352,10 @@
             toggleProposalFields(modality) {
                 const fAmount = document.getElementById('field-amount');
                 const fLoan = document.getElementById('field-loan');
-                const fBenefits = document.getElementById('field-benefits');
-
                 fAmount.classList.add('hidden');
                 fLoan.classList.add('hidden');
-                fBenefits.classList.add('hidden');
-
-                if (modality === 'money') fAmount.classList.remove('hidden');
-                if (modality === 'loan') fLoan.classList.remove('hidden');
-                if (modality === 'benefits') fBenefits.classList.remove('hidden');
-                if (modality === 'combined') {
-                    fAmount.classList.remove('hidden');
-                    fLoan.classList.remove('hidden');
-                    fBenefits.classList.remove('hidden');
-                }
+                if (modality === 'money' || modality === 'combined') fAmount.classList.remove('hidden');
+                if (modality === 'loan' || modality === 'combined') fLoan.classList.remove('hidden');
             }
 
             async handleCreateProposalSubmit(e, playerId) {
@@ -1116,7 +1364,6 @@
                 const amount = document.getElementById('prop-amount').value || 0;
                 const startDate = document.getElementById('prop-start').value || '';
                 const endDate = document.getElementById('prop-end').value || '';
-                const benefits = document.getElementById('prop-benefits').value || '';
                 const comments = document.getElementById('prop-comments').value || '';
 
                 try {
@@ -1128,7 +1375,6 @@
                         amount: Number(amount),
                         startDate,
                         endDate,
-                        benefits,
                         comments,
                         status: 'Pendiente',
                         createdAt: serverTimestamp()
@@ -1136,8 +1382,8 @@
 
                     await addDoc(collection(db, 'notifications'), {
                         recipientUid: playerId,
-                        title: 'Nueva Oferta de Fichaje',
-                        message: `El club ${this.userData.name} te ha enviado una propuesta de fichaje.`,
+                        title: 'Nueva Oferta de Fichaje Nacional',
+                        message: `El club ${this.userData.name} te ha enviado una propuesta.`,
                         read: false,
                         createdAt: serverTimestamp()
                     });
@@ -1149,7 +1395,7 @@
                 }
             }
 
-            // --- PANEL DEL JUGADOR ---
+            // --- PANEL DEL FUTBOLISTA ---
             async renderPlayerPanel(container) {
                 if (!this.currentUser) {
                     this.navigateTo('login');
@@ -1157,19 +1403,19 @@
                 }
 
                 container.innerHTML = `
-                    <div class="space-y-8">
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="space-y-6">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <div>
-                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Jugador Sub-17</span>
-                                <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Jugador'}</h2>
+                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Futbolista</span>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Futbolista'}</h2>
                             </div>
-                            <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil Futbolístico</span></a>
+                            <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil / Videos</span></a>
                         </div>
 
                         <!-- Propuestas Recibidas -->
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl space-y-6">
-                            <h3 class="text-xl font-bold text-white">Mis Propuestas y Ofertas Recibidas</h3>
-                            <div id="player-proposals" class="space-y-4">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl space-y-4">
+                            <h3 class="text-lg font-bold text-white">Mis Propuestas y Ofertas Recibidas</h3>
+                            <div id="player-proposals" class="space-y-3">
                                 <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
                             </div>
                         </div>
@@ -1183,73 +1429,26 @@
                     const propContainer = document.getElementById('player-proposals');
 
                     if (list.length === 0) {
-                        propContainer.innerHTML = `<p class="text-sm text-gray-400">No tenés propuestas recibidas en este momento.</p>`;
+                        propContainer.innerHTML = `<p class="text-xs text-gray-400">No tenés propuestas recibidas en este momento.</p>`;
                         return;
                     }
 
                     propContainer.innerHTML = list.map(prop => `
-                        <div class="bg-black/40 border border-cardenal-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="bg-black/40 border border-cardenal-border p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <div class="space-y-1">
-                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-950 text-amber-400 uppercase">${prop.modality}</span>
-                                <h4 class="text-lg font-bold text-white mt-1">Oferta de: ${prop.senderName}</h4>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-950 text-amber-400 uppercase">${prop.modality}</span>
+                                <h4 class="text-sm font-bold text-white mt-1">Oferta de: ${prop.senderName}</h4>
                                 <p class="text-xs text-gray-300">Importe: <strong>$U ${prop.amount || 0}</strong> • Comentarios: ${prop.comments || 'Ninguno'}</p>
                                 <p class="text-xs text-emerald-400 font-semibold">Estado: ${prop.status}</p>
                             </div>
                             <div class="flex flex-wrap gap-2">
                                 <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Aceptar</button>
-                                <button onclick="app.openCounterProposalModal('${prop.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Contrapropuesta</button>
                                 <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Rechazar</button>
                             </div>
                         </div>
                     `).join('');
                 } catch (e) {
                     console.error("Error cargando propuestas:", e);
-                }
-            }
-
-            openCounterProposalModal(propId) {
-                const modal = document.getElementById('global-modal');
-                const content = document.getElementById('modal-content');
-
-                content.innerHTML = `
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-white">Enviar Contrapropuesta al Club</h3>
-                            <button onclick="app.closeModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-                        </div>
-                        <form onsubmit="app.handleCounterProposalSubmit(event, '${propId}')" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nuevo Importe Solicitado ($U)</label>
-                                <input type="number" id="counter-amount" placeholder="Ej: 8000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Comentarios y Condiciones</label>
-                                <textarea id="counter-msg" required rows="3" placeholder="Explica tus condiciones..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none"></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Contrapropuesta</button>
-                        </form>
-                    </div>
-                `;
-                modal.classList.remove('hidden');
-            }
-
-            async handleCounterProposalSubmit(e, propId) {
-                e.preventDefault();
-                const amount = document.getElementById('counter-amount').value || 0;
-                const message = document.getElementById('counter-msg').value;
-
-                try {
-                    await updateDoc(doc(db, 'transferOffers', propId), {
-                        status: 'Contrapropuesta',
-                        counterAmount: Number(amount),
-                        counterMessage: message
-                    });
-
-                    this.showToast("Contrapropuesta enviada con éxito.", "success");
-                    this.closeModal();
-                    this.renderPlayerPanel(document.getElementById('app-view'));
-                } catch (error) {
-                    this.showToast("Error al enviar contrapropuesta.", "error");
                 }
             }
 
@@ -1271,16 +1470,16 @@
                 }
 
                 container.innerHTML = `
-                    <div class="space-y-8">
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl">
+                    <div class="space-y-6">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl">
                             <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Club</span>
-                            <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Representante'}</h2>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Representante'}</h2>
                         </div>
 
-                        <!-- Solicitudes de Jugadores -->
-                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl space-y-6">
-                            <h3 class="text-xl font-bold text-white">Solicitudes de Ingreso al Club</h3>
-                            <div id="club-applications" class="space-y-4">
+                        <!-- Solicitudes de Ingreso -->
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl space-y-4">
+                            <h3 class="text-lg font-bold text-white">Solicitudes de Ingreso al Plantel</h3>
+                            <div id="club-applications" class="space-y-3">
                                 <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
                             </div>
                         </div>
@@ -1294,14 +1493,14 @@
                     const appContainer = document.getElementById('club-applications');
 
                     if (list.length === 0) {
-                        appContainer.innerHTML = `<p class="text-sm text-gray-400">No tenés solicitudes de ingreso pendientes.</p>`;
+                        appContainer.innerHTML = `<p class="text-xs text-gray-400">No tenés solicitudes de ingreso pendientes.</p>`;
                         return;
                     }
 
                     appContainer.innerHTML = list.map(app => `
-                        <div class="bg-black/40 border border-cardenal-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="bg-black/40 border border-cardenal-border p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <div class="space-y-1">
-                                <h4 class="text-lg font-bold text-white">${app.playerName}</h4>
+                                <h4 class="text-sm font-bold text-white">${app.playerName}</h4>
                                 <p class="text-xs text-gray-300">Posición: <strong>${app.position}</strong> • Mensaje: "${app.message}"</p>
                                 <p class="text-xs text-amber-400 font-semibold">Estado: ${app.status}</p>
                             </div>
@@ -1312,7 +1511,7 @@
                         </div>
                     `).join('');
                 } catch (e) {
-                    console.error("Error cargando solicitudes del club:", e);
+                    console.error("Error cargando solicitudes:", e);
                 }
             }
 
@@ -1332,10 +1531,10 @@
                     return;
                 }
                 container.innerHTML = `
-                    <div class="max-w-4xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
-                        <h2 class="text-3xl font-extrabold text-white">Panel de Administración</h2>
-                        <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-6 py-3 rounded-xl transition shadow">
-                            <i class="fa-solid fa-database mr-2"></i> Inicializar / Reiniciar Base de Datos Demo
+                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
+                        <h2 class="text-2xl font-extrabold text-white">Panel de Administración</h2>
+                        <button onclick="app.seedNationalDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow">
+                            <i class="fa-solid fa-database mr-2"></i> Inicializar / Cargar Datos Nacionales
                         </button>
                     </div>
                 `;
@@ -1348,8 +1547,8 @@
                 }
                 container.innerHTML = `
                     <div class="max-w-2xl mx-auto space-y-6">
-                        <h2 class="text-3xl font-extrabold text-white">Notificaciones</h2>
-                        <div id="notif-list" class="space-y-4">
+                        <h2 class="text-2xl font-extrabold text-white">Notificaciones</h2>
+                        <div id="notif-list" class="space-y-3">
                             <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
                         </div>
                     </div>
@@ -1361,14 +1560,14 @@
                     const listEl = document.getElementById('notif-list');
 
                     if (list.length === 0) {
-                        listEl.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl text-center text-gray-400">No tenés notificaciones nuevas.</div>`;
+                        listEl.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl text-center text-gray-400 text-xs">No tenés notificaciones nuevas.</div>`;
                         return;
                     }
 
                     listEl.innerHTML = list.map(n => `
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl">
-                            <h4 class="text-base font-bold text-white">${n.title}</h4>
-                            <p class="text-sm text-gray-300 mt-1">${n.message}</p>
+                        <div class="bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
+                            <h4 class="text-sm font-bold text-white">${n.title}</h4>
+                            <p class="text-xs text-gray-300 mt-1">${n.message}</p>
                         </div>
                     `).join('');
                 } catch (e) {
@@ -1378,29 +1577,27 @@
 
             renderHelp(container) {
                 container.innerHTML = `
-                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
-                        <h2 class="text-3xl font-extrabold text-white">Ayuda, Privacidad y Protección de Menores</h2>
-                        <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
-                            <p><strong>El Cardenal Sporting</strong> está diseñado para el fútbol juvenil Sub-17 de Durazno, Uruguay. Cumplimos con estrictas normativas de privacidad y protección de menores.</p>
-                            <h3 class="text-lg font-bold text-white pt-2">Privacidad por Defecto</h3>
-                            <p>Los datos sensibles (teléfonos, correos personales, domicilios y documentos de identidad) no se publican públicamente. Las comunicaciones y propuestas de fichaje pasan por filtros formales y seguros.</p>
-                        </div>
+                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6 text-xs sm:text-sm text-gray-300 leading-relaxed">
+                        <h2 class="text-2xl font-extrabold text-white">Protección de Menores y Privacidad (Uruguay)</h2>
+                        <p><strong>El Cardenal Sporting</strong> cumple con la normativa vigente en Uruguay para la protección de datos personales de menores de edad y deportistas formativos.</p>
+                        <h3 class="text-base font-bold text-white pt-2">Privacidad y Seguridad</h3>
+                        <p>Los datos de contacto privado (teléfono personal, domicilios, documentos) no se muestran públicamente. Las propuestas de fichaje y scouting pasan por canales formales en la plataforma.</p>
                     </div>
                 `;
             }
 
-            async seedDemoData() {
+            async seedNationalDemoData() {
                 try {
-                    this.showToast("Generando datos ficticios de demostración...", "info");
+                    this.showToast("Generando datos nacionales de demostración...", "info");
                     const batch = writeBatch(db);
 
                     const clubsData = [
-                        { name: "Club Atlético Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Institución histórica de la capital departamental." },
-                        { name: "Racing de Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Semillero de talentos juveniles en Durazno." },
-                        { name: "Wanderers de Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Tradición y formación competitiva." },
-                        { name: "Rampla Juniors de Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Pasión y garra en divisiones formativas." },
-                        { name: "Santa Bernardina FC", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Club representativo de la zona norte." },
-                        { name: "Central Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Competencia y desarrollo juvenil." }
+                        { name: "Peñarol (Formativas)", department: "Montevideo", categories: ["Sub-16", "Sub-17", "Sub-19"], verified: true, description: "Institución deportiva oficial." },
+                        { name: "Nacional (Formativas)", department: "Montevideo", categories: ["Sub-16", "Sub-17", "Sub-19"], verified: true, description: "Institución deportiva oficial." },
+                        { name: "Defensor Sporting", department: "Montevideo", categories: ["Sub-17", "Sub-20"], verified: true, description: "Semillero tradicional de Uruguay." },
+                        { name: "Deportivo Maldonado", department: "Maldonado", categories: ["Sub-17", "Primera División"], verified: true, description: "Representante del fútbol fernandino." },
+                        { name: "Salto FC", department: "Salto", categories: ["Sub-17", "Primera División"], verified: true, description: "Fútbol profesional del litoral." },
+                        { name: "Club Atlético Durazno", department: "Durazno", categories: ["Sub-17", "Sub-19"], verified: true, description: "Tradición futbolística del centro del país." }
                     ];
 
                     for (let c of clubsData) {
@@ -1409,27 +1606,29 @@
                     }
 
                     const positions = ['Arquero', 'Defensa central', 'Mediocampista central', 'Extremo derecho', 'Delantero centro'];
-                    const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez', 'Santiago Fernández', 'Ignacio López', 'Thiago Sosa', 'Bruno Ferreira', 'Lautaro Ramírez'];
-                    const clubsList = ['Club Atlético Durazno', 'Racing de Durazno', 'Wanderers de Durazno', 'Libre', 'Santa Bernardina FC'];
-
-                    for (let i = 0; i < 10; i++) {
+                    const names = ['Santiago Rodríguez', 'Joaquín Silva', 'Matías Pereira', 'Facundo Gómez', 'Ignacio Martínez', 'Lucas Fernández', 'Thiago Sosa', 'Agustín Ramírez'];
+                    
+                    for (let i = 0; i < 15; i++) {
                         const refDoc = doc(collection(db, 'players'));
+                        const dep = URUGUAY_DEPARTMENTS[i % URUGUAY_DEPARTMENTS.length];
                         batch.set(refDoc, {
-                            sportingName: `${names[i % names.length]} (${i + 1})`,
-                            category: 'Sub-17',
+                            sportingName: `${names[i % names.length]} (${dep})`,
+                            category: CATEGORIES_LIST[i % CATEGORIES_LIST.length],
+                            department: dep,
+                            locality: dep,
                             position: positions[i % positions.length],
                             preferredFoot: 'Derecha',
-                            currentClub: clubsList[i % clubsList.length],
-                            status: i % 2 === 0 ? 'Disponible para nuevas oportunidades' : 'Con club actual',
-                            description: 'Jugador destacado en formativas locales de Durazno con excelente proyección.',
-                            videoUrl: 'https://youtube.com',
+                            currentClub: 'Libre',
+                            status: 'Disponible para nuevas oportunidades',
+                            description: `Futbolista destacado en formativas y competencia oficial en ${dep}, Uruguay.`,
+                            videos: [],
                             published: true,
                             lastUpdated: serverTimestamp()
                         });
                     }
 
                     await batch.commit();
-                    this.showToast("¡Datos demo cargados con éxito!", "success");
+                    this.showToast("¡Datos nacionales cargados con éxito!", "success");
                     this.loadPlayers();
                 } catch (error) {
                     this.showToast("Error cargando datos demo: " + error.message, "error");
