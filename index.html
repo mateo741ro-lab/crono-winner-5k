@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Cardenal Sporting | Mercado de Pases Sub-17 Durazno</title>
+    <!-- Favicon con el Logo Oficial -->
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" type="image/jpeg">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -40,8 +42,8 @@
     <header class="sticky top-0 z-50 bg-cardenal-card border-b border-cardenal-border shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigateTo('home')">
-                <div class="w-12 h-12 rounded-xl demo-badge flex items-center justify-center text-white shadow-md">
-                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                <div class="w-12 h-12 rounded-xl overflow-hidden bg-black border border-cardenal-border flex items-center justify-center shadow-md">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" alt="Logo El Cardenal Sporting" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <h1 class="text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
@@ -121,7 +123,7 @@
             constructor() {
                 this.currentUser = null;
                 this.userData = null;
-                this.activeRole = 'player'; // Rol activo por defecto
+                this.activeRole = 'player';
                 this.currentView = 'home';
                 this.playersCache = [];
                 this.clubsCache = [];
@@ -156,7 +158,6 @@
                     const userDoc = await getDoc(doc(db, 'users', uid));
                     if (userDoc.exists()) {
                         this.userData = userDoc.data();
-                        // Asignar el rol activo si está guardado o el primer rol disponible
                         if (this.userData.activeRole) {
                             this.activeRole = this.userData.activeRole;
                         } else if (this.userData.roles && this.userData.roles.length > 0) {
@@ -170,98 +171,66 @@
                 }
             }
 
-         async switchRole(newRole) {
-    if (!this.currentUser) {
-        this.showToast("Debes iniciar sesión primero.", "error");
-        this.navigateTo('login');
-        return;
-    }
-
-    try {
-        if (newRole === 'player') {
-            const pSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
-            if (!pSnap.exists()) {
-                await setDoc(doc(db, 'players', this.currentUser.uid), {
-                    uid: this.currentUser.uid,
-                    sportingName: this.userData?.name || 'Jugador',
-                    category: 'Sub-17',
-                    position: 'Mediocampista central',
-                    preferredFoot: 'Derecha',
-                    currentClub: 'Libre',
-                    status: 'Disponible para nuevas oportunidades',
-                    description: 'Jugador juvenil de Durazno.',
-                    published: true,
-                    lastUpdated: serverTimestamp()
-                }, { merge: true });
-            }
-        } else if (newRole === 'club') {
-            const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
-            const cSnap = await getDocs(qClubs);
-            if (cSnap.empty) {
-                await addDoc(collection(db, 'clubs'), {
-                    name: `Club de ${this.userData?.name || 'Representante'}`,
-                    representativeUid: this.currentUser.uid,
-                    city: 'Durazno',
-                    verified: true,
-                    description: 'Club participante en las formativas de Durazno.',
-                    lastUpdated: serverTimestamp()
-                });
-            }
-        }
-
-        let roles = this.userData?.roles || [this.userData?.role || 'player'];
-        if (!roles.includes(newRole)) roles.push(newRole);
-
-        this.activeRole = newRole;
-        if (this.userData) {
-            this.userData.activeRole = newRole;
-            this.userData.roles = roles;
-        }
-
-        await updateDoc(doc(db, 'users', this.currentUser.uid), {
-            activeRole: newRole,
-            roles: roles
-        });
-
-        this.showToast(`Modo activado: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
-        this.renderNavbarAuth();
-        this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
-    } catch (error) {
-        console.error("Error al cambiar de rol:", error);
-        this.showToast("Error al activar modo: " + error.message, "error");
-    }
-}
-                } else if (newRole === 'club') {
-                    const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
-                    const cSnap = await getDocs(qClubs);
-                    if (cSnap.empty) {
-                        await addDoc(collection(db, 'clubs'), {
-                            name: `Club de ${this.userData.name}`,
-                            representativeUid: this.currentUser.uid,
-                            city: 'Durazno',
-                            verified: true,
-                            description: 'Club participante en las formativas de Durazno.',
-                            lastUpdated: serverTimestamp()
-                        });
-                    }
+            async switchRole(newRole) {
+                if (!this.currentUser) {
+                    this.showToast("Debes iniciar sesión primero.", "error");
+                    this.navigateTo('login');
+                    return;
                 }
 
-                // Asegurar que el arreglo de roles incluya ambos
-                let roles = this.userData.roles || [this.userData.role || 'player'];
-                if (!roles.includes(newRole)) roles.push(newRole);
+                try {
+                    if (newRole === 'player') {
+                        const pSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
+                        if (!pSnap.exists()) {
+                            await setDoc(doc(db, 'players', this.currentUser.uid), {
+                                uid: this.currentUser.uid,
+                                sportingName: this.userData?.name || 'Jugador',
+                                category: 'Sub-17',
+                                position: 'Mediocampista central',
+                                preferredFoot: 'Derecha',
+                                currentClub: 'Libre',
+                                status: 'Disponible para nuevas oportunidades',
+                                description: 'Jugador juvenil de Durazno.',
+                                published: true,
+                                lastUpdated: serverTimestamp()
+                            }, { merge: true });
+                        }
+                    } else if (newRole === 'club') {
+                        const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
+                        const cSnap = await getDocs(qClubs);
+                        if (cSnap.empty) {
+                            await addDoc(collection(db, 'clubs'), {
+                                name: `Club de ${this.userData?.name || 'Representante'}`,
+                                representativeUid: this.currentUser.uid,
+                                city: 'Durazno',
+                                verified: true,
+                                description: 'Club participante en las formativas de Durazno.',
+                                lastUpdated: serverTimestamp()
+                            });
+                        }
+                    }
 
-                this.activeRole = newRole;
-                this.userData.activeRole = newRole;
-                this.userData.roles = roles;
+                    let roles = this.userData?.roles || [this.userData?.role || 'player'];
+                    if (!roles.includes(newRole)) roles.push(newRole);
 
-                await updateDoc(doc(db, 'users', this.currentUser.uid), {
-                    activeRole: newRole,
-                    roles: roles
-                });
+                    this.activeRole = newRole;
+                    if (this.userData) {
+                        this.userData.activeRole = newRole;
+                        this.userData.roles = roles;
+                    }
 
-                this.showToast(`Modo cambiado a: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
-                this.renderNavbarAuth();
-                this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
+                    await updateDoc(doc(db, 'users', this.currentUser.uid), {
+                        activeRole: newRole,
+                        roles: roles
+                    });
+
+                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
+                    this.renderNavbarAuth();
+                    this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
+                } catch (error) {
+                    console.error("Error al cambiar de rol:", error);
+                    this.showToast("Error al activar modo: " + error.message, "error");
+                }
             }
 
             navigateTo(view, param = null) {
@@ -296,7 +265,7 @@
                 }
             }
 
-            // --- 1. MENÚ DE USUARIO DINÁMICO & SELECTOR DE MODO ---
+            // --- MENÚ DE USUARIO DINÁMICO & SELECTOR ---
             renderNavbarAuth() {
                 const nav = document.getElementById('auth-nav-container');
                 if (!nav) return;
@@ -405,36 +374,37 @@
                 `;
             }
 
-           renderRoleSelector(container) {
-    container.innerHTML = `
-        <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl text-center space-y-8">
-            <div>
-                <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
-                <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
-                <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Jugador y Club en cualquier momento.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
-                    <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                        <i class="fa-solid fa-shirt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white text-center">Modo Jugador Sub-17</h3>
-                    <p class="text-xs text-gray-400 text-center">Publica tu perfil, sube videos de jugadas, solicita ingreso a clubes y recibe ofertas de fichaje.</p>
-                    <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Jugador</span>
-                </button>
+            renderRoleSelector(container) {
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl text-center space-y-8">
+                        <div>
+                            <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
+                            <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
+                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Jugador y Club en cualquier momento.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
+                                <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-shirt"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white text-center">Modo Jugador Sub-17</h3>
+                                <p class="text-xs text-gray-400 text-center">Publica tu perfil, sube videos de jugadas, solicita ingreso a clubes y recibe ofertas de fichaje.</p>
+                                <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Jugador</span>
+                            </button>
 
-                <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
-                    <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                        <i class="fa-solid fa-shield-halved"></i>
+                            <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
+                                <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white text-center">Modo Representante de Club</h3>
+                                <p class="text-xs text-gray-400 text-center">Busca talentos juveniles en el mercado, gestiona solicitudes de aspirantes y envía propuestas de fichaje.</p>
+                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Club</span>
+                            </button>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-white text-center">Modo Representante de Club</h3>
-                    <p class="text-xs text-gray-400 text-center">Busca talentos juveniles en el mercado, gestiona solicitudes de aspirantes y envía propuestas de fichaje.</p>
-                    <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Club</span>
-                </button>
-            </div>
-        </div>
-    `;
-}
+                `;
+            }
+
             renderLogin(container) {
                 container.innerHTML = `
                     <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
@@ -475,7 +445,7 @@
                     <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
                         <div class="text-center space-y-2 mb-8">
                             <h2 class="text-2xl font-bold text-white">Crear Cuenta</h2>
-                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil principal para comenzar</p>
+                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil inicial para comenzar</p>
                         </div>
                         <form id="register-form" class="space-y-5" onsubmit="app.handleRegisterSubmit(event)">
                             <div>
@@ -555,7 +525,7 @@
                     case 'auth/operation-not-allowed':
                         return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
                     case 'auth/email-already-in-use':
-                        return 'El correo electrónico ya está registrado. Si ya te registraste, inicia sesión para cambiar de modo entre Jugador y Club.';
+                        return 'El correo electrónico ya está registrado. Si ya te registraste, inicia sesión.';
                     case 'auth/weak-password':
                         return 'La contraseña es muy débil. Usa al menos 6 caracteres.';
                     case 'auth/invalid-email':
