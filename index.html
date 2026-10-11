@@ -203,7 +203,6 @@
                     if (userDoc.exists()) {
                         this.userData = userDoc.data();
                     } else {
-                        // Si es usuario nuevo, no le asignamos rol automático hasta que lo seleccione
                         this.userData = null;
                     }
                 } catch (error) {
@@ -213,20 +212,28 @@
 
             listenToNotifications() {
                 if (!this.currentUser) return;
-                const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid), where('read', '==', false));
-                this.notifUnsubscribe = onSnapshot(q, (snapshot) => {
-                    const count = snapshot.size;
-                    const badge = document.getElementById('unread-notif-badge');
-                    const mobileBadge = document.getElementById('mobile-unread-badge');
-                    if (badge) {
-                        if (count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
-                        else { badge.classList.add('hidden'); }
-                    }
-                    if (mobileBadge) {
-                        if (count > 0) { mobileBadge.innerText = count; mobileBadge.classList.remove('hidden'); }
-                        else { mobileBadge.classList.add('hidden'); }
-                    }
-                });
+                try {
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
+                    this.notifUnsubscribe = onSnapshot(q, (snapshot) => {
+                        const docs = snapshot.docs.map(d => d.data());
+                        const unreadDocs = docs.filter(d => d.read === false);
+                        const count = unreadDocs.length;
+                        const badge = document.getElementById('unread-notif-badge');
+                        const mobileBadge = document.getElementById('mobile-unread-badge');
+                        if (badge) {
+                            if (count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
+                            else { badge.classList.add('hidden'); }
+                        }
+                        if (mobileBadge) {
+                            if (count > 0) { mobileBadge.innerText = count; mobileBadge.classList.remove('hidden'); }
+                            else { mobileBadge.classList.add('hidden'); }
+                        }
+                    }, (error) => {
+                        console.error("Error en listener de notificaciones:", error);
+                    });
+                } catch (e) {
+                    console.error("Error configurando notificaciones:", e);
+                }
             }
 
             async signInWithGoogle() {
@@ -238,7 +245,6 @@
                     const userDoc = await getDoc(userDocRef);
                     
                     if (!userDoc.exists()) {
-                        // Redirigir a selección obligatoria de rol antes de crear nada
                         this.currentUser = user;
                         this.navigateTo('role-setup-google');
                     } else {
@@ -851,7 +857,6 @@
                     msgsContainer.scrollTop = msgsContainer.scrollHeight;
                 });
 
-                // Guardar la referencia del destinatario para las notificaciones
                 this.currentChatRecipientUid = recipientUid;
             }
 
@@ -874,7 +879,6 @@
                         lastUpdated: serverTimestamp()
                     }, { merge: true });
 
-                    // Crear notificación para el destinatario
                     if (this.currentChatRecipientUid) {
                         await addDoc(collection(db, 'notifications'), {
                             recipientUid: this.currentChatRecipientUid,
@@ -1841,10 +1845,19 @@
                     </div>
                 `;
                 try {
-                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid), orderBy('createdAt', 'desc'));
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
                     const snap = await getDocs(q);
-                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    let list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                    // Ordenar en JavaScript para evitar requerir índices compuestos en Firestore
+                    list.sort((a, b) => {
+                        const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+                        const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+                        return timeB - timeA;
+                    });
+
                     const listEl = document.getElementById('notif-list');
+                    if (!listEl) return;
 
                     if (list.length === 0) {
                         listEl.innerHTML = `<div class="bg-white border border-slate-200 p-6 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No tenés notificaciones.</div>`;
@@ -1857,24 +1870,30 @@
                                 <h4 class="text-sm font-bold text-slate-900">${n.title}</h4>
                                 <p class="text-xs text-slate-600">${n.message}</p>
                             </div>
-                            ${n.chatId ? `<button onclick="app.navigateTo('chat', '${n.chatId}')" class="bg-cardenal-red text-white text-xs font-bold px-3 py-1.5 rounded-xl">Ver Chat</button>` : ''}
+                            ${n.chatId ? `<button onclick="app.navigateTo('chat', '${n.chatId}')" class="bg-cardenal-red text-white text-xs font-bold px-3 py-1.5 rounded-xl ml-2 shrink-0">Ver Chat</button>` : ''}
                         </div>
                     `).join('');
                 } catch (e) {
                     console.error("Error cargando notificaciones:", e);
+                    const listEl = document.getElementById('notif-list');
+                    if (listEl) listEl.innerHTML = `<div class="bg-white border border-slate-200 p-6 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No se pudieron cargar las notificaciones.</div>`;
                 }
             }
 
             async markAllNotifsRead() {
                 try {
-                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid), where('read', '==', false));
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
                     const snap = await getDocs(q);
                     snap.forEach(async (d) => {
-                        await updateDoc(doc(db, 'notifications', d.id), { read: true });
+                        if (d.data().read === false) {
+                            await updateDoc(doc(db, 'notifications', d.id), { read: true });
+                        }
                     });
                     this.showToast("Notificaciones marcadas como leídas", "info");
                     this.renderNotifications(document.getElementById('app-view'));
-                } catch (e) {}
+                } catch (e) {
+                    this.showToast("Error actualizando notificaciones", "error");
+                }
             }
 
             renderHelp(container) {
