@@ -121,6 +121,7 @@
             constructor() {
                 this.currentUser = null;
                 this.userData = null;
+                this.activeRole = 'player'; // Rol activo por defecto
                 this.currentView = 'home';
                 this.playersCache = [];
                 this.clubsCache = [];
@@ -155,10 +156,72 @@
                     const userDoc = await getDoc(doc(db, 'users', uid));
                     if (userDoc.exists()) {
                         this.userData = userDoc.data();
+                        // Asignar el rol activo si está guardado o el primer rol disponible
+                        if (this.userData.activeRole) {
+                            this.activeRole = this.userData.activeRole;
+                        } else if (this.userData.roles && this.userData.roles.length > 0) {
+                            this.activeRole = this.userData.roles[0];
+                        } else if (this.userData.role) {
+                            this.activeRole = this.userData.role;
+                        }
                     }
                 } catch (error) {
                     console.error("Error cargando perfil de usuario:", error);
                 }
+            }
+
+            async switchRole(newRole) {
+                if (!this.currentUser) return;
+
+                // Verificar si ya tiene creado el documento de dicho rol
+                if (newRole === 'player') {
+                    const pSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
+                    if (!pSnap.exists()) {
+                        // Crear perfil inicial de jugador si no existía
+                        await setDoc(doc(db, 'players', this.currentUser.uid), {
+                            uid: this.currentUser.uid,
+                            sportingName: this.userData.name || 'Jugador',
+                            category: 'Sub-17',
+                            position: 'Mediocampista central',
+                            preferredFoot: 'Derecha',
+                            currentClub: 'Libre',
+                            status: 'Disponible para nuevas oportunidades',
+                            description: 'Jugador juvenil de Durazno.',
+                            published: true,
+                            lastUpdated: serverTimestamp()
+                        }, { merge: true });
+                    }
+                } else if (newRole === 'club') {
+                    const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
+                    const cSnap = await getDocs(qClubs);
+                    if (cSnap.empty) {
+                        await addDoc(collection(db, 'clubs'), {
+                            name: `Club de ${this.userData.name}`,
+                            representativeUid: this.currentUser.uid,
+                            city: 'Durazno',
+                            verified: true,
+                            description: 'Club participante en las formativas de Durazno.',
+                            lastUpdated: serverTimestamp()
+                        });
+                    }
+                }
+
+                // Asegurar que el arreglo de roles incluya ambos
+                let roles = this.userData.roles || [this.userData.role || 'player'];
+                if (!roles.includes(newRole)) roles.push(newRole);
+
+                this.activeRole = newRole;
+                this.userData.activeRole = newRole;
+                this.userData.roles = roles;
+
+                await updateDoc(doc(db, 'users', this.currentUser.uid), {
+                    activeRole: newRole,
+                    roles: roles
+                });
+
+                this.showToast(`Modo cambiado a: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
+                this.renderNavbarAuth();
+                this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
             }
 
             navigateTo(view, param = null) {
@@ -177,6 +240,7 @@
                     case 'home': this.renderHome(container); break;
                     case 'login': this.renderLogin(container); break;
                     case 'register': this.renderRegister(container); break;
+                    case 'role-selector': this.renderRoleSelector(container); break;
                     case 'market': this.renderMarket(container); break;
                     case 'player': this.renderPlayerDetail(container, param); break;
                     case 'clubs': this.renderClubs(container); break;
@@ -192,18 +256,25 @@
                 }
             }
 
-            // --- 1. MENÚ DE USUARIO DINÁMICO ---
+            // --- 1. MENÚ DE USUARIO DINÁMICO & SELECTOR DE MODO ---
             renderNavbarAuth() {
                 const nav = document.getElementById('auth-nav-container');
                 if (!nav) return;
 
                 if (this.currentUser && this.userData) {
                     const initials = this.userData.name ? this.userData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'CS';
+                    
                     let panelLink = '';
-                    if (this.userData.role === 'player') panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel</a>`;
-                    else if (this.userData.role === 'club') panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Club</a>`;
+                    if (this.activeRole === 'player') {
+                        panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Jugador</a>`;
+                    } else if (this.activeRole === 'club') {
+                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Representante Club</a>`;
+                    }
                     
                     let adminLink = this.userData.role === 'admin' ? `<a href="#admin-panel" onclick="app.navigateTo('admin-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-cardenal-gold hover:bg-zinc-800"><i class="fa-solid fa-lock mr-2"></i> Admin</a>` : '';
+
+                    const otherRole = this.activeRole === 'player' ? 'club' : 'player';
+                    const otherRoleLabel = this.activeRole === 'player' ? 'Cambiar a Modo Representante de Club' : 'Cambiar a Modo Jugador Sub-17';
 
                     nav.innerHTML = `
                         <div class="relative">
@@ -211,18 +282,27 @@
                                 <div class="w-9 h-9 rounded-xl bg-cardenal-red flex items-center justify-center text-white font-bold text-xs shadow">
                                     ${initials}
                                 </div>
-                                <span class="text-sm font-semibold text-gray-200 hidden sm:inline">${this.userData.name}</span>
+                                <div class="text-left hidden sm:block">
+                                    <p class="text-sm font-semibold text-gray-200 leading-tight">${this.userData.name}</p>
+                                    <p class="text-[10px] font-bold text-cardenal-gold uppercase">${this.activeRole === 'player' ? 'Jugador' : 'Club'}</p>
+                                </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                             </button>
-                            <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-cardenal-card border border-cardenal-border rounded-2xl shadow-2xl hidden py-2 z-50">
+                            <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-cardenal-card border border-cardenal-border rounded-2xl shadow-2xl hidden py-2 z-50">
                                 <div class="px-4 py-2 border-b border-cardenal-border">
                                     <p class="text-xs text-gray-400">Conectado como</p>
                                     <p class="text-sm font-bold text-white truncate">${this.userData.email}</p>
                                 </div>
-                                ${this.userData.role === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
+                                ${this.activeRole === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
                                 ${panelLink}
                                 ${adminLink}
                                 <a href="#notifications" onclick="app.navigateTo('notifications'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-bell mr-2"></i> Notificaciones</a>
+                                
+                                <div class="border-t border-cardenal-border my-1"></div>
+                                <button onclick="app.switchRole('${otherRole}'); app.toggleDropdown();" class="w-full text-left px-4 py-2 text-xs text-amber-400 hover:bg-amber-950/40 font-bold">
+                                    <i class="fa-solid fa-arrows-rotate mr-2"></i> ${otherRoleLabel}
+                                </button>
+                                
                                 <div class="border-t border-cardenal-border my-1"></div>
                                 <button onclick="app.logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-950/40 font-semibold"><i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar Sesión</button>
                             </div>
@@ -273,8 +353,43 @@
                                     <a href="#clubs" onclick="app.navigateTo('clubs')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2">
                                         <i class="fa-solid fa-shield"></i><span>Ver Clubes de Durazno</span>
                                     </a>
-                                    ${this.userData?.role === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar / Editar Mi Perfil</span></a>` : ''}
+                                    ${this.currentUser ? `
+                                        <button onclick="app.navigateTo('role-selector')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2">
+                                            <i class="fa-solid fa-users-gear"></i><span>Elegir Modo (Jugador o Club)</span>
+                                        </button>
+                                    ` : ''}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderRoleSelector(container) {
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl text-center space-y-8">
+                        <div>
+                            <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
+                            <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
+                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email}) puedes ser Jugador y Representante de Club al mismo tiempo.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div onclick="app.switchRole('player')" class="bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group">
+                                <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-shirt"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">Modo Jugador Sub-17</h3>
+                                <p class="text-xs text-gray-400">Publica tu perfil, sube videos de jugadas, solicita ingreso a clubes y recibe ofertas de fichaje.</p>
+                                <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl">Entrar como Jugador</span>
+                            </div>
+
+                            <div onclick="app.switchRole('club')" class="bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group">
+                                <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">Modo Representante de Club</h3>
+                                <p class="text-xs text-gray-400">Busca talentos juveniles en el mercado, gestiona solicitudes de aspirantes y envía propuestas de fichaje.</p>
+                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl">Entrar como Club</span>
                             </div>
                         </div>
                     </div>
@@ -310,7 +425,7 @@
                 try {
                     await signInWithEmailAndPassword(auth, email, pass);
                     this.showToast("¡Bienvenido de vuelta!", "success");
-                    this.navigateTo('home');
+                    this.navigateTo('role-selector');
                 } catch (error) {
                     this.showToast("Error al iniciar sesión: " + this.translateFirebaseError(error.code), "error");
                 }
@@ -321,11 +436,11 @@
                     <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
                         <div class="text-center space-y-2 mb-8">
                             <h2 class="text-2xl font-bold text-white">Crear Cuenta</h2>
-                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil para comenzar</p>
+                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil principal para comenzar</p>
                         </div>
                         <form id="register-form" class="space-y-5" onsubmit="app.handleRegisterSubmit(event)">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tipo de Cuenta</label>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tipo de Perfil Inicial</label>
                                 <select id="reg-role" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleRegisterFields(this.value)">
                                     <option value="player">Jugador Sub-17</option>
                                     <option value="club">Club de Fútbol (Representante)</option>
@@ -371,7 +486,9 @@
                     const cred = await createUserWithEmailAndPassword(auth, email, pass);
                     const uid = cred.user.uid;
 
-                    await setDoc(doc(db, 'users', uid), { uid, name, email, role, createdAt: serverTimestamp() });
+                    await setDoc(doc(db, 'users', uid), {
+                        uid, name, email, role, activeRole: role, roles: [role], createdAt: serverTimestamp()
+                    });
 
                     if (role === 'player') {
                         await setDoc(doc(db, 'players', uid), {
@@ -387,7 +504,7 @@
                     }
 
                     this.showToast("¡Cuenta creada con éxito!", "success");
-                    this.navigateTo(role === 'player' ? 'player-panel' : 'club-panel');
+                    this.navigateTo('role-selector');
                 } catch (error) {
                     console.error("Error exacto de Firebase:", error);
                     this.showToast("Error en el registro: " + this.translateFirebaseError(error.code), "error");
@@ -399,7 +516,7 @@
                     case 'auth/operation-not-allowed':
                         return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
                     case 'auth/email-already-in-use':
-                        return 'El correo electrónico ya está registrado. Intenta iniciar sesión.';
+                        return 'El correo electrónico ya está registrado. Si ya te registraste, inicia sesión para cambiar de modo entre Jugador y Club.';
                     case 'auth/weak-password':
                         return 'La contraseña es muy débil. Usa al menos 6 caracteres.';
                     case 'auth/invalid-email':
@@ -413,22 +530,20 @@
                 }
             }
 
-            // --- 2. PERFIL FUTBOLÍSTICO Y PUBLICACIÓN DE JUGADORES ---
+            // --- PERFIL FUTBOLÍSTICO Y PUBLICACIÓN ---
             async renderProfileEdit(container) {
-                if (!this.currentUser || this.userData?.role !== 'player') {
+                if (!this.currentUser) {
                     this.navigateTo('login');
                     return;
                 }
 
                 let pData = {
-                    sportingName: this.userData.name || '',
+                    sportingName: this.userData?.name || '',
                     position: 'Mediocampista central',
-                    secondaryPosition: 'Extremo',
                     preferredFoot: 'Derecha',
                     currentClub: 'Libre',
                     height: '1.75m',
                     weight: '68kg',
-                    experience: 'Divisiones formativas locales',
                     description: 'Jugador juvenil destacado de Durazno.',
                     videoUrl: '',
                     status: 'Disponible para nuevas oportunidades',
@@ -561,7 +676,7 @@
                 }
             }
 
-            // --- 3. MERCADO DE PASES SUB-17 ---
+            // --- MERCADO DE PASES SUB-17 ---
             async renderMarket(container) {
                 container.innerHTML = `
                     <div class="space-y-8">
@@ -571,7 +686,7 @@
                                 <p class="text-xs text-gray-400 mt-1">Jugadores juveniles registrados y publicados en Durazno, Uruguay</p>
                             </div>
                             <div class="flex items-center space-x-3">
-                                ${this.userData?.role === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
+                                ${this.currentUser ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
                                 <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
                                     <i class="fa-solid fa-database mr-1"></i> Cargar Datos Demo
                                 </button>
@@ -638,7 +753,7 @@
                             <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status || 'Disponible'}</span>
                             <div class="flex space-x-2">
                                 <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Perfil</a>
-                                ${this.userData?.role === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
+                                ${this.activeRole === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
                             </div>
                         </div>
                     </div>
@@ -711,7 +826,7 @@
                                     ${p.videoUrl ? `<div class="pt-4"><a href="${p.videoUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 border border-cardenal-border text-white px-4 py-2.5 rounded-xl text-xs font-bold inline-flex items-center space-x-2"><i class="fa-brands fa-youtube text-red-500 text-base"></i><span>Ver Video de Jugadas Destacadas</span></a></div>` : ''}
                                 </div>
 
-                                ${this.userData?.role === 'club' ? `
+                                ${this.activeRole === 'club' ? `
                                     <div class="mt-8 pt-6 border-t border-cardenal-border flex justify-end">
                                         <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2">
                                             <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje / Préstamo</span>
@@ -726,7 +841,7 @@
                 }
             }
 
-            // --- 4. SECCIÓN DE CLUBES Y SOLICITUDES DE INGRESO ---
+            // --- CLUBES Y SOLICITUDES DE INGRESO ---
             async renderClubs(container) {
                 container.innerHTML = `
                     <div class="space-y-8">
@@ -809,16 +924,12 @@
 
             async openApplyClubModal(clubId, clubName, repUid) {
                 if (!this.currentUser) {
-                    this.showToast("Debes iniciar sesión como jugador para solicitar ingreso.", "error");
+                    this.showToast("Debes iniciar sesión para solicitar ingreso.", "error");
                     this.navigateTo('login');
                     return;
                 }
-                if (this.userData?.role !== 'player') {
-                    this.showToast("Solo las cuentas de jugadores pueden solicitar ingresar a un club.", "error");
-                    return;
-                }
 
-                let pData = { sportingName: this.userData.name || '', position: 'Mediocampista central', description: '' };
+                let pData = { sportingName: this.userData?.name || '', position: 'Mediocampista central', description: '' };
                 try {
                     const snap = await getDoc(doc(db, 'players', this.currentUser.uid));
                     if (snap.exists()) pData = snap.data();
@@ -900,7 +1011,7 @@
                 }
             }
 
-            // --- 8. SISTEMA DE FICHAJES Y PRÉSTAMOS ---
+            // --- SISTEMA DE FICHAJES Y PRÉSTAMOS ---
             async renderCreateProposal(container, playerId) {
                 const playerDoc = await getDoc(doc(db, 'players', playerId));
                 if (!playerDoc.exists()) {
@@ -1015,9 +1126,9 @@
                 }
             }
 
-            // --- 6. PANEL DEL JUGADOR ---
+            // --- PANEL DEL JUGADOR ---
             async renderPlayerPanel(container) {
-                if (!this.currentUser || this.userData?.role !== 'player') {
+                if (!this.currentUser) {
                     this.navigateTo('login');
                     return;
                 }
@@ -1129,9 +1240,9 @@
                 }
             }
 
-            // --- 7. PANEL DEL CLUB ---
+            // --- PANEL DEL CLUB ---
             async renderClubPanel(container) {
-                if (!this.currentUser || this.userData?.role !== 'club') {
+                if (!this.currentUser) {
                     this.navigateTo('login');
                     return;
                 }
