@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -33,8 +33,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Outfit', sans-serif; }
-        .demo-badge { background: linear-gradient(135deg, #991b1b, #d97706); }
-        /* Ocultar barra de desplazamiento en contenedores horizontales móviles */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -44,13 +42,20 @@
     <!-- Header / Navbar Escritorio y Tablet -->
     <header class="sticky top-0 z-50 bg-cardenal-card border-b border-cardenal-border shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigateTo('home')">
-                <div class="w-12 h-12 rounded-xl overflow-hidden bg-black border border-cardenal-border flex items-center justify-center shadow-md">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" alt="Logo El Cardenal Sporting" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <h1 class="text-lg sm:text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
-                    <p class="text-[10px] sm:text-xs text-gray-400 font-medium">Scouting & Mercado Nacional • Uruguay</p>
+            <div class="flex items-center space-x-3">
+                <!-- Botón de Flecha para ir Atrás -->
+                <button id="back-btn" onclick="app.goBack()" class="hidden bg-black/60 border border-cardenal-border hover:border-cardenal-gold text-white w-10 h-10 rounded-xl items-center justify-center transition mr-1">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigateTo('home')">
+                    <div class="w-12 h-12 rounded-xl overflow-hidden bg-black border border-cardenal-border flex items-center justify-center shadow-md">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" alt="Logo El Cardenal Sporting" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
+                        <p class="text-[10px] sm:text-xs text-gray-400 font-medium">Scouting & Mercado Nacional • Uruguay</p>
+                    </div>
                 </div>
             </div>
 
@@ -60,7 +65,8 @@
                 <a href="#market" onclick="app.navigateTo('market')" class="hover:text-cardenal-gold transition">Mercado</a>
                 <a href="#departments" onclick="app.navigateTo('departments')" class="hover:text-cardenal-gold transition">Departamentos</a>
                 <a href="#clubs" onclick="app.navigateTo('clubs')" class="hover:text-cardenal-gold transition">Clubes</a>
-                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-gold transition">Privacidad y Menores</a>
+                <a href="#chats" onclick="app.navigateTo('chats')" class="hover:text-cardenal-gold transition">Mensajes</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-gold transition">Ayuda</a>
             </nav>
 
             <!-- Acciones de Usuario / Menú Dinámico -->
@@ -78,8 +84,8 @@
         <a href="#market" onclick="app.navigateTo('market')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
             <i class="fa-solid fa-futbol text-base"></i><span>Mercado</span>
         </a>
-        <a href="#departments" onclick="app.navigateTo('departments')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
-            <i class="fa-solid fa-map text-base"></i><span>Uy</span>
+        <a href="#chats" onclick="app.navigateTo('chats')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
+            <i class="fa-solid fa-comments text-base"></i><span>Chat</span>
         </a>
         <a href="#clubs" onclick="app.navigateTo('clubs')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
             <i class="fa-solid fa-shield text-base"></i><span>Clubes</span>
@@ -87,12 +93,6 @@
         <a href="#notifications" onclick="app.navigateTo('notifications')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold relative">
             <i class="fa-solid fa-bell text-base"></i><span>Alertas</span>
         </a>
-    </div>
-
-    <!-- Banner Demo / Nacional -->
-    <div class="demo-badge text-white text-xs font-semibold py-1.5 px-4 text-center tracking-wide flex items-center justify-center space-x-2 shadow-inner">
-        <i class="fa-solid fa-flag"></i>
-        <span>PLATAFORMA NACIONAL DE SCOUTING Y MERCADO DE PASES — URUGUAY (19 DEPARTAMENTOS)</span>
     </div>
 
     <!-- Contenedor Principal SPA -->
@@ -124,8 +124,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch, deleteDoc, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAN6fuDBCSLKNFB6w9VGKqlPRCqpyATxb0",
@@ -160,8 +160,10 @@
                 this.userData = null;
                 this.activeRole = 'player';
                 this.currentView = 'home';
+                this.historyStack = [];
                 this.playersCache = [];
                 this.clubsCache = [];
+                this.chatUnsubscribe = null;
                 this.initAuthListener();
                 
                 window.addEventListener('hashchange', () => this.handleRouting());
@@ -228,7 +230,7 @@
                         if (!pSnap.exists()) {
                             await setDoc(doc(db, 'players', this.currentUser.uid), {
                                 uid: this.currentUser.uid,
-                                sportingName: this.userData?.name || 'Jugador',
+                                sportingName: this.userData?.name || 'Futbolista',
                                 category: 'Sub-17',
                                 department: 'Montevideo',
                                 locality: 'Montevideo',
@@ -247,7 +249,7 @@
                         const cSnap = await getDocs(qClubs);
                         if (cSnap.empty) {
                             await addDoc(collection(db, 'clubs'), {
-                                name: `Club de ${this.userData?.name || 'Representante'}`,
+                                name: `Club de ${this.userData?.name || 'Técnico/representante del club'}`,
                                 representativeUid: this.currentUser.uid,
                                 department: 'Montevideo',
                                 city: 'Montevideo',
@@ -277,7 +279,7 @@
                         roles: roles
                     }, { merge: true });
 
-                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Futbolista' : 'Representante de Club'}`, "success");
+                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Futbolista' : 'Técnico/representante del club'}`, "success");
                     this.renderNavbarAuth();
                     this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
@@ -287,13 +289,38 @@
             }
 
             navigateTo(view, param = null) {
-                window.location.hash = param ? `${view}/${param}` : view;
+                const newHash = param ? `${view}/${param}` : view;
+                if (window.location.hash.slice(1) !== newHash) {
+                    this.historyStack.push(window.location.hash.slice(1) || 'home');
+                }
+                window.location.hash = newHash;
+            }
+
+            goBack() {
+                if (this.historyStack.length > 0) {
+                    const prev = this.historyStack.pop();
+                    window.location.hash = prev;
+                } else {
+                    window.location.hash = 'home';
+                }
             }
 
             handleRouting() {
                 const hash = window.location.hash.slice(1) || 'home';
                 const [view, param] = hash.split('/');
                 this.currentView = view;
+
+                // Controlar visibilidad del botón para ir Atrás
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) {
+                    if (view !== 'home') backBtn.classList.remove('hidden'), backBtn.classList.add('flex');
+                    else backBtn.classList.add('hidden'), backBtn.classList.remove('flex');
+                }
+
+                if (this.chatUnsubscribe) {
+                    this.chatUnsubscribe();
+                    this.chatUnsubscribe = null;
+                }
                 
                 const container = document.getElementById('app-view');
                 container.innerHTML = `<div class="flex justify-center items-center py-24"><i class="fa-solid fa-spinner fa-spin text-4xl text-cardenal-gold"></i></div>`;
@@ -311,6 +338,8 @@
                     case 'profile-edit': this.renderProfileEdit(container); break;
                     case 'player-panel': this.renderPlayerPanel(container); break;
                     case 'club-panel': this.renderClubPanel(container); break;
+                    case 'chats': this.renderChatsList(container); break;
+                    case 'chat': this.renderChatRoom(container, param); break;
                     case 'admin-panel': this.renderAdminPanel(container); break;
                     case 'proposal-create': this.renderCreateProposal(container, param); break;
                     case 'notifications': this.renderNotifications(container); break;
@@ -329,15 +358,15 @@
                     
                     let panelLink = '';
                     if (this.activeRole === 'player') {
-                        panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Jugador</a>`;
+                        panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Futbolista</a>`;
                     } else if (this.activeRole === 'club') {
-                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Club</a>`;
+                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Técnico / Club</a>`;
                     }
                     
                     let adminLink = this.userData.role === 'admin' ? `<a href="#admin-panel" onclick="app.navigateTo('admin-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-cardenal-gold hover:bg-zinc-800"><i class="fa-solid fa-lock mr-2"></i> Admin</a>` : '';
 
                     const otherRole = this.activeRole === 'player' ? 'club' : 'player';
-                    const otherRoleLabel = this.activeRole === 'player' ? 'Cambiar a Modo Club' : 'Cambiar a Modo Futbolista';
+                    const otherRoleLabel = this.activeRole === 'player' ? 'Modo Técnico/representante del club' : 'Modo Futbolista';
 
                     nav.innerHTML = `
                         <div class="relative">
@@ -347,7 +376,7 @@
                                 </div>
                                 <div class="text-left hidden sm:block">
                                     <p class="text-sm font-semibold text-gray-200 leading-tight">${this.userData.name}</p>
-                                    <p class="text-[10px] font-bold text-cardenal-gold uppercase">${this.activeRole === 'player' ? 'Futbolista' : 'Club'}</p>
+                                    <p class="text-[10px] font-bold text-cardenal-gold uppercase">${this.activeRole === 'player' ? 'Futbolista' : 'Técnico / Club'}</p>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                             </button>
@@ -358,12 +387,13 @@
                                 </div>
                                 ${this.activeRole === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
                                 ${panelLink}
+                                <a href="#chats" onclick="app.navigateTo('chats'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-comments mr-2"></i> Mensajes Privados</a>
                                 ${adminLink}
                                 <a href="#notifications" onclick="app.navigateTo('notifications'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-bell mr-2"></i> Notificaciones</a>
                                 
                                 <div class="border-t border-cardenal-border my-1"></div>
                                 <button onclick="app.switchRole('${otherRole}'); app.toggleDropdown();" class="w-full text-left px-4 py-2 text-xs text-amber-400 hover:bg-amber-950/40 font-bold">
-                                    <i class="fa-solid fa-arrows-rotate mr-2"></i> ${otherRoleLabel}
+                                    <i class="fa-solid fa-arrows-rotate mr-2"></i> Cambiar a ${otherRoleLabel}
                                 </button>
                                 
                                 <div class="border-t border-cardenal-border my-1"></div>
@@ -409,7 +439,7 @@
                             <div class="max-w-2xl space-y-6">
                                 <span class="bg-cardenal-gold/20 text-cardenal-gold border border-cardenal-gold/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Plataforma Nacional de Scouting • Uruguay</span>
                                 <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">El talento de los <span class="text-cardenal-gold">19 departamentos</span> conectado</h2>
-                                <p class="text-gray-300 text-sm md:text-base">El Cardenal Sporting conecta futbolistas de todo Uruguay con clubes profesionales, juveniles y amateurs. Publica tu perfil, sube tus videos y recibe propuestas.</p>
+                                <p class="text-gray-300 text-sm md:text-base">El Cardenal Sporting conecta futbolistas de todo Uruguay con técnicos/representantes de clubes profesionales y formativos. Registra tu perfil real y chatea directamente.</p>
                                 <div class="flex flex-wrap gap-4 pt-2">
                                     <a href="#market" onclick="app.navigateTo('market')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2 text-sm">
                                         <i class="fa-solid fa-futbol"></i><span>Explorar Mercado Nacional</span>
@@ -458,7 +488,7 @@
                         <div>
                             <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
                             <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
-                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Club en cualquier momento.</p>
+                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Técnico/representante del club.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
@@ -466,7 +496,7 @@
                                     <i class="fa-solid fa-shirt"></i>
                                 </div>
                                 <h3 class="text-xl font-bold text-white text-center">Modo Futbolista</h3>
-                                <p class="text-xs text-gray-400 text-center">Publica tu perfil nacional, sube videos directamente, solicita ingreso a clubes y recibe propuestas.</p>
+                                <p class="text-xs text-gray-400 text-center">Publica tu perfil nacional, sube videos directamente, solicita ingreso a clubes y chatea en privado.</p>
                                 <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Futbolista</span>
                             </button>
 
@@ -474,9 +504,9 @@
                                 <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-white text-center">Modo Club / Scouting</h3>
-                                <p class="text-xs text-gray-400 text-center">Busca talentos en todo Uruguay, filtra por departamento y envía ofertas profesionales.</p>
-                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Club</span>
+                                <h3 class="text-xl font-bold text-white text-center">Modo Técnico/representante del club</h3>
+                                <p class="text-xs text-gray-400 text-center">Busca talentos en todo Uruguay, filtra por departamento y abre chats directos con futbolistas.</p>
+                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Técnico/Representante</span>
                             </button>
                         </div>
                     </div>
@@ -530,7 +560,7 @@
                                 <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tipo de Perfil Inicial</label>
                                 <select id="reg-role" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleRegisterFields(this.value)">
                                     <option value="player">Futbolista</option>
-                                    <option value="club">Club / Representante</option>
+                                    <option value="club">Técnico/representante del club</option>
                                 </select>
                             </div>
                             <div>
@@ -658,6 +688,171 @@
                 }
             }
 
+            // --- CHAT PRIVADO EN TIEMPO REAL ---
+            async startPrivateChat(otherUid, otherName) {
+                if (!this.currentUser) {
+                    this.showToast("Debes iniciar sesión para enviar mensajes.", "error");
+                    this.navigateTo('login');
+                    return;
+                }
+
+                // Generar ID único para la sala entre los dos UIDs
+                const chatId = [this.currentUser.uid, otherUid].sort().join('_');
+                const chatRef = doc(db, 'chats', chatId);
+
+                try {
+                    await setDoc(chatRef, {
+                        chatId,
+                        participants: [this.currentUser.uid, otherUid],
+                        names: {
+                            [this.currentUser.uid]: this.userData?.name || 'Usuario',
+                            [otherUid]: otherName || 'Usuario'
+                        },
+                        lastUpdated: serverTimestamp()
+                    }, { merge: true });
+
+                    this.navigateTo('chat', chatId);
+                } catch (error) {
+                    this.showToast("Error iniciando chat: " + error.message, "error");
+                }
+            }
+
+            async renderChatsList(container) {
+                if (!this.currentUser) {
+                    this.navigateTo('login');
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto space-y-6">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                            <h2 class="text-2xl font-extrabold text-white">Mis Mensajes Privados</h2>
+                            <p class="text-xs text-gray-400 mt-1">Conversaciones directas entre futbolistas y técnicos/representantes</p>
+                        </div>
+                        <div id="chats-list" class="space-y-3">
+                            <div class="text-center py-12"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const q = query(collection(db, 'chats'), where('participants', 'array-contains', this.currentUser.uid));
+                    const snap = await getDocs(q);
+                    const chatsList = document.getElementById('chats-list');
+
+                    if (snap.empty) {
+                        chatsList.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-8 rounded-2xl text-center text-gray-400 text-xs">No tienes conversaciones activas aún.</div>`;
+                        return;
+                    }
+
+                    chatsList.innerHTML = snap.docs.map(docSnap => {
+                        const data = docSnap.data();
+                        const otherUid = data.participants.find(uid => uid !== this.currentUser.uid);
+                        const otherName = data.names ? (data.names[otherUid] || 'Usuario') : 'Usuario';
+                        const lastMsg = data.lastMessage || 'Haz clic para iniciar la conversación.';
+
+                        return `
+                            <div onclick="app.navigateTo('chat', '${data.chatId}')" class="bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold p-4 rounded-2xl cursor-pointer transition flex justify-between items-center">
+                                <div class="space-y-1">
+                                    <h4 class="text-sm font-bold text-white"><i class="fa-solid fa-user-circle mr-2 text-cardenal-gold"></i>${otherName}</h4>
+                                    <p class="text-xs text-gray-400 truncate max-w-xs">${lastMsg}</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                            </div>
+                        `;
+                    }).join('');
+                } catch (e) {
+                    console.error("Error cargando chats:", e);
+                }
+            }
+
+            async renderChatRoom(container, chatId) {
+                if (!this.currentUser) {
+                    this.navigateTo('login');
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col h-[75vh]">
+                        <div class="pb-4 border-b border-cardenal-border flex justify-between items-center">
+                            <div>
+                                <h3 id="chat-title" class="text-base font-bold text-white">Chat Privado</h3>
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle text-[8px] mr-1"></i>En línea</p>
+                            </div>
+                            <button onclick="app.navigateTo('chats')" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+
+                        <!-- Mensajes del Chat -->
+                        <div id="chat-messages" class="flex-grow overflow-y-auto my-4 space-y-3 pr-2">
+                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                        </div>
+
+                        <!-- Formulario de Envío -->
+                        <form onsubmit="app.sendChatMessage(event, '${chatId}')" class="flex gap-2 pt-2 border-t border-cardenal-border">
+                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-grow bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none">
+                            <button type="submit" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                `;
+
+                // Cargar título del otro usuario
+                const chatDoc = await getDoc(doc(db, 'chats', chatId));
+                if (chatDoc.exists()) {
+                    const data = chatDoc.data();
+                    const otherUid = data.participants.find(uid => uid !== this.currentUser.uid);
+                    const otherName = data.names ? (data.names[otherUid] || 'Usuario') : 'Usuario';
+                    document.getElementById('chat-title').innerText = `Chat con ${otherName}`;
+                }
+
+                // Escuchador en tiempo real
+                const msgsQuery = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
+                this.chatUnsubscribe = onSnapshot(msgsQuery, (snapshot) => {
+                    const msgsContainer = document.getElementById('chat-messages');
+                    if (!msgsContainer) return;
+
+                    if (snapshot.empty) {
+                        msgsContainer.innerHTML = `<div class="text-center text-xs text-gray-500 py-8">Inicia la conversación enviando un saludo.</div>`;
+                        return;
+                    }
+
+                    msgsContainer.innerHTML = snapshot.docs.map(d => {
+                        const m = d.data();
+                        const isMe = m.senderUid === this.currentUser.uid;
+                        return `
+                            <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                                <div class="max-w-[80%] rounded-2xl px-4 py-2 text-xs ${isMe ? 'bg-cardenal-red text-white rounded-br-none' : 'bg-zinc-800 text-gray-200 border border-cardenal-border rounded-bl-none'}">
+                                    <p>${m.text}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    msgsContainer.scrollTop = msgsContainer.scrollHeight;
+                });
+            }
+
+            async sendChatMessage(e, chatId) {
+                e.preventDefault();
+                const input = document.getElementById('chat-input');
+                const text = input.value.trim();
+                if (!text) return;
+
+                input.value = '';
+                try {
+                    await addDoc(collection(db, 'chats', chatId, 'messages'), {
+                        senderUid: this.currentUser.uid,
+                        text,
+                        createdAt: serverTimestamp()
+                    });
+
+                    await updateDoc(doc(db, 'chats', chatId), {
+                        lastMessage: text,
+                        lastUpdated: serverTimestamp()
+                    });
+                } catch (error) {
+                    this.showToast("Error al enviar mensaje.", "error");
+                }
+            }
+
             // --- PERFIL FUTBOLÍSTICO Y SUBIDA DE VIDEOS A STORAGE ---
             async renderProfileEdit(container) {
                 if (!this.currentUser) {
@@ -774,11 +969,9 @@
                                 <textarea id="p-desc" rows="3" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">${pData.description}</textarea>
                             </div>
 
-                            <!-- Sección Subida Directa de Videos a Firebase Storage -->
+                            <!-- Subida de Videos a Firebase Storage -->
                             <div class="border-t border-cardenal-border pt-4 space-y-3">
                                 <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-video text-cardenal-gold mr-2"></i>Mis Videos de Jugadas (Firebase Storage)</h3>
-                                <p class="text-xs text-gray-400">Sube videos cortos (MP4/WebM, máx 50MB) directamente desde tu dispositivo.</p>
-                                
                                 <div class="flex flex-col sm:flex-row gap-3 items-center bg-black/40 p-4 rounded-xl border border-cardenal-border">
                                     <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/quicktime" class="text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cardenal-red file:text-white hover:file:bg-red-800 cursor-pointer">
                                     <input type="text" id="video-title-input" placeholder="Título del video (Ej: Gol de tiro libre)" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
@@ -791,9 +984,7 @@
                                     <p id="upload-progress-text" class="text-[10px] text-gray-400 text-right">Subiendo video...</p>
                                 </div>
 
-                                <div id="profile-videos-list" class="space-y-2 pt-2">
-                                    <!-- Listado de videos subidos -->
-                                </div>
+                                <div id="profile-videos-list" class="space-y-2 pt-2"></div>
                             </div>
 
                             <div class="flex items-center space-x-3 pt-2">
@@ -835,10 +1026,6 @@
                     this.showToast("Selecciona un archivo de video válido.", "error");
                     return;
                 }
-                if (file.size > 50 * 1024 * 1024) {
-                    this.showToast("El video supera el límite de 50MB.", "error");
-                    return;
-                }
 
                 const progressContainer = document.getElementById('upload-progress-container');
                 const progressBar = document.getElementById('upload-progress-bar');
@@ -855,9 +1042,8 @@
                         progressText.innerText = `Subiendo: ${Math.round(progress)}%`;
                     }, 
                     (error) => {
-                        console.error("Error subiendo video:", error);
                         progressContainer.classList.add('hidden');
-                        this.showToast("Error al subir el video a Storage.", "error");
+                        this.showToast("Error al subir el video.", "error");
                     }, 
                     async () => {
                         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
@@ -865,7 +1051,6 @@
                         fileInput.value = '';
                         titleInput.value = '';
 
-                        // Agregar al documento de jugador
                         try {
                             const docRef = doc(db, 'players', this.currentUser.uid);
                             const snap = await getDoc(docRef);
@@ -952,9 +1137,6 @@
                             </div>
                             <div class="flex items-center space-x-3">
                                 ${this.currentUser ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
-                                <button onclick="app.seedNationalDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                                    <i class="fa-solid fa-database mr-1"></i> Cargar Datos País
-                                </button>
                             </div>
                         </div>
 
@@ -1002,7 +1184,7 @@
                 if (!grid) return;
 
                 if (players.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay futbolistas publicados con esos filtros. Haz clic en "Cargar Datos País".</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay futbolistas registrados aún. Sé el primero en publicar tu perfil.</div>`;
                     return;
                 }
 
@@ -1022,7 +1204,7 @@
                             <span class="text-[10px] font-semibold px-2 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status || 'Disponible'}</span>
                             <div class="flex space-x-2">
                                 <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ver Perfil</a>
-                                ${this.activeRole === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
+                                ${this.currentUser && p.uid !== this.currentUser.uid ? `<button onclick="app.startPrivateChat('${p.uid}', '${p.sportingName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow"><i class="fa-solid fa-comments"></i></button>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1056,10 +1238,7 @@
                     const p = docSnap.data();
 
                     container.innerHTML = `
-                        <div class="max-w-4xl mx-auto space-y-8">
-                            <button onclick="app.navigateTo('market')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
-                                <i class="fa-solid fa-arrow-left"></i><span>Volver al Mercado</span>
-                            </button>
+                        <div class="max-w-4xl mx-auto space-y-6">
                             <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6">
                                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-3xl sm:text-4xl text-cardenal-gold font-extrabold shadow">
@@ -1109,7 +1288,6 @@
                                                     <p class="text-xs font-bold text-white">${v.title || 'Jugada'}</p>
                                                     <video controls class="w-full rounded-xl max-h-60 bg-black">
                                                         <source src="${v.url}" type="video/mp4">
-                                                        Tu navegador no soporta reproducción de video.
                                                     </video>
                                                 </div>
                                             `).join('')}
@@ -1117,13 +1295,18 @@
                                     ` : `<p class="text-xs text-gray-400 italic">Este futbolista aún no ha publicado videos de jugadas.</p>`}
                                 </div>
 
-                                ${this.activeRole === 'club' ? `
-                                    <div class="pt-6 border-t border-cardenal-border flex justify-end">
-                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2 text-sm">
-                                            <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje / Préstamo</span>
+                                <div class="pt-6 border-t border-cardenal-border flex flex-wrap gap-3 justify-end">
+                                    ${this.currentUser && p.uid !== this.currentUser.uid ? `
+                                        <button onclick="app.startPrivateChat('${p.uid}', '${p.sportingName}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2 text-xs">
+                                            <i class="fa-solid fa-comments"></i><span>Enviar Mensaje Privado</span>
+                                        </button>
+                                    ` : ''}
+                                    ${this.activeRole === 'club' ? `
+                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2 text-xs">
+                                            <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje</span>
                                         </a>
-                                    </div>
-                                ` : ''}
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1153,7 +1336,7 @@
                     const grid = document.getElementById('clubs-grid');
                     
                     if (this.clubsCache.length === 0) {
-                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados. Carga los datos país desde el Mercado.</div>`;
+                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados todavía. Registra tu club como Técnico/Representante.</div>`;
                         return;
                     }
 
@@ -1190,9 +1373,6 @@
 
                     container.innerHTML = `
                         <div class="max-w-4xl mx-auto space-y-6">
-                            <button onclick="app.navigateTo('clubs')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
-                                <i class="fa-solid fa-arrow-left"></i><span>Volver a Clubes</span>
-                            </button>
                             <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                     <div>
@@ -1200,9 +1380,16 @@
                                         <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">${c.name}</h2>
                                         <p class="text-xs text-gray-400 mt-1">Institución deportiva oficial en Uruguay</p>
                                     </div>
-                                    <button onclick="app.openApplyClubModal('${clubId}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow">
-                                        <i class="fa-solid fa-file-signature mr-1"></i> SOLICITAR INGRESAR AL CLUB
-                                    </button>
+                                    <div class="flex gap-2">
+                                        ${c.representativeUid && this.currentUser ? `
+                                            <button onclick="app.startPrivateChat('${c.representativeUid}', 'Técnico/Representante de ${c.name}')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow">
+                                                <i class="fa-solid fa-comments mr-1"></i> Contactar Técnico
+                                            </button>
+                                        ` : ''}
+                                        <button onclick="app.openApplyClubModal('${clubId}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow">
+                                            Solicitar Ingreso
+                                        </button>
+                                    </div>
                                 </div>
                                 <p class="text-gray-300 text-xs sm:text-sm bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
                             </div>
@@ -1296,7 +1483,7 @@
                 }
             }
 
-            // --- SISTEMA DE FICHAJES Y PRÉSTAMOS EN UYU ---
+            // --- FICHAJES Y PRÉSTAMOS ---
             async renderCreateProposal(container, playerId) {
                 const playerDoc = await getDoc(doc(db, 'players', playerId));
                 if (!playerDoc.exists()) {
@@ -1395,7 +1582,7 @@
                 }
             }
 
-            // --- PANEL DEL FUTBOLISTA ---
+            // --- PANELS Y NOTIFICACIONES ---
             async renderPlayerPanel(container) {
                 if (!this.currentUser) {
                     this.navigateTo('login');
@@ -1442,6 +1629,7 @@
                                 <p class="text-xs text-emerald-400 font-semibold">Estado: ${prop.status}</p>
                             </div>
                             <div class="flex flex-wrap gap-2">
+                                <button onclick="app.startPrivateChat('${prop.senderUid}', '${prop.senderName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-comments mr-1"></i>Chatear</button>
                                 <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Aceptar</button>
                                 <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Rechazar</button>
                             </div>
@@ -1462,7 +1650,6 @@
                 }
             }
 
-            // --- PANEL DEL CLUB ---
             async renderClubPanel(container) {
                 if (!this.currentUser) {
                     this.navigateTo('login');
@@ -1472,13 +1659,13 @@
                 container.innerHTML = `
                     <div class="space-y-6">
                         <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl">
-                            <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Club</span>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Representante'}</h2>
+                            <span class="text-xs text-cardenal-gold font-bold uppercase">Panel Técnico / Representante del Club</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Técnico / Club'}</h2>
                         </div>
 
                         <!-- Solicitudes de Ingreso -->
                         <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl space-y-4">
-                            <h3 class="text-lg font-bold text-white">Solicitudes de Ingreso al Plantel</h3>
+                            <h3 class="text-lg font-bold text-white">Solicitudes de Ingreso Recibidas</h3>
                             <div id="club-applications" class="space-y-3">
                                 <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
                             </div>
@@ -1505,6 +1692,7 @@
                                 <p class="text-xs text-amber-400 font-semibold">Estado: ${app.status}</p>
                             </div>
                             <div class="flex space-x-2">
+                                <button onclick="app.startPrivateChat('${app.playerUid}', '${app.playerName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-comments mr-1"></i>Chatear</button>
                                 <button onclick="app.updateAppStatus('${app.id}', 'Aceptada')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Aceptar</button>
                                 <button onclick="app.updateAppStatus('${app.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Rechazar</button>
                             </div>
@@ -1533,11 +1721,31 @@
                 container.innerHTML = `
                     <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
                         <h2 class="text-2xl font-extrabold text-white">Panel de Administración</h2>
-                        <button onclick="app.seedNationalDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow">
-                            <i class="fa-solid fa-database mr-2"></i> Inicializar / Cargar Datos Nacionales
-                        </button>
+                        <div class="p-4 bg-black/40 border border-cardenal-border rounded-2xl space-y-3">
+                            <p class="text-xs text-gray-300">Vaciar la base de datos de usuarios ficticios para comenzar a recibir registros reales de futbolistas y clubes.</p>
+                            <button onclick="app.clearAllDemoData()" class="bg-red-900 hover:bg-red-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow">
+                                <i class="fa-solid fa-trash mr-2"></i> Limpiar Todo para Producción Real
+                            </button>
+                        </div>
                     </div>
                 `;
+            }
+
+            async clearAllDemoData() {
+                if (!confirm("¿Estás seguro de vaciar todos los registros ficticios? Esta acción dejará la base de datos vacía para usuarios reales.")) return;
+                try {
+                    this.showToast("Limpiando base de datos...", "info");
+                    const playersSnap = await getDocs(collection(db, 'players'));
+                    playersSnap.forEach(async (d) => await deleteDoc(doc(db, 'players', d.id)));
+                    
+                    const clubsSnap = await getDocs(collection(db, 'clubs'));
+                    clubsSnap.forEach(async (d) => await deleteDoc(doc(db, 'clubs', d.id)));
+
+                    this.showToast("¡Base de datos limpiada con éxito!", "success");
+                    this.loadPlayers();
+                } catch (e) {
+                    this.showToast("Error al limpiar base de datos.", "error");
+                }
             }
 
             async renderNotifications(container) {
@@ -1581,58 +1789,9 @@
                         <h2 class="text-2xl font-extrabold text-white">Protección de Menores y Privacidad (Uruguay)</h2>
                         <p><strong>El Cardenal Sporting</strong> cumple con la normativa vigente en Uruguay para la protección de datos personales de menores de edad y deportistas formativos.</p>
                         <h3 class="text-base font-bold text-white pt-2">Privacidad y Seguridad</h3>
-                        <p>Los datos de contacto privado (teléfono personal, domicilios, documentos) no se muestran públicamente. Las propuestas de fichaje y scouting pasan por canales formales en la plataforma.</p>
+                        <p>Los datos de contacto privado (teléfono personal, domicilios, documentos) no se muestran públicamente. Las propuestas de fichaje y scouting pasan por canales formales y chats en la plataforma.</p>
                     </div>
                 `;
-            }
-
-            async seedNationalDemoData() {
-                try {
-                    this.showToast("Generando datos nacionales de demostración...", "info");
-                    const batch = writeBatch(db);
-
-                    const clubsData = [
-                        { name: "Peñarol (Formativas)", department: "Montevideo", categories: ["Sub-16", "Sub-17", "Sub-19"], verified: true, description: "Institución deportiva oficial." },
-                        { name: "Nacional (Formativas)", department: "Montevideo", categories: ["Sub-16", "Sub-17", "Sub-19"], verified: true, description: "Institución deportiva oficial." },
-                        { name: "Defensor Sporting", department: "Montevideo", categories: ["Sub-17", "Sub-20"], verified: true, description: "Semillero tradicional de Uruguay." },
-                        { name: "Deportivo Maldonado", department: "Maldonado", categories: ["Sub-17", "Primera División"], verified: true, description: "Representante del fútbol fernandino." },
-                        { name: "Salto FC", department: "Salto", categories: ["Sub-17", "Primera División"], verified: true, description: "Fútbol profesional del litoral." },
-                        { name: "Club Atlético Durazno", department: "Durazno", categories: ["Sub-17", "Sub-19"], verified: true, description: "Tradición futbolística del centro del país." }
-                    ];
-
-                    for (let c of clubsData) {
-                        const refDoc = doc(collection(db, 'clubs'));
-                        batch.set(refDoc, { ...c, lastUpdated: serverTimestamp() });
-                    }
-
-                    const positions = ['Arquero', 'Defensa central', 'Mediocampista central', 'Extremo derecho', 'Delantero centro'];
-                    const names = ['Santiago Rodríguez', 'Joaquín Silva', 'Matías Pereira', 'Facundo Gómez', 'Ignacio Martínez', 'Lucas Fernández', 'Thiago Sosa', 'Agustín Ramírez'];
-                    
-                    for (let i = 0; i < 15; i++) {
-                        const refDoc = doc(collection(db, 'players'));
-                        const dep = URUGUAY_DEPARTMENTS[i % URUGUAY_DEPARTMENTS.length];
-                        batch.set(refDoc, {
-                            sportingName: `${names[i % names.length]} (${dep})`,
-                            category: CATEGORIES_LIST[i % CATEGORIES_LIST.length],
-                            department: dep,
-                            locality: dep,
-                            position: positions[i % positions.length],
-                            preferredFoot: 'Derecha',
-                            currentClub: 'Libre',
-                            status: 'Disponible para nuevas oportunidades',
-                            description: `Futbolista destacado en formativas y competencia oficial en ${dep}, Uruguay.`,
-                            videos: [],
-                            published: true,
-                            lastUpdated: serverTimestamp()
-                        });
-                    }
-
-                    await batch.commit();
-                    this.showToast("¡Datos nacionales cargados con éxito!", "success");
-                    this.loadPlayers();
-                } catch (error) {
-                    this.showToast("Error cargando datos demo: " + error.message, "error");
-                }
             }
         }
 
