@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,9 +18,11 @@
                             red: '#991b1b',
                             darkred: '#7f1d1d',
                             gold: '#d97706',
-                            dark: '#0a0a0a',
-                            card: '#141414',
-                            border: '#262626'
+                            lightbg: '#f8fafc',
+                            card: '#ffffff',
+                            border: '#e2e8f0',
+                            textPrimary: '#0f172a',
+                            textSecondary: '#475569'
                         }
                     }
                 }
@@ -37,61 +39,61 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-cardenal-dark text-gray-100 min-h-screen flex flex-col selection:bg-cardenal-red selection:text-white pb-20 md:pb-0">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col selection:bg-cardenal-red selection:text-white pb-20 md:pb-0">
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-50 bg-cardenal-card border-b border-cardenal-border shadow-lg">
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <!-- Botón Atrás -->
-                <button id="back-btn" onclick="app.goBack()" class="hidden bg-black/60 border border-cardenal-border hover:border-cardenal-gold text-white w-10 h-10 rounded-xl items-center justify-center transition mr-1">
+                <button id="back-btn" onclick="app.goBack()" class="hidden bg-slate-100 border border-slate-200 hover:border-cardenal-gold text-slate-700 w-10 h-10 rounded-xl items-center justify-center transition mr-1">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
 
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigateTo('home')">
-                    <div class="w-12 h-12 rounded-xl overflow-hidden bg-black border border-cardenal-border flex items-center justify-center shadow-md">
+                    <div class="w-12 h-12 rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 flex items-center justify-center shadow-sm shrink-0">
                         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" alt="Logo El Cardenal Sporting" class="w-full h-full object-cover">
                     </div>
                     <div>
-                        <h1 class="text-lg sm:text-xl font-extrabold tracking-wider text-white uppercase">El Cardenal <span class="text-cardenal-gold">Sporting</span></h1>
-                        <p class="text-[10px] sm:text-xs text-gray-400 font-medium">Scouting & Mercado Nacional • Uruguay</p>
+                        <h1 class="text-base sm:text-lg md:text-xl font-extrabold tracking-wider text-slate-900 uppercase leading-tight">El Cardenal <span class="text-cardenal-red">Sporting</span></h1>
+                        <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Scouting & Mercado Nacional • Uruguay</p>
                     </div>
                 </div>
             </div>
 
             <!-- Navegación Escritorio -->
-            <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
-                <a href="#home" onclick="app.navigateTo('home')" class="hover:text-cardenal-gold transition">Inicio</a>
-                <a href="#market" onclick="app.navigateTo('market')" class="hover:text-cardenal-gold transition">Mercado</a>
-                <a href="#departments" onclick="app.navigateTo('departments')" class="hover:text-cardenal-gold transition">Departamentos</a>
-                <a href="#clubs" onclick="app.navigateTo('clubs')" class="hover:text-cardenal-gold transition">Clubes</a>
-                <a href="#chats" onclick="app.navigateTo('chats')" class="hover:text-cardenal-gold transition">Mensajes</a>
-                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-gold transition">Ayuda</a>
+            <nav class="hidden lg:flex items-center space-x-6 text-sm font-semibold text-slate-700">
+                <a href="#home" onclick="app.navigateTo('home')" class="hover:text-cardenal-red transition">Inicio</a>
+                <a href="#market" onclick="app.navigateTo('market')" class="hover:text-cardenal-red transition">Mercado</a>
+                <a href="#departments" onclick="app.navigateTo('departments')" class="hover:text-cardenal-red transition">Departamentos</a>
+                <a href="#clubs" onclick="app.navigateTo('clubs')" class="hover:text-cardenal-red transition">Clubes</a>
+                <a href="#chats" onclick="app.navigateTo('chats')" class="hover:text-cardenal-red transition">Mensajes</a>
+                <a href="#help" onclick="app.navigateTo('help')" class="hover:text-cardenal-red transition">Ayuda</a>
             </nav>
 
             <!-- Acciones de Usuario / Menú Dinámico -->
             <div class="flex items-center space-x-3 relative" id="auth-nav-container">
-                <i class="fa-solid fa-spinner fa-spin text-cardenal-gold"></i>
+                <i class="fa-solid fa-spinner fa-spin text-cardenal-red"></i>
             </div>
         </div>
     </header>
 
     <!-- Barra Inferior Móvil -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-cardenal-card border-t border-cardenal-border px-4 py-2 flex justify-around items-center text-xs">
-        <a href="#home" onclick="app.navigateTo('home')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
-            <i class="fa-solid fa-house text-base"></i><span>Inicio</span>
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex justify-around items-center text-xs shadow-lg">
+        <a href="#home" onclick="app.navigateTo('home')" class="flex flex-col items-center text-slate-500 hover:text-cardenal-red">
+            <i class="fa-solid fa-house text-base mb-0.5"></i><span>Inicio</span>
         </a>
-        <a href="#market" onclick="app.navigateTo('market')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
-            <i class="fa-solid fa-futbol text-base"></i><span>Mercado</span>
+        <a href="#market" onclick="app.navigateTo('market')" class="flex flex-col items-center text-slate-500 hover:text-cardenal-red">
+            <i class="fa-solid fa-futbol text-base mb-0.5"></i><span>Mercado</span>
         </a>
-        <a href="#chats" onclick="app.navigateTo('chats')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
-            <i class="fa-solid fa-comments text-base"></i><span>Chat</span>
+        <a href="#chats" onclick="app.navigateTo('chats')" class="flex flex-col items-center text-slate-500 hover:text-cardenal-red">
+            <i class="fa-solid fa-comments text-base mb-0.5"></i><span>Chat</span>
         </a>
-        <a href="#clubs" onclick="app.navigateTo('clubs')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold">
-            <i class="fa-solid fa-shield text-base"></i><span>Clubes</span>
+        <a href="#clubs" onclick="app.navigateTo('clubs')" class="flex flex-col items-center text-slate-500 hover:text-cardenal-red">
+            <i class="fa-solid fa-shield text-base mb-0.5"></i><span>Clubes</span>
         </a>
-        <a href="#notifications" onclick="app.navigateTo('notifications')" class="flex flex-col items-center text-gray-400 hover:text-cardenal-gold relative">
-            <i class="fa-solid fa-bell text-base"></i><span>Alertas</span>
+        <a href="#notifications" onclick="app.navigateTo('notifications')" class="flex flex-col items-center text-slate-500 hover:text-cardenal-red relative">
+            <i class="fa-solid fa-bell text-base mb-0.5"></i><span>Alertas</span>
         </a>
     </div>
 
@@ -104,12 +106,12 @@
     <div id="toast-container" class="fixed bottom-16 md:bottom-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none"></div>
 
     <!-- Modales Globales -->
-    <div id="global-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div id="modal-content" class="bg-cardenal-card border border-cardenal-border rounded-2xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl"></div>
+    <div id="global-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl"></div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-cardenal-card border-t border-cardenal-border mt-12 py-8 text-center text-xs text-gray-400 mb-12 md:mb-0">
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-xs text-slate-500 mb-12 md:mb-0">
         <div class="max-w-7xl mx-auto px-4 space-y-3">
             <p>© 2026 El Cardenal Sporting. Plataforma Nacional de Fútbol Juvenil y Profesional — Uruguay.</p>
             <div class="flex justify-center space-x-6">
@@ -321,7 +323,7 @@
                 }
                 
                 const container = document.getElementById('app-view');
-                container.innerHTML = `<div class="flex justify-center items-center py-24"><i class="fa-solid fa-spinner fa-spin text-4xl text-cardenal-gold"></i></div>`;
+                container.innerHTML = `<div class="flex justify-center items-center py-24"><i class="fa-solid fa-spinner fa-spin text-4xl text-cardenal-red"></i></div>`;
 
                 switch(view) {
                     case 'home': this.renderHome(container); break;
@@ -355,52 +357,52 @@
                     
                     let panelLink = '';
                     if (this.activeRole === 'player') {
-                        panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Futbolista</a>`;
+                        panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Futbolista</a>`;
                     } else if (this.activeRole === 'club') {
-                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Técnico / Club</a>`;
+                        panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Técnico / Club</a>`;
                     }
                     
-                    let adminLink = this.userData.role === 'admin' ? `<a href="#admin-panel" onclick="app.navigateTo('admin-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-cardenal-gold hover:bg-zinc-800"><i class="fa-solid fa-lock mr-2"></i> Admin</a>` : '';
+                    let adminLink = this.userData.role === 'admin' ? `<a href="#admin-panel" onclick="app.navigateTo('admin-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-cardenal-red hover:bg-slate-100"><i class="fa-solid fa-lock mr-2"></i> Admin</a>` : '';
                     const otherRole = this.activeRole === 'player' ? 'club' : 'player';
-                    const otherRoleLabel = this.activeRole === 'player' ? 'Modo Técnico/representante del club' : 'Modo Futbolista';
+                    const otherRoleLabel = this.activeRole === 'player' ? 'Modo Técnico/Representante' : 'Modo Futbolista';
 
                     nav.innerHTML = `
                         <div class="relative">
-                            <button id="user-menu-btn" onclick="app.toggleDropdown()" class="flex items-center space-x-3 bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold px-3 py-2 rounded-2xl transition shadow">
-                                <div class="w-9 h-9 rounded-xl bg-cardenal-red flex items-center justify-center text-white font-bold text-xs shadow">
+                            <button id="user-menu-btn" onclick="app.toggleDropdown()" class="flex items-center space-x-3 bg-white border border-slate-200 hover:border-cardenal-red px-3 py-2 rounded-2xl transition shadow-sm">
+                                <div class="w-9 h-9 rounded-xl bg-cardenal-red flex items-center justify-center text-white font-bold text-xs shadow-sm">
                                     ${initials}
                                 </div>
                                 <div class="text-left hidden sm:block">
-                                    <p class="text-sm font-semibold text-gray-200 leading-tight">${this.userData.name}</p>
-                                    <p class="text-[10px] font-bold text-cardenal-gold uppercase">${this.activeRole === 'player' ? 'Futbolista' : 'Técnico / Club'}</p>
+                                    <p class="text-sm font-semibold text-slate-800 leading-tight">${this.userData.name}</p>
+                                    <p class="text-[10px] font-bold text-cardenal-red uppercase">${this.activeRole === 'player' ? 'Futbolista' : 'Técnico / Club'}</p>
                                 </div>
-                                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                                <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
                             </button>
-                            <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-cardenal-card border border-cardenal-border rounded-2xl shadow-2xl hidden py-2 z-50">
-                                <div class="px-4 py-2 border-b border-cardenal-border">
-                                    <p class="text-xs text-gray-400">Conectado como</p>
-                                    <p class="text-sm font-bold text-white truncate">${this.userData.email}</p>
+                            <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl hidden py-2 z-50">
+                                <div class="px-4 py-2 border-b border-slate-100">
+                                    <p class="text-xs text-slate-400">Conectado como</p>
+                                    <p class="text-sm font-bold text-slate-900 truncate">${this.userData.email}</p>
                                 </div>
-                                ${this.activeRole === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
+                                ${this.activeRole === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
                                 ${panelLink}
-                                <a href="#chats" onclick="app.navigateTo('chats'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-comments mr-2"></i> Mensajes Privados</a>
+                                <a href="#chats" onclick="app.navigateTo('chats'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-comments mr-2"></i> Mensajes Privados</a>
                                 ${adminLink}
-                                <a href="#notifications" onclick="app.navigateTo('notifications'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white"><i class="fa-solid fa-bell mr-2"></i> Notificaciones</a>
+                                <a href="#notifications" onclick="app.navigateTo('notifications'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-bell mr-2"></i> Notificaciones</a>
                                 
-                                <div class="border-t border-cardenal-border my-1"></div>
-                                <button onclick="app.switchRole('${otherRole}'); app.toggleDropdown();" class="w-full text-left px-4 py-2 text-xs text-amber-400 hover:bg-amber-950/40 font-bold">
+                                <div class="border-t border-slate-100 my-1"></div>
+                                <button onclick="app.switchRole('${otherRole}'); app.toggleDropdown();" class="w-full text-left px-4 py-2 text-xs text-amber-700 hover:bg-amber-50 font-bold">
                                     <i class="fa-solid fa-arrows-rotate mr-2"></i> Cambiar a ${otherRoleLabel}
                                 </button>
                                 
-                                <div class="border-t border-cardenal-border my-1"></div>
-                                <button onclick="app.logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-950/40 font-semibold"><i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar Sesión</button>
+                                <div class="border-t border-slate-100 my-1"></div>
+                                <button onclick="app.logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-semibold"><i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar Sesión</button>
                             </div>
                         </div>
                     `;
                 } else {
                     nav.innerHTML = `
-                        <a href="#login" onclick="app.navigateTo('login')" class="text-sm font-semibold text-gray-300 hover:text-cardenal-gold transition">Ingresar</a>
-                        <a href="#register" onclick="app.navigateTo('register')" class="bg-cardenal-red hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition">Registrarse</a>
+                        <a href="#login" onclick="app.navigateTo('login')" class="text-sm font-semibold text-slate-700 hover:text-cardenal-red transition">Ingresar</a>
+                        <a href="#register" onclick="app.navigateTo('register')" class="bg-cardenal-red hover:bg-red-800 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition">Registrarse</a>
                     `;
                 }
             }
@@ -420,10 +422,10 @@
                 const container = document.getElementById('toast-container');
                 if (!container) return;
                 const toast = document.createElement('div');
-                const bg = type === 'success' ? 'bg-emerald-900 border-emerald-700 text-emerald-100' : (type === 'error' ? 'bg-red-900 border-red-700 text-red-100' : 'bg-gray-900 border-gray-700 text-gray-100');
+                const bg = type === 'success' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : (type === 'error' ? 'bg-red-50 border-red-300 text-red-800' : 'bg-slate-100 border-slate-300 text-slate-800');
                 
-                toast.className = `border px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm font-medium pointer-events-auto ${bg}`;
-                toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${message}</span>`;
+                toast.className = `border px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-sm font-semibold pointer-events-auto ${bg}`;
+                toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-600' : 'fa-circle-exclamation text-red-600'}"></i><span>${message}</span>`;
                 container.appendChild(toast);
                 setTimeout(() => toast.remove(), 5000);
             }
@@ -431,16 +433,16 @@
             renderHome(container) {
                 container.innerHTML = `
                     <div class="space-y-12">
-                        <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-red-950 via-cardenal-card to-black border border-cardenal-border p-8 md:p-16 shadow-2xl">
+                        <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-red-950 border border-slate-200 p-8 md:p-16 shadow-lg text-white">
                             <div class="max-w-2xl space-y-6">
-                                <span class="bg-cardenal-gold/20 text-cardenal-gold border border-cardenal-gold/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Plataforma Nacional de Scouting • Uruguay</span>
-                                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">El talento de los <span class="text-cardenal-gold">19 departamentos</span> conectado</h2>
-                                <p class="text-gray-300 text-sm md:text-base">El Cardenal Sporting conecta futbolistas de todo Uruguay con técnicos/representantes de clubes. Registra tu perfil real y chatea directamente.</p>
+                                <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Plataforma Nacional de Scouting • Uruguay</span>
+                                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">El talento de los <span class="text-amber-400">19 departamentos</span> conectado</h2>
+                                <p class="text-slate-300 text-sm md:text-base">El Cardenal Sporting conecta futbolistas de todo Uruguay con técnicos y representantes de clubes. Registra tu perfil real y chatea directamente.</p>
                                 <div class="flex flex-wrap gap-4 pt-2">
-                                    <a href="#market" onclick="app.navigateTo('market')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2 text-sm">
+                                    <a href="#market" onclick="app.navigateTo('market')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl shadow-md transition flex items-center space-x-2 text-sm">
                                         <i class="fa-solid fa-futbol"></i><span>Explorar Mercado Nacional</span>
                                     </a>
-                                    <a href="#departments" onclick="app.navigateTo('departments')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2 text-sm">
+                                    <a href="#departments" onclick="app.navigateTo('departments')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2 text-sm">
                                         <i class="fa-solid fa-map"></i><span>Ver por Departamentos</span>
                                     </a>
                                     ${this.currentUser ? `
@@ -453,11 +455,11 @@
                         </div>
 
                         <div class="space-y-4">
-                            <h3 class="text-xl font-bold text-white">Explorar por Departamento</h3>
+                            <h3 class="text-xl font-bold text-slate-900">Explorar por Departamento</h3>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
                                 ${URUGUAY_DEPARTMENTS.slice(0, 12).map(dep => `
-                                    <button onclick="app.navigateToMarketWithDepartment('${dep}')" class="bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold p-3 rounded-2xl text-center transition group">
-                                        <p class="text-xs font-bold text-white group-hover:text-cardenal-gold">${dep}</p>
+                                    <button onclick="app.navigateToMarketWithDepartment('${dep}')" class="bg-white border border-slate-200 hover:border-cardenal-red p-4 rounded-2xl text-center transition shadow-sm group">
+                                        <p class="text-xs font-bold text-slate-800 group-hover:text-cardenal-red">${dep}</p>
                                     </button>
                                 `).join('')}
                             </div>
@@ -479,29 +481,29 @@
 
             renderRoleSelector(container) {
                 container.innerHTML = `
-                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl text-center space-y-8">
+                    <div class="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm text-center space-y-8">
                         <div>
-                            <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
-                            <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
-                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Técnico/representante del club.</p>
+                            <span class="text-xs text-cardenal-red font-bold uppercase">Selección de Modo</span>
+                            <h2 class="text-3xl font-bold text-slate-900 mt-2">¿Cómo deseas operar hoy?</h2>
+                            <p class="text-xs text-slate-500 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Técnico/representante del club.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
-                                <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                            <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-slate-50 border border-slate-200 hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none shadow-sm">
+                                <div class="w-16 h-16 rounded-2xl bg-red-100 text-cardenal-red border border-red-200 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                                     <i class="fa-solid fa-shirt"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-white text-center">Modo Futbolista</h3>
-                                <p class="text-xs text-gray-400 text-center">Publica tu perfil nacional, sube videos directamente, solicita ingreso a clubes y chatea en privado.</p>
+                                <h3 class="text-xl font-bold text-slate-900 text-center">Modo Futbolista</h3>
+                                <p class="text-xs text-slate-600 text-center">Publica tu perfil nacional, sube videos, solicita ingreso a clubes y chatea en privado.</p>
                                 <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Futbolista</span>
                             </button>
 
-                            <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
-                                <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                            <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-slate-50 border border-slate-200 hover:border-amber-500 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none shadow-sm">
+                                <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 border border-amber-200 flex items-center justify-center text-3xl group-hover:scale-110 transition">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-white text-center">Modo Técnico/representante del club</h3>
-                                <p class="text-xs text-gray-400 text-center">Busca talentos en todo Uruguay, filtra por departamento y abre chats directos con futbolistas.</p>
-                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Técnico/Representante</span>
+                                <h3 class="text-xl font-bold text-slate-900 text-center">Modo Técnico / Club</h3>
+                                <p class="text-xs text-slate-600 text-center">Busca talentos en todo Uruguay, filtra por departamento y abre chats directos.</p>
+                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Técnico</span>
                             </button>
                         </div>
                     </div>
@@ -510,21 +512,21 @@
 
             renderLogin(container) {
                 container.innerHTML = `
-                    <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
+                    <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
                         <div class="text-center space-y-2 mb-8">
-                            <h2 class="text-2xl font-bold text-white">Iniciar Sesión</h2>
-                            <p class="text-xs text-gray-400">Accede a El Cardenal Sporting</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Iniciar Sesión</h2>
+                            <p class="text-xs text-slate-500">Accede a El Cardenal Sporting</p>
                         </div>
                         <form id="login-form" class="space-y-5" onsubmit="app.handleLoginSubmit(event)">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Correo electrónico</label>
-                                <input type="email" id="login-email" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Correo electrónico</label>
+                                <input type="email" id="login-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
-                                <input type="password" id="login-password" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Contraseña</label>
+                                <input type="password" id="login-password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">Entrar</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-sm text-sm">Entrar</button>
                         </form>
                     </div>
                 `;
@@ -545,36 +547,36 @@
 
             renderRegister(container) {
                 container.innerHTML = `
-                    <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
+                    <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
                         <div class="text-center space-y-2 mb-8">
-                            <h2 class="text-2xl font-bold text-white">Crear Cuenta</h2>
-                            <p class="text-xs text-gray-400">Seleccioná tu tipo de perfil inicial</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Crear Cuenta</h2>
+                            <p class="text-xs text-slate-500">Seleccioná tu tipo de perfil inicial</p>
                         </div>
                         <form id="register-form" class="space-y-5" onsubmit="app.handleRegisterSubmit(event)">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tipo de Perfil Inicial</label>
-                                <select id="reg-role" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleRegisterFields(this.value)">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tipo de Perfil Inicial</label>
+                                <select id="reg-role" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none" onchange="app.toggleRegisterFields(this.value)">
                                     <option value="player">Futbolista</option>
                                     <option value="club">Técnico/representante del club</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre Completo / Deportivo</label>
-                                <input type="text" id="reg-name" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre Completo / Deportivo</label>
+                                <input type="text" id="reg-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <div id="club-extra-field" class="hidden">
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre del Club</label>
-                                <input type="text" id="reg-clubname" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" placeholder="Ej: Club Atlético Durazno">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre del Club</label>
+                                <input type="text" id="reg-clubname" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none" placeholder="Ej: Club Atlético Durazno">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Correo electrónico</label>
-                                <input type="email" id="reg-email" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Correo electrónico</label>
+                                <input type="email" id="reg-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Contraseña</label>
-                                <input type="password" id="reg-password" required minlength="6" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Contraseña</label>
+                                <input type="password" id="reg-password" required minlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-cardenal-red outline-none">
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">Registrarse</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-sm text-sm">Registrarse</button>
                         </form>
                     </div>
                 `;
@@ -627,9 +629,9 @@
             translateFirebaseError(code) {
                 switch(code) {
                     case 'auth/operation-not-allowed': return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
-                    case 'auth/email-already-in-use': return 'El correo electrónico ya está registrado. Inicia sesión.';
-                    case 'auth/weak-password': return 'La contraseña es muy débil. Usa al menos 6 caracteres.';
-                    case 'auth/invalid-email': return 'El correo electrónico ingresado no es válido.';
+                    case 'auth/email-already-in-use': return 'El correo electrónico ya está registrado.';
+                    case 'auth/weak-password': return 'La contraseña debe tener al menos 6 caracteres.';
+                    case 'auth/invalid-email': return 'El correo electrónico no es válido.';
                     case 'auth/wrong-password':
                     case 'auth/user-not-found':
                     case 'auth/invalid-credential': return 'Correo o contraseña incorrectos.';
@@ -640,14 +642,14 @@
             async renderDepartmentsOverview(container) {
                 container.innerHTML = `
                     <div class="space-y-6">
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl flex justify-between items-center">
+                        <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm flex justify-between items-center">
                             <div>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Scouting por Departamento</h2>
-                                <p class="text-xs text-gray-400 mt-1">Explora futbolistas publicados en los 19 departamentos de Uruguay</p>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Scouting por Departamento</h2>
+                                <p class="text-xs text-slate-500 mt-1">Explora futbolistas publicados en los 19 departamentos de Uruguay</p>
                             </div>
                         </div>
                         <div id="departments-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-red"></i></div>
                         </div>
                     </div>
                 `;
@@ -666,12 +668,12 @@
 
                     const grid = document.getElementById('departments-grid');
                     grid.innerHTML = URUGUAY_DEPARTMENTS.map(dep => `
-                        <div onclick="app.navigateToMarketWithDepartment('${dep}')" class="bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold p-6 rounded-3xl shadow-xl cursor-pointer transition flex justify-between items-center group">
+                        <div onclick="app.navigateToMarketWithDepartment('${dep}')" class="bg-white border border-slate-200 hover:border-cardenal-red p-6 rounded-3xl shadow-sm cursor-pointer transition flex justify-between items-center group">
                             <div>
-                                <h3 class="text-lg font-bold text-white group-hover:text-cardenal-gold transition">${dep}</h3>
-                                <p class="text-xs text-gray-400 mt-1"><strong class="text-white">${counts[dep]}</strong> futbolistas publicados</p>
+                                <h3 class="text-lg font-bold text-slate-900 group-hover:text-cardenal-red transition">${dep}</h3>
+                                <p class="text-xs text-slate-500 mt-1"><strong class="text-slate-800">${counts[dep]}</strong> futbolistas publicados</p>
                             </div>
-                            <div class="w-10 h-10 rounded-xl bg-black border border-cardenal-border flex items-center justify-center text-cardenal-gold group-hover:scale-110 transition">
+                            <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-cardenal-red group-hover:scale-110 transition">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </div>
                         </div>
@@ -718,12 +720,12 @@
 
                 container.innerHTML = `
                     <div class="max-w-3xl mx-auto space-y-6">
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
-                            <h2 class="text-2xl font-extrabold text-white">Mis Mensajes Privados</h2>
-                            <p class="text-xs text-gray-400 mt-1">Conversaciones directas entre futbolistas y técnicos/representantes</p>
+                        <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
+                            <h2 class="text-2xl font-extrabold text-slate-900">Mis Mensajes Privados</h2>
+                            <p class="text-xs text-slate-500 mt-1">Conversaciones directas entre futbolistas y técnicos/representantes</p>
                         </div>
                         <div id="chats-list" class="space-y-3">
-                            <div class="text-center py-12"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                            <div class="text-center py-12"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-red"></i></div>
                         </div>
                     </div>
                 `;
@@ -734,7 +736,7 @@
                     const chatsList = document.getElementById('chats-list');
 
                     if (snap.empty) {
-                        chatsList.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-8 rounded-2xl text-center text-gray-400 text-xs">No tienes conversaciones activas aún.</div>`;
+                        chatsList.innerHTML = `<div class="bg-white border border-slate-200 p-8 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No tienes conversaciones activas aún.</div>`;
                         return;
                     }
 
@@ -745,12 +747,12 @@
                         const lastMsg = data.lastMessage || 'Haz clic para iniciar la conversación.';
 
                         return `
-                            <div onclick="app.navigateTo('chat', '${data.chatId}')" class="bg-cardenal-card border border-cardenal-border hover:border-cardenal-gold p-4 rounded-2xl cursor-pointer transition flex justify-between items-center">
+                            <div onclick="app.navigateTo('chat', '${data.chatId}')" class="bg-white border border-slate-200 hover:border-cardenal-red p-4 rounded-2xl cursor-pointer transition shadow-sm flex justify-between items-center">
                                 <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-white"><i class="fa-solid fa-user-circle mr-2 text-cardenal-gold"></i>${otherName}</h4>
-                                    <p class="text-xs text-gray-400 truncate max-w-xs">${lastMsg}</p>
+                                    <h4 class="text-sm font-bold text-slate-900"><i class="fa-solid fa-user-circle mr-2 text-cardenal-red"></i>${otherName}</h4>
+                                    <p class="text-xs text-slate-500 truncate max-w-xs">${lastMsg}</p>
                                 </div>
-                                <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                             </div>
                         `;
                     }).join('');
@@ -766,22 +768,22 @@
                 }
 
                 container.innerHTML = `
-                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col h-[75vh]">
-                        <div class="pb-4 border-b border-cardenal-border flex justify-between items-center">
+                    <div class="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col h-[75vh]">
+                        <div class="pb-4 border-b border-slate-100 flex justify-between items-center">
                             <div>
-                                <h3 id="chat-title" class="text-base font-bold text-white">Chat Privado</h3>
-                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle text-[8px] mr-1"></i>En línea</p>
+                                <h3 id="chat-title" class="text-base font-bold text-slate-900">Chat Privado</h3>
+                                <p class="text-[10px] text-emerald-600 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1"></i>En línea</p>
                             </div>
-                            <button onclick="app.navigateTo('chats')" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                            <button onclick="app.navigateTo('chats')" class="text-xs text-slate-500 hover:text-slate-900 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
                         </div>
 
                         <div id="chat-messages" class="flex-grow overflow-y-auto my-4 space-y-3 pr-2">
-                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-red"></i></div>
                         </div>
 
-                        <form onsubmit="app.sendChatMessage(event, '${chatId}')" class="flex gap-2 pt-2 border-t border-cardenal-border">
-                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-grow bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none">
-                            <button type="submit" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-paper-plane"></i></button>
+                        <form onsubmit="app.sendChatMessage(event, '${chatId}')" class="flex gap-2 pt-2 border-t border-slate-100">
+                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-red outline-none">
+                            <button type="submit" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-sm"><i class="fa-solid fa-paper-plane"></i></button>
                         </form>
                     </div>
                 `;
@@ -800,7 +802,7 @@
                     if (!msgsContainer) return;
 
                     if (snapshot.empty) {
-                        msgsContainer.innerHTML = `<div class="text-center text-xs text-gray-500 py-8">Inicia la conversación enviando un saludo.</div>`;
+                        msgsContainer.innerHTML = `<div class="text-center text-xs text-slate-400 py-8">Inicia la conversación enviando un saludo.</div>`;
                         return;
                     }
 
@@ -809,7 +811,7 @@
                         const isMe = m.senderUid === this.currentUser.uid;
                         return `
                             <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                                <div class="max-w-[80%] rounded-2xl px-4 py-2 text-xs ${isMe ? 'bg-cardenal-red text-white rounded-br-none' : 'bg-zinc-800 text-gray-200 border border-cardenal-border rounded-bl-none'}">
+                                <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs ${isMe ? 'bg-cardenal-red text-white rounded-br-none shadow-sm' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-none'}">
                                     <p>${m.text}</p>
                                 </div>
                             </div>
@@ -875,41 +877,41 @@
                 }
 
                 container.innerHTML = `
-                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                    <div class="max-w-3xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
                         <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-xs text-cardenal-gold font-bold uppercase">Scouting Nacional Uruguay</span>
-                                <h2 class="text-2xl font-bold text-white mt-1">Mi Perfil Futbolístico</h2>
+                                <span class="text-xs text-cardenal-red font-bold uppercase">Scouting Nacional Uruguay</span>
+                                <h2 class="text-2xl font-bold text-slate-900 mt-1">Mi Perfil Futbolístico</h2>
                             </div>
-                            <a href="#player-panel" onclick="app.navigateTo('player-panel')" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> Panel</a>
+                            <a href="#player-panel" onclick="app.navigateTo('player-panel')" class="text-xs text-slate-600 hover:text-slate-900 font-bold"><i class="fa-solid fa-arrow-left mr-1"></i> Panel</a>
                         </div>
                         <form id="profile-form" onsubmit="app.handleProfileSave(event)" class="space-y-4">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre Deportivo</label>
-                                <input type="text" id="p-name" value="${pData.sportingName}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre Deportivo</label>
+                                <input type="text" id="p-name" value="${pData.sportingName}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Departamento (Uruguay)</label>
-                                    <select id="p-dep" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Departamento (Uruguay)</label>
+                                    <select id="p-dep" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                         ${URUGUAY_DEPARTMENTS.map(d => `<option value="${d}" ${pData.department === d ? 'selected' : ''}>${d}</option>`).join('')}
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Localidad / Ciudad</label>
-                                    <input type="text" id="p-loc" value="${pData.locality || ''}" placeholder="Ej: Durazno, Las Piedras, Salto..." required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Localidad / Ciudad</label>
+                                    <input type="text" id="p-loc" value="${pData.locality || ''}" placeholder="Ej: Durazno, Las Piedras, Salto..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Categoría</label>
-                                    <select id="p-cat" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Categoría</label>
+                                    <select id="p-cat" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                         ${CATEGORIES_LIST.map(c => `<option value="${c}" ${pData.category === c ? 'selected' : ''}>${c}</option>`).join('')}
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Posición Principal</label>
-                                    <select id="p-pos" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Posición Principal</label>
+                                    <select id="p-pos" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                         <option value="Arquero" ${pData.position === 'Arquero' ? 'selected' : ''}>Arquero</option>
                                         <option value="Defensa central" ${pData.position === 'Defensa central' ? 'selected' : ''}>Defensa central</option>
                                         <option value="Lateral derecho" ${pData.position === 'Lateral derecho' ? 'selected' : ''}>Lateral derecho</option>
@@ -923,8 +925,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Pierna Hábil</label>
-                                    <select id="p-foot" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Pierna Hábil</label>
+                                    <select id="p-foot" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                         <option value="Derecha" ${pData.preferredFoot === 'Derecha' ? 'selected' : ''}>Derecha</option>
                                         <option value="Izquierda" ${pData.preferredFoot === 'Izquierda' ? 'selected' : ''}>Izquierda</option>
                                         <option value="Ambidextro" ${pData.preferredFoot === 'Ambidextro' ? 'selected' : ''}>Ambidextro</option>
@@ -933,43 +935,43 @@
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Club Actual</label>
-                                    <input type="text" id="p-club" value="${pData.currentClub}" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Club Actual</label>
+                                    <input type="text" id="p-club" value="${pData.currentClub}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Altura</label>
-                                    <input type="text" id="p-height" value="${pData.height}" placeholder="Ej: 1.80m" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Altura</label>
+                                    <input type="text" id="p-height" value="${pData.height}" placeholder="Ej: 1.80m" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Peso</label>
-                                    <input type="text" id="p-weight" value="${pData.weight}" placeholder="Ej: 72kg" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Peso</label>
+                                    <input type="text" id="p-weight" value="${pData.weight}" placeholder="Ej: 72kg" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Estado en el Mercado</label>
-                                <select id="p-status" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Estado en el Mercado</label>
+                                <select id="p-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">
                                     <option value="Disponible para nuevas oportunidades" ${pData.status?.includes('Disponible') ? 'selected' : ''}>Disponible para nuevas oportunidades</option>
                                     <option value="En préstamo" ${pData.status?.includes('préstamo') ? 'selected' : ''}>En préstamo</option>
                                     <option value="Con club actual" ${pData.status?.includes('Con club') ? 'selected' : ''}>Con club actual (No disponible)</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Descripción y Características Técnicas</label>
-                                <textarea id="p-desc" rows="3" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">${pData.description}</textarea>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Descripción y Características Técnicas</label>
+                                <textarea id="p-desc" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none">${pData.description}</textarea>
                             </div>
 
-                            <div class="border-t border-cardenal-border pt-4 space-y-3">
-                                <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-video text-cardenal-gold mr-2"></i>Mis Videos de Jugadas (Firebase Storage)</h3>
-                                <div class="flex flex-col sm:flex-row gap-3 items-center bg-black/40 p-4 rounded-xl border border-cardenal-border">
-                                    <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/quicktime" class="text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cardenal-red file:text-white hover:file:bg-red-800 cursor-pointer">
-                                    <input type="text" id="video-title-input" placeholder="Título del video (Ej: Gol de tiro libre)" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
-                                    <button type="button" onclick="app.uploadVideoToStorage()" class="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition whitespace-nowrap">Subir Video</button>
+                            <div class="border-t border-slate-100 pt-4 space-y-3">
+                                <h3 class="text-sm font-bold text-slate-900"><i class="fa-solid fa-video text-cardenal-red mr-2"></i>Mis Videos de Jugadas (Firebase Storage)</h3>
+                                <div class="flex flex-col sm:flex-row gap-3 items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/quicktime" class="text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cardenal-red file:text-white hover:file:bg-red-800 cursor-pointer">
+                                    <input type="text" id="video-title-input" placeholder="Título del video (Ej: Gol de tiro libre)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-cardenal-red outline-none">
+                                    <button type="button" onclick="app.uploadVideoToStorage()" class="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition whitespace-nowrap shadow-sm">Subir Video</button>
                                 </div>
                                 <div id="upload-progress-container" class="hidden space-y-1">
-                                    <div class="w-full bg-black rounded-full h-2.5 overflow-hidden border border-cardenal-border">
-                                        <div id="upload-progress-bar" class="bg-cardenal-gold h-2.5 transition-all duration-300" style="width: 0%"></div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                                        <div id="upload-progress-bar" class="bg-cardenal-red h-2.5 transition-all duration-300" style="width: 0%"></div>
                                     </div>
-                                    <p id="upload-progress-text" class="text-[10px] text-gray-400 text-right">Subiendo video...</p>
+                                    <p id="upload-progress-text" class="text-[10px] text-slate-500 text-right">Subiendo video...</p>
                                 </div>
 
                                 <div id="profile-videos-list" class="space-y-2 pt-2"></div>
@@ -977,9 +979,9 @@
 
                             <div class="flex items-center space-x-3 pt-2">
                                 <input type="checkbox" id="p-published" ${pData.published ? 'checked' : ''} class="w-4 h-4 accent-cardenal-red">
-                                <label for="p-published" class="text-sm font-medium text-gray-300">Publicar mi perfil en el Mercado Nacional</label>
+                                <label for="p-published" class="text-sm font-medium text-slate-700">Publicar mi perfil en el Mercado Nacional</label>
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">Guardar y Publicar Perfil</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-sm text-sm">Guardar y Publicar Perfil</button>
                         </form>
                     </div>
                 `;
@@ -990,16 +992,16 @@
                 const listEl = document.getElementById('profile-videos-list');
                 if (!listEl) return;
                 if (!videos || videos.length === 0) {
-                    listEl.innerHTML = `<p class="text-xs text-gray-400 italic">No hay videos subidos todavía.</p>`;
+                    listEl.innerHTML = `<p class="text-xs text-slate-400 italic">No hay videos subidos todavía.</p>`;
                     return;
                 }
                 listEl.innerHTML = videos.map((v, idx) => `
-                    <div class="flex justify-between items-center bg-black/60 border border-cardenal-border p-3 rounded-xl text-xs">
+                    <div class="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs">
                         <div class="flex items-center space-x-3 truncate">
-                            <i class="fa-solid fa-play text-cardenal-gold"></i>
-                            <span class="font-bold text-white truncate">${v.title || `Video ${idx + 1}`}</span>
+                            <i class="fa-solid fa-play text-cardenal-red"></i>
+                            <span class="font-bold text-slate-800 truncate">${v.title || `Video ${idx + 1}`}</span>
                         </div>
-                        <button type="button" onclick="app.removeVideo(${idx})" class="text-red-400 hover:text-red-300 font-semibold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                        <button type="button" onclick="app.removeVideo(${idx})" class="text-red-600 hover:text-red-800 font-semibold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `).join('');
             }
@@ -1118,27 +1120,27 @@
             async renderMarket(container) {
                 container.innerHTML = `
                     <div class="space-y-6">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
                             <div>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Mercado Nacional de Futbolistas</h2>
-                                <p class="text-xs text-gray-400 mt-1">Talentos publicados en todo el territorio uruguayo</p>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Mercado Nacional de Futbolistas</h2>
+                                <p class="text-xs text-slate-500 mt-1">Talentos publicados en todo el territorio uruguayo</p>
                             </div>
                             <div class="flex items-center space-x-3">
-                                ${this.currentUser ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
+                                ${this.currentUser ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
-                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
-                            <select id="filter-department" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
+                            <select id="filter-department" onchange="app.filterPlayers()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
                                 <option value="">Todos los departamentos</option>
                                 ${URUGUAY_DEPARTMENTS.map(d => `<option value="${d}">${d}</option>`).join('')}
                             </select>
-                            <select id="filter-category" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                            <select id="filter-category" onchange="app.filterPlayers()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
                                 <option value="">Todas las categorías</option>
                                 ${CATEGORIES_LIST.map(c => `<option value="${c}">${c}</option>`).join('')}
                             </select>
-                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
                                 <option value="">Todas las posiciones</option>
                                 <option value="Arquero">Arquero</option>
                                 <option value="Defensa central">Defensa central</option>
@@ -1149,7 +1151,7 @@
                         </div>
 
                         <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-red"></i></div>
                         </div>
                     </div>
                 `;
@@ -1171,27 +1173,27 @@
                 if (!grid) return;
 
                 if (players.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay futbolistas registrados aún. Sé el primero en publicar tu perfil.</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">No hay futbolistas registrados aún. Sé el primero en publicar tu perfil.</div>`;
                     return;
                 }
 
                 grid.innerHTML = players.map(p => `
-                    <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:border-cardenal-red transition group">
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between hover:border-cardenal-red transition group">
                         <div>
                             <div class="flex justify-between items-start mb-3">
-                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${p.position}</span>
-                                <span class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>${p.department || 'Uruguay'}</span>
+                                <span class="bg-red-50 text-cardenal-red border border-red-200 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${p.position}</span>
+                                <span class="text-xs text-amber-700 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>${p.department || 'Uruguay'}</span>
                             </div>
-                            <h3 class="text-lg font-bold text-white group-hover:text-cardenal-gold transition">${p.sportingName}</h3>
-                            <p class="text-xs text-gray-400 mt-1">${p.category || 'Sub-17'} • Club: ${p.currentClub || 'Libre'}</p>
-                            <p class="text-xs text-gray-300 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
-                            ${p.videos && p.videos.length > 0 ? `<p class="text-[10px] text-emerald-400 mt-2"><i class="fa-solid fa-video mr-1"></i>${p.videos.length} video(s) de jugadas</p>` : ''}
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-cardenal-red transition">${p.sportingName}</h3>
+                            <p class="text-xs text-slate-500 mt-1">${p.category || 'Sub-17'} • Club: ${p.currentClub || 'Libre'}</p>
+                            <p class="text-xs text-slate-600 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
+                            ${p.videos && p.videos.length > 0 ? `<p class="text-[10px] text-emerald-600 font-semibold mt-2"><i class="fa-solid fa-video mr-1"></i>${p.videos.length} video(s) de jugadas</p>` : ''}
                         </div>
-                        <div class="pt-4 mt-4 border-t border-cardenal-border flex justify-between items-center">
-                            <span class="text-[10px] font-semibold px-2 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status || 'Disponible'}</span>
+                        <div class="pt-4 mt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-[10px] font-semibold px-2.5 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'}">${p.status || 'Disponible'}</span>
                             <div class="flex space-x-2">
-                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ver Perfil</a>
-                                ${this.currentUser && p.uid !== this.currentUser.uid ? `<button onclick="app.startPrivateChat('${p.uid}', '${p.sportingName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow"><i class="fa-solid fa-comments"></i></button>` : ''}
+                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm">Ver Perfil</a>
+                                ${this.currentUser && p.uid !== this.currentUser.uid ? `<button onclick="app.startPrivateChat('${p.uid}', '${p.sportingName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm"><i class="fa-solid fa-comments"></i></button>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1219,76 +1221,76 @@
                 try {
                     const docSnap = await getDoc(doc(db, 'players', playerId));
                     if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Futbolista no encontrado.</div>`;
+                        container.innerHTML = `<div class="text-center py-16 text-slate-500">Futbolista no encontrado.</div>`;
                         return;
                     }
                     const p = docSnap.data();
 
                     container.innerHTML = `
                         <div class="max-w-4xl mx-auto space-y-6">
-                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6">
+                            <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden space-y-6">
                                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-3xl sm:text-4xl text-cardenal-gold font-extrabold shadow">
+                                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-3xl sm:text-4xl text-cardenal-red font-extrabold shadow-sm">
                                         ${p.sportingName.charAt(0)}
                                     </div>
                                     <div class="space-y-1">
                                         <div class="flex gap-2">
-                                            <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase">${p.position}</span>
-                                            <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase">${p.department || 'Uruguay'}</span>
+                                            <span class="bg-red-50 text-cardenal-red border border-red-200 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase">${p.position}</span>
+                                            <span class="bg-amber-50 text-amber-800 border border-amber-200 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase">${p.department || 'Uruguay'}</span>
                                         </div>
-                                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">${p.sportingName}</h2>
-                                        <p class="text-xs text-gray-400"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-white">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
+                                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">${p.sportingName}</h2>
+                                        <p class="text-xs text-slate-500"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-slate-800">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
-                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Pierna Hábil</span>
-                                        <p class="text-sm font-bold text-white mt-1">${p.preferredFoot}</p>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Pierna Hábil</span>
+                                        <p class="text-sm font-bold text-slate-800 mt-1">${p.preferredFoot}</p>
                                     </div>
-                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
-                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Estado</span>
-                                        <p class="text-xs font-bold text-emerald-400 mt-1">${p.status}</p>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Estado</span>
+                                        <p class="text-xs font-bold text-emerald-600 mt-1">${p.status}</p>
                                     </div>
-                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
-                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Altura</span>
-                                        <p class="text-sm font-bold text-white mt-1">${p.height || 'No especificada'}</p>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Altura</span>
+                                        <p class="text-sm font-bold text-slate-800 mt-1">${p.height || 'No especificada'}</p>
                                     </div>
-                                    <div class="bg-black/40 p-3 rounded-xl border border-cardenal-border">
-                                        <span class="text-[10px] text-gray-400 uppercase font-semibold">Peso</span>
-                                        <p class="text-sm font-bold text-white mt-1">${p.weight || 'No especificado'}</p>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Peso</span>
+                                        <p class="text-sm font-bold text-slate-800 mt-1">${p.weight || 'No especificado'}</p>
                                     </div>
                                 </div>
 
                                 <div class="space-y-3">
-                                    <h3 class="text-base font-bold text-white">Descripción Deportiva</h3>
-                                    <p class="text-gray-300 text-xs sm:text-sm leading-relaxed bg-black/40 p-4 rounded-xl border border-cardenal-border">${p.description || 'Sin descripción.'}</p>
+                                    <h3 class="text-base font-bold text-slate-900">Descripción Deportiva</h3>
+                                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">${p.description || 'Sin descripción.'}</p>
                                 </div>
 
                                 <div class="space-y-4 pt-2">
-                                    <h3 class="text-base font-bold text-white"><i class="fa-solid fa-video text-cardenal-gold mr-2"></i>Videos y Jugadas Destacadas</h3>
+                                    <h3 class="text-base font-bold text-slate-900"><i class="fa-solid fa-video text-cardenal-red mr-2"></i>Videos y Jugadas Destacadas</h3>
                                     ${p.videos && p.videos.length > 0 ? `
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             ${p.videos.map(v => `
-                                                <div class="bg-black border border-cardenal-border rounded-2xl p-4 space-y-2 shadow-lg">
-                                                    <p class="text-xs font-bold text-white">${v.title || 'Jugada'}</p>
+                                                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2 shadow-sm">
+                                                    <p class="text-xs font-bold text-slate-800">${v.title || 'Jugada'}</p>
                                                     <video controls class="w-full rounded-xl max-h-60 bg-black">
                                                         <source src="${v.url}" type="video/mp4">
                                                     </video>
                                                 </div>
                                             `).join('')}
                                         </div>
-                                    ` : `<p class="text-xs text-gray-400 italic">Este futbolista aún no ha publicado videos de jugadas.</p>`}
+                                    ` : `<p class="text-xs text-slate-400 italic">Este futbolista aún no ha publicado videos de jugadas.</p>`}
                                 </div>
 
-                                <div class="pt-6 border-t border-cardenal-border flex flex-wrap gap-3 justify-end">
+                                <div class="pt-6 border-t border-slate-100 flex flex-wrap gap-3 justify-end">
                                     ${this.currentUser && p.uid !== this.currentUser.uid ? `
-                                        <button onclick="app.startPrivateChat('${p.uid}', '${p.sportingName}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2 text-xs">
+                                        <button onclick="app.startPrivateChat('${p.uid}', '${p.sportingName}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow-sm flex items-center space-x-2 text-xs">
                                             <i class="fa-solid fa-comments"></i><span>Enviar Mensaje Privado</span>
                                         </button>
                                     ` : ''}
                                     ${this.activeRole === 'club' ? `
-                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2 text-xs">
+                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-sm flex items-center space-x-2 text-xs">
                                             <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje</span>
                                         </a>
                                     ` : ''}
@@ -1297,7 +1299,7 @@
                         </div>
                     `;
                 } catch (e) {
-                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando perfil.</div>`;
+                    container.innerHTML = `<div class="text-center py-16 text-slate-500">Error cargando perfil.</div>`;
                 }
             }
 
@@ -1305,14 +1307,14 @@
             async renderClubs(container) {
                 container.innerHTML = `
                     <div class="space-y-6">
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl flex justify-between items-center">
+                        <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm flex justify-between items-center">
                             <div>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Directorio de Clubes</h2>
-                                <p class="text-xs text-gray-400 mt-1">Instituciones y formativas en Uruguay</p>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Directorio de Clubes</h2>
+                                <p class="text-xs text-slate-500 mt-1">Instituciones y formativas en Uruguay</p>
                             </div>
                         </div>
                         <div id="clubs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-red"></i></div>
                         </div>
                     </div>
                 `;
@@ -1322,24 +1324,24 @@
                     const grid = document.getElementById('clubs-grid');
                     
                     if (this.clubsCache.length === 0) {
-                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados todavía. Registra tu club como Técnico/Representante.</div>`;
+                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">No hay clubes registrados todavía. Registra tu club como Técnico/Representante.</div>`;
                         return;
                     }
 
                     grid.innerHTML = this.clubsCache.map(c => `
-                        <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start mb-3">
-                                    <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${c.department || 'Uruguay'}</span>
-                                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-900">Afiliado</span>
+                                    <span class="bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${c.department || 'Uruguay'}</span>
+                                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">Afiliado</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-white">${c.name}</h3>
-                                <p class="text-xs text-gray-400 mt-1">Categorías: ${c.categories?.join(', ') || 'Juveniles y Primera'}</p>
-                                <p class="text-xs text-gray-300 mt-3 line-clamp-2">${c.description || 'Sin descripción institucional.'}</p>
+                                <h3 class="text-lg font-bold text-slate-900">${c.name}</h3>
+                                <p class="text-xs text-slate-500 mt-1">Categorías: ${c.categories?.join(', ') || 'Juveniles y Primera'}</p>
+                                <p class="text-xs text-slate-600 mt-3 line-clamp-2">${c.description || 'Sin descripción institucional.'}</p>
                             </div>
-                            <div class="pt-4 mt-4 border-t border-cardenal-border flex justify-between items-center">
-                                <a href="#club-profile/${c.id}" onclick="app.navigateTo('club-profile', '${c.id}')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white px-4 py-2 rounded-xl text-xs font-bold transition">Ver Club</a>
-                                <button onclick="app.openApplyClubModal('${c.id}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Solicitar Ingreso</button>
+                            <div class="pt-4 mt-4 border-t border-slate-100 flex justify-between items-center">
+                                <a href="#club-profile/${c.id}" onclick="app.navigateTo('club-profile', '${c.id}')" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition">Ver Club</a>
+                                <button onclick="app.openApplyClubModal('${c.id}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm">Solicitar Ingreso</button>
                             </div>
                         </div>
                     `).join('');
@@ -1352,37 +1354,37 @@
                 try {
                     const docSnap = await getDoc(doc(db, 'clubs', clubId));
                     if (!docSnap.exists()) {
-                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Club no encontrado.</div>`;
+                        container.innerHTML = `<div class="text-center py-16 text-slate-500">Club no encontrado.</div>`;
                         return;
                     }
                     const c = docSnap.data();
 
                     container.innerHTML = `
                         <div class="max-w-4xl mx-auto space-y-6">
-                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                            <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                     <div>
-                                        <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${c.department || 'Uruguay'}</span>
-                                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">${c.name}</h2>
-                                        <p class="text-xs text-gray-400 mt-1">Institución deportiva oficial en Uruguay</p>
+                                        <span class="bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${c.department || 'Uruguay'}</span>
+                                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">${c.name}</h2>
+                                        <p class="text-xs text-slate-500 mt-1">Institución deportiva oficial en Uruguay</p>
                                     </div>
                                     <div class="flex gap-2">
                                         ${c.representativeUid && this.currentUser ? `
-                                            <button onclick="app.startPrivateChat('${c.representativeUid}', 'Técnico/Representante de ${c.name}')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow">
+                                            <button onclick="app.startPrivateChat('${c.representativeUid}', 'Técnico/Representante de ${c.name}')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow-sm">
                                                 <i class="fa-solid fa-comments mr-1"></i> Contactar Técnico
                                             </button>
                                         ` : ''}
-                                        <button onclick="app.openApplyClubModal('${clubId}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow">
+                                        <button onclick="app.openApplyClubModal('${clubId}', '${c.name}', '${c.representativeUid || ''}')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-3 rounded-xl transition shadow-sm">
                                             Solicitar Ingreso
                                         </button>
                                     </div>
                                 </div>
-                                <p class="text-gray-300 text-xs sm:text-sm bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
+                                <p class="text-slate-600 text-xs sm:text-sm bg-slate-50 p-4 rounded-xl border border-slate-200">${c.description || 'Sin descripción institucional.'}</p>
                             </div>
                         </div>
                     `;
                 } catch (e) {
-                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando club.</div>`;
+                    container.innerHTML = `<div class="text-center py-16 text-slate-500">Error cargando club.</div>`;
                 }
             }
 
@@ -1405,25 +1407,25 @@
                 content.innerHTML = `
                     <div class="space-y-6">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-bold text-white">Solicitud de Ingreso a ${clubName}</h3>
-                            <button onclick="app.closeModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                            <h3 class="text-lg font-bold text-slate-900">Solicitud de Ingreso a ${clubName}</h3>
+                            <button onclick="app.closeModal()" class="text-slate-400 hover:text-slate-900 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
                         </div>
                         <form onsubmit="app.handleApplyClubSubmit(event, '${clubId}', '${repUid}')" class="space-y-4">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nombre Deportivo</label>
-                                <input type="text" id="app-name" value="${pData.sportingName}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre Deportivo</label>
+                                <input type="text" id="app-name" value="${pData.sportingName}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Posición Principal</label>
-                                    <input type="text" id="app-pos" value="${pData.position}" required class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Posición Principal</label>
+                                    <input type="text" id="app-pos" value="${pData.position}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Motivo / Mensaje</label>
-                                    <input type="text" id="app-msg" required placeholder="Deseo sumarme a las formativas..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Motivo / Mensaje</label>
+                                    <input type="text" id="app-msg" required placeholder="Deseo sumarme a las formativas..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:border-cardenal-red outline-none">
                                 </div>
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-xs">Enviar Solicitud Formal</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-sm text-xs">Enviar Solicitud Formal</button>
                         </form>
                     </div>
                 `;
@@ -1479,16 +1481,16 @@
                 const player = playerDoc.data();
 
                 container.innerHTML = `
-                    <div class="max-w-xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                    <div class="max-w-xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
                         <div>
-                            <span class="text-xs text-cardenal-gold font-bold uppercase">Propuesta Oficial de Fichaje</span>
-                            <h2 class="text-2xl font-bold text-white mt-1">Oferta para: ${player.sportingName}</h2>
-                            <p class="text-xs text-gray-400">Departamento: ${player.department || 'Uruguay'} • Club actual: ${player.currentClub || 'Libre'}</p>
+                            <span class="text-xs text-cardenal-red font-bold uppercase">Propuesta Oficial de Fichaje</span>
+                            <h2 class="text-2xl font-bold text-slate-900 mt-1">Oferta para: ${player.sportingName}</h2>
+                            <p class="text-xs text-slate-500">Departamento: ${player.department || 'Uruguay'} • Club actual: ${player.currentClub || 'Libre'}</p>
                         </div>
                         <form id="proposal-form" class="space-y-4" onsubmit="app.handleCreateProposalSubmit(event, '${playerId}')">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Modalidad de Operación</label>
-                                <select id="prop-modality" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none" onchange="app.toggleProposalFields(this.value)">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Modalidad de Operación</label>
+                                <select id="prop-modality" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-red outline-none" onchange="app.toggleProposalFields(this.value)">
                                     <option value="money">Transferencia Económica (Pesos Uruguayos - UYU)</option>
                                     <option value="free">Incorporación Gratuita</option>
                                     <option value="loan">Préstamo Temporal con Fechas</option>
@@ -1497,26 +1499,26 @@
                                 </select>
                             </div>
                             <div id="field-amount">
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Importe en Pesos Uruguayos ($U)</label>
-                                <input type="number" id="prop-amount" placeholder="Ej: 15000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none">
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Importe en Pesos Uruguayos ($U)</label>
+                                <input type="number" id="prop-amount" placeholder="Ej: 15000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-red outline-none">
                             </div>
                             <div id="field-loan" class="hidden space-y-3">
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Inicio</label>
-                                        <input type="date" id="prop-start" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha de Inicio</label>
+                                        <input type="date" id="prop-start" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-cardenal-red outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Fin</label>
-                                        <input type="date" id="prop-end" class="w-full bg-black border border-cardenal-border rounded-xl px-3 py-2 text-xs focus:border-cardenal-gold outline-none">
+                                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha de Fin</label>
+                                        <input type="date" id="prop-end" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:border-cardenal-red outline-none">
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Mensaje y Condiciones</label>
-                                <textarea id="prop-comments" rows="3" placeholder="Detalles de la propuesta..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-gold outline-none"></textarea>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Mensaje y Condiciones</label>
+                                <textarea id="prop-comments" rows="3" placeholder="Detalles de la propuesta..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-red outline-none"></textarea>
                             </div>
-                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg text-xs">Enviar Propuesta Formal</button>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-sm text-xs">Enviar Propuesta Formal</button>
                         </form>
                     </div>
                 `;
@@ -1577,18 +1579,18 @@
 
                 container.innerHTML = `
                     <div class="space-y-6">
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <div>
-                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Futbolista</span>
-                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Futbolista'}</h2>
+                                <span class="text-xs text-cardenal-red font-bold uppercase">Panel de Futbolista</span>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">${this.userData?.name || 'Futbolista'}</h2>
                             </div>
-                            <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil / Videos</span></a>
+                            <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil / Videos</span></a>
                         </div>
 
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl space-y-4">
-                            <h3 class="text-lg font-bold text-white">Mis Propuestas y Ofertas Recibidas</h3>
+                        <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900">Mis Propuestas y Ofertas Recibidas</h3>
                             <div id="player-proposals" class="space-y-3">
-                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-red"></i></div>
                             </div>
                         </div>
                     </div>
@@ -1601,23 +1603,23 @@
                     const propContainer = document.getElementById('player-proposals');
 
                     if (list.length === 0) {
-                        propContainer.innerHTML = `<p class="text-xs text-gray-400">No tenés propuestas recibidas en este momento.</p>`;
+                        propContainer.innerHTML = `<p class="text-xs text-slate-500">No tenés propuestas recibidas en este momento.</p>`;
                         return;
                     }
 
                     propContainer.innerHTML = list.map(prop => `
-                        <div class="bg-black/40 border border-cardenal-border p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <div class="space-y-1">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-950 text-amber-400 uppercase">${prop.modality}</span>
-                                <h4 class="text-sm font-bold text-white mt-1">Oferta de: ${prop.senderName}</h4>
-                                <p class="text-xs text-gray-300">Importe: <strong>$U ${prop.amount || 0}</strong> • Comentarios: ${prop.comments || 'Ninguno'}</p>
-                                <p class="text-xs text-emerald-400 font-semibold">Estado: ${prop.status}</p>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 uppercase">${prop.modality}</span>
+                                <h4 class="text-sm font-bold text-slate-900 mt-1">Oferta de: ${prop.senderName}</h4>
+                                <p class="text-xs text-slate-600">Importe: <strong>$U ${prop.amount || 0}</strong> • Comentarios: ${prop.comments || 'Ninguno'}</p>
+                                <p class="text-xs text-emerald-600 font-semibold">Estado: ${prop.status}</p>
                             </div>
                             <div class="flex flex-wrap gap-2">
-                                <button onclick="app.startPrivateChat('${prop.senderUid}', '${prop.senderName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-comments mr-1"></i>Chatear</button>
-                                <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Aceptar</button>
-                                <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Rechazar</button>
-                                <button onclick="app.deleteProposal('${prop.id}')" class="bg-zinc-800 hover:bg-red-950 text-red-400 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Eliminar</button>
+                                <button onclick="app.startPrivateChat('${prop.senderUid}', '${prop.senderName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm"><i class="fa-solid fa-comments mr-1"></i>Chatear</button>
+                                <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm">Aceptar</button>
+                                <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm">Rechazar</button>
+                                <button onclick="app.deleteProposal('${prop.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Eliminar</button>
                             </div>
                         </div>
                     `).join('');
@@ -1655,15 +1657,15 @@
 
                 container.innerHTML = `
                     <div class="space-y-6">
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl">
-                            <span class="text-xs text-cardenal-gold font-bold uppercase">Panel Técnico / Representante del Club</span>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Técnico / Club'}</h2>
+                        <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm">
+                            <span class="text-xs text-amber-600 font-bold uppercase">Panel Técnico / Representante del Club</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">${this.userData?.name || 'Técnico / Club'}</h2>
                         </div>
 
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 sm:p-8 rounded-3xl shadow-xl space-y-4">
-                            <h3 class="text-lg font-bold text-white">Solicitudes de Ingreso Recibidas</h3>
+                        <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900">Solicitudes de Ingreso Recibidas</h3>
                             <div id="club-applications" class="space-y-3">
-                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-red"></i></div>
                             </div>
                         </div>
                     </div>
@@ -1683,22 +1685,22 @@
                     const appContainer = document.getElementById('club-applications');
 
                     if (list.length === 0) {
-                        appContainer.innerHTML = `<p class="text-xs text-gray-400">No tenés solicitudes de ingreso pendientes en este momento.</p>`;
+                        appContainer.innerHTML = `<p class="text-xs text-slate-500">No tenés solicitudes de ingreso pendientes en este momento.</p>`;
                         return;
                     }
 
                     appContainer.innerHTML = list.map(app => `
-                        <div class="bg-black/40 border border-cardenal-border p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <div class="space-y-1">
-                                <h4 class="text-sm font-bold text-white">${app.playerName}</h4>
-                                <p class="text-xs text-gray-300">Posición: <strong>${app.position}</strong> • Mensaje: "${app.message}"</p>
-                                <p class="text-xs text-amber-400 font-semibold">Estado: ${app.status}</p>
+                                <h4 class="text-sm font-bold text-slate-900">${app.playerName}</h4>
+                                <p class="text-xs text-slate-600">Posición: <strong>${app.position}</strong> • Mensaje: "${app.message}"</p>
+                                <p class="text-xs text-amber-700 font-semibold">Estado: ${app.status}</p>
                             </div>
                             <div class="flex flex-wrap gap-2">
-                                <button onclick="app.startPrivateChat('${app.playerUid}', '${app.playerName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-comments mr-1"></i>Chatear</button>
-                                <button onclick="app.updateAppStatus('${app.id}', 'Aceptada')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Aceptar</button>
-                                <button onclick="app.updateAppStatus('${app.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Rechazar</button>
-                                <button onclick="app.deleteApplication('${app.id}')" class="bg-zinc-800 hover:bg-red-950 text-red-400 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="app.startPrivateChat('${app.playerUid}', '${app.playerName}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm"><i class="fa-solid fa-comments mr-1"></i>Chatear</button>
+                                <button onclick="app.updateAppStatus('${app.id}', 'Aceptada')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm">Aceptar</button>
+                                <button onclick="app.updateAppStatus('${app.id}', 'Rechazada')" class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm">Rechazar</button>
+                                <button onclick="app.deleteApplication('${app.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     `).join('');
@@ -1730,15 +1732,15 @@
 
             renderAdminPanel(container) {
                 if (!this.currentUser || this.userData?.role !== 'admin') {
-                    container.innerHTML = `<div class="text-center py-24 text-red-500 font-bold">Acceso restringido a administradores.</div>`;
+                    container.innerHTML = `<div class="text-center py-24 text-red-600 font-bold">Acceso restringido a administradores.</div>`;
                     return;
                 }
                 container.innerHTML = `
-                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
-                        <h2 class="text-2xl font-extrabold text-white">Panel de Administración</h2>
-                        <div class="p-4 bg-black/40 border border-cardenal-border rounded-2xl space-y-3">
-                            <p class="text-xs text-gray-300">Vaciar la base de datos para comenzar a recibir registros reales de futbolistas y clubes.</p>
-                            <button onclick="app.clearAllData()" class="bg-red-900 hover:bg-red-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow">
+                    <div class="max-w-3xl mx-auto bg-white border border-slate-200 p-8 rounded-3xl shadow-sm space-y-6">
+                        <h2 class="text-2xl font-extrabold text-slate-900">Panel de Administración</h2>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <p class="text-xs text-slate-600">Vaciar la base de datos para comenzar a recibir registros reales de futbolistas y clubes.</p>
+                            <button onclick="app.clearAllData()" class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold px-6 py-3 rounded-xl transition shadow-sm">
                                 <i class="fa-solid fa-trash mr-2"></i> Limpiar Base de Datos
                             </button>
                         </div>
@@ -1770,9 +1772,9 @@
                 }
                 container.innerHTML = `
                     <div class="max-w-2xl mx-auto space-y-6">
-                        <h2 class="text-2xl font-extrabold text-white">Notificaciones</h2>
+                        <h2 class="text-2xl font-extrabold text-slate-900">Notificaciones</h2>
                         <div id="notif-list" class="space-y-3">
-                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-red"></i></div>
                         </div>
                     </div>
                 `;
@@ -1783,14 +1785,14 @@
                     const listEl = document.getElementById('notif-list');
 
                     if (list.length === 0) {
-                        listEl.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl text-center text-gray-400 text-xs">No tenés notificaciones nuevas.</div>`;
+                        listEl.innerHTML = `<div class="bg-white border border-slate-200 p-6 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No tenés notificaciones nuevas.</div>`;
                         return;
                     }
 
                     listEl.innerHTML = list.map(n => `
-                        <div class="bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
-                            <h4 class="text-sm font-bold text-white">${n.title}</h4>
-                            <p class="text-xs text-gray-300 mt-1">${n.message}</p>
+                        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+                            <h4 class="text-sm font-bold text-slate-900">${n.title}</h4>
+                            <p class="text-xs text-slate-600 mt-1">${n.message}</p>
                         </div>
                     `).join('');
                 } catch (e) {
@@ -1800,10 +1802,10 @@
 
             renderHelp(container) {
                 container.innerHTML = `
-                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6 text-xs sm:text-sm text-gray-300 leading-relaxed">
-                        <h2 class="text-2xl font-extrabold text-white">Protección de Menores y Privacidad (Uruguay)</h2>
+                    <div class="max-w-3xl mx-auto bg-white border border-slate-200 p-8 rounded-3xl shadow-sm space-y-6 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <h2 class="text-2xl font-extrabold text-slate-900">Protección de Menores y Privacidad (Uruguay)</h2>
                         <p><strong>El Cardenal Sporting</strong> cumple con la normativa vigente en Uruguay para la protección de datos personales de menores de edad y deportistas formativos.</p>
-                        <h3 class="text-base font-bold text-white pt-2">Privacidad y Seguridad</h3>
+                        <h3 class="text-base font-bold text-slate-900 pt-2">Privacidad y Seguridad</h3>
                         <p>Los datos de contacto privado (teléfono personal, domicilios, documentos) no se muestran públicamente. Las propuestas de fichaje y scouting pasan por canales formales y chats en la plataforma.</p>
                     </div>
                 `;
