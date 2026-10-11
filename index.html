@@ -93,7 +93,9 @@
             <i class="fa-solid fa-shield text-base mb-0.5"></i><span>Clubes</span>
         </a>
         <a href="#notifications" onclick="app.navigateTo('notifications')" class="flex flex-col items-center text-slate-500 hover:text-cardenal-red relative">
-            <i class="fa-solid fa-bell text-base mb-0.5"></i><span>Alertas</span>
+            <i class="fa-solid fa-bell text-base mb-0.5"></i>
+            <span id="mobile-unread-badge" class="hidden absolute top-0 right-3 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+            <span>Alertas</span>
         </a>
     </div>
 
@@ -161,12 +163,12 @@
             constructor() {
                 this.currentUser = null;
                 this.userData = null;
-                this.activeRole = 'player';
                 this.currentView = 'home';
                 this.historyStack = [];
                 this.playersCache = [];
                 this.clubsCache = [];
                 this.chatUnsubscribe = null;
+                this.notifUnsubscribe = null;
                 this.initAuthListener();
                 
                 window.addEventListener('hashchange', () => this.handleRouting());
@@ -184,9 +186,11 @@
                     if (user) {
                         this.currentUser = user;
                         await this.loadUserData(user.uid);
+                        this.listenToNotifications();
                     } else {
                         this.currentUser = null;
                         this.userData = null;
+                        if (this.notifUnsubscribe) { this.notifUnsubscribe(); this.notifUnsubscribe = null; }
                     }
                     this.renderNavbarAuth();
                     this.handleRouting();
@@ -198,32 +202,31 @@
                     const userDoc = await getDoc(doc(db, 'users', uid));
                     if (userDoc.exists()) {
                         this.userData = userDoc.data();
-                        if (this.userData.activeRole) {
-                            this.activeRole = this.userData.activeRole;
-                        } else if (this.userData.roles && this.userData.roles.length > 0) {
-                            this.activeRole = this.userData.roles[0];
-                        } else if (this.userData.role) {
-                            this.activeRole = this.userData.role;
-                        }
                     } else {
-                        this.userData = {
-                            uid: uid,
-                            email: this.currentUser?.email || '',
-                            name: this.currentUser?.displayName || 'Usuario',
-                            role: 'player',
-                            roles: ['player'],
-                            activeRole: 'player'
-                        };
+                        // Si es usuario nuevo, no le asignamos rol automático hasta que lo seleccione
+                        this.userData = null;
                     }
                 } catch (error) {
                     console.error("Error cargando perfil:", error);
-                    this.userData = {
-                        uid: uid,
-                        email: this.currentUser?.email || '',
-                        name: this.currentUser?.displayName || 'Usuario',
-                        activeRole: 'player'
-                    };
                 }
+            }
+
+            listenToNotifications() {
+                if (!this.currentUser) return;
+                const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid), where('read', '==', false));
+                this.notifUnsubscribe = onSnapshot(q, (snapshot) => {
+                    const count = snapshot.size;
+                    const badge = document.getElementById('unread-notif-badge');
+                    const mobileBadge = document.getElementById('mobile-unread-badge');
+                    if (badge) {
+                        if (count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
+                        else { badge.classList.add('hidden'); }
+                    }
+                    if (mobileBadge) {
+                        if (count > 0) { mobileBadge.innerText = count; mobileBadge.classList.remove('hidden'); }
+                        else { mobileBadge.classList.add('hidden'); }
+                    }
+                });
             }
 
             async signInWithGoogle() {
@@ -235,108 +238,52 @@
                     const userDoc = await getDoc(userDocRef);
                     
                     if (!userDoc.exists()) {
-                        await setDoc(userDocRef, {
-                            uid: user.uid,
-                            name: user.displayName || 'Usuario Google',
-                            email: user.email,
-                            role: 'player',
-                            activeRole: 'player',
-                            roles: ['player'],
-                            createdAt: serverTimestamp()
-                        });
-                        
-                        await setDoc(doc(db, 'players', user.uid), {
-                            uid: user.uid,
-                            sportingName: user.displayName || 'Futbolista',
-                            category: 'Sub-17',
-                            department: 'Montevideo',
-                            locality: 'Montevideo',
-                            position: 'Mediocampista central',
-                            preferredFoot: 'Derecha',
-                            currentClub: 'Libre',
-                            status: 'Disponible para nuevas oportunidades',
-                            description: 'Futbolista en Uruguay.',
-                            videos: [],
-                            published: true,
-                            lastUpdated: serverTimestamp()
-                        });
+                        // Redirigir a selección obligatoria de rol antes de crear nada
+                        this.currentUser = user;
+                        this.navigateTo('role-setup-google');
+                    } else {
+                        this.userData = userDoc.data();
+                        this.showToast("¡Inicio de sesión con Google exitoso!", "success");
+                        this.navigateTo(this.userData.role === 'player' ? 'player-panel' : 'club-panel');
                     }
-
-                    this.showToast("¡Inicio de sesión con Google exitoso!", "success");
-                    this.navigateTo('role-selector');
                 } catch (error) {
                     console.error(error);
                     this.showToast("Error al iniciar con Google: " + error.message, "error");
                 }
             }
 
-            async switchRole(newRole) {
-                if (!this.currentUser) {
-                    this.showToast("Debes iniciar sesión primero.", "error");
-                    this.navigateTo('login');
-                    return;
-                }
-
+            async completeGoogleRoleSetup(selectedRole, clubName = '') {
+                if (!this.currentUser) return;
                 try {
-                    if (newRole === 'player') {
-                        const pSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
-                        if (!pSnap.exists()) {
-                            await setDoc(doc(db, 'players', this.currentUser.uid), {
-                                uid: this.currentUser.uid,
-                                sportingName: this.userData?.name || 'Futbolista',
-                                category: 'Sub-17',
-                                department: 'Montevideo',
-                                locality: 'Montevideo',
-                                position: 'Mediocampista central',
-                                preferredFoot: 'Derecha',
-                                currentClub: 'Libre',
-                                status: 'Disponible para nuevas oportunidades',
-                                description: 'Futbolista en Uruguay.',
-                                videos: [],
-                                published: true,
-                                lastUpdated: serverTimestamp()
-                            }, { merge: true });
-                        }
-                    } else if (newRole === 'club') {
-                        const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
-                        const cSnap = await getDocs(qClubs);
-                        if (cSnap.empty) {
-                            await addDoc(collection(db, 'clubs'), {
-                                name: `Club de ${this.userData?.name || 'Técnico/representante'}`,
-                                representativeUid: this.currentUser.uid,
-                                department: 'Montevideo',
-                                city: 'Montevideo',
-                                categories: ['Sub-17', 'Primera División'],
-                                verified: true,
-                                description: 'Institución deportiva afiliada.',
-                                lastUpdated: serverTimestamp()
-                            });
-                        }
+                    const uid = this.currentUser.uid;
+                    const name = this.currentUser.displayName || 'Usuario Google';
+                    const email = this.currentUser.email;
+
+                    await setDoc(doc(db, 'users', uid), {
+                        uid, name, email, role: selectedRole, createdAt: serverTimestamp()
+                    });
+
+                    if (selectedRole === 'player') {
+                        await setDoc(doc(db, 'players', uid), {
+                            uid, sportingName: name, category: 'Sub-17', department: 'Montevideo', locality: 'Montevideo',
+                            position: 'Mediocampista central', preferredFoot: 'Derecha', currentClub: 'Libre',
+                            status: 'Disponible para nuevas oportunidades', description: 'Futbolista en Uruguay.',
+                            videos: [], published: true, lastUpdated: serverTimestamp()
+                        });
+                    } else {
+                        await addDoc(collection(db, 'clubs'), {
+                            name: clubName || `Club de ${name}`, representativeUid: uid, department: 'Montevideo', city: 'Montevideo',
+                            categories: ['Sub-17', 'Primera División'], verified: true,
+                            description: 'Institución afiliada en Uruguay.', lastUpdated: serverTimestamp()
+                        });
                     }
 
-                    let roles = this.userData?.roles || [this.userData?.role || 'player'];
-                    if (!roles.includes(newRole)) roles.push(newRole);
-
-                    this.activeRole = newRole;
-                    if (!this.userData) {
-                        this.userData = { uid: this.currentUser.uid, email: this.currentUser.email, name: 'Usuario' };
-                    }
-                    this.userData.activeRole = newRole;
-                    this.userData.roles = roles;
-
-                    await setDoc(doc(db, 'users', this.currentUser.uid), {
-                        uid: this.currentUser.uid,
-                        email: this.currentUser.email,
-                        name: this.userData.name || 'Usuario',
-                        activeRole: newRole,
-                        roles: roles
-                    }, { merge: true });
-
-                    this.showToast(`Modo activado: ${newRole === 'player' ? 'Futbolista' : 'Técnico / Club'}`, "success");
+                    await this.loadUserData(uid);
+                    this.showToast("¡Perfil configurado con éxito!", "success");
                     this.renderNavbarAuth();
-                    this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
+                    this.navigateTo(selectedRole === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
-                    this.showToast("Error al activar modo: " + error.message, "error");
+                    this.showToast("Error completando perfil: " + error.message, "error");
                 }
             }
 
@@ -383,7 +330,7 @@
                         case 'home': this.renderHome(container); break;
                         case 'login': this.renderLogin(container); break;
                         case 'register': this.renderRegister(container); break;
-                        case 'role-selector': this.renderRoleSelector(container); break;
+                        case 'role-setup-google': this.renderGoogleRoleSetup(container); break;
                         case 'market': this.renderMarket(container); break;
                         case 'departments': this.renderDepartmentsOverview(container); break;
                         case 'player': this.renderPlayerDetail(container, param); break;
@@ -414,17 +361,21 @@
                     const initials = this.userData.name ? this.userData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'CS';
                     
                     let panelLink = '';
-                    if (this.activeRole === 'player') {
+                    if (this.userData.role === 'player') {
                         panelLink = `<a href="#player-panel" onclick="app.navigateTo('player-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-gauge mr-2"></i> Mi Panel Futbolista</a>`;
-                    } else if (this.activeRole === 'club') {
+                    } else if (this.userData.role === 'club') {
                         panelLink = `<a href="#club-panel" onclick="app.navigateTo('club-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-shield-halved mr-2"></i> Panel Técnico / Club</a>`;
                     }
                     
                     let adminLink = this.userData.role === 'admin' ? `<a href="#admin-panel" onclick="app.navigateTo('admin-panel'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-cardenal-red hover:bg-slate-100"><i class="fa-solid fa-lock mr-2"></i> Admin</a>` : '';
-                    const otherRole = this.activeRole === 'player' ? 'club' : 'player';
-                    const otherRoleLabel = this.activeRole === 'player' ? 'Modo Técnico/Representante' : 'Modo Futbolista';
 
                     nav.innerHTML = `
+                        <!-- Botón Campanita Notificaciones -->
+                        <button onclick="app.navigateTo('notifications')" class="relative p-2.5 text-slate-600 hover:text-cardenal-red rounded-xl border border-slate-200 bg-white shadow-sm transition">
+                            <i class="fa-solid fa-bell text-base"></i>
+                            <span id="unread-notif-badge" class="hidden absolute -top-1 -right-1 bg-cardenal-red text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">0</span>
+                        </button>
+
                         <div class="relative">
                             <button id="user-menu-btn" onclick="app.toggleDropdown()" class="flex items-center space-x-3 bg-white border border-slate-200 hover:border-cardenal-red px-3 py-2 rounded-2xl transition shadow-sm">
                                 <div class="w-9 h-9 rounded-xl bg-cardenal-red flex items-center justify-center text-white font-bold text-xs shadow-sm">
@@ -432,7 +383,7 @@
                                 </div>
                                 <div class="text-left hidden sm:block">
                                     <p class="text-sm font-semibold text-slate-800 leading-tight">${this.userData.name}</p>
-                                    <p class="text-[10px] font-bold text-cardenal-red uppercase">${this.activeRole === 'player' ? 'Futbolista' : 'Técnico / Club'}</p>
+                                    <p class="text-[10px] font-bold text-cardenal-red uppercase">${this.userData.role === 'player' ? 'Futbolista' : 'Técnico / Club'}</p>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
                             </button>
@@ -440,17 +391,13 @@
                                 <div class="px-4 py-2 border-b border-slate-100">
                                     <p class="text-xs text-slate-400">Conectado como</p>
                                     <p class="text-sm font-bold text-slate-900 truncate">${this.userData.email}</p>
+                                    <span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 uppercase">${this.userData.role === 'player' ? 'Perfil Futbolista' : 'Perfil Técnico/Club'}</span>
                                 </div>
-                                ${this.activeRole === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
+                                ${this.userData.role === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-user-pen mr-2"></i> Mi Perfil Futbolístico</a>` : ''}
                                 ${panelLink}
                                 <a href="#chats" onclick="app.navigateTo('chats'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-comments mr-2"></i> Mensajes Privados</a>
                                 ${adminLink}
                                 <a href="#notifications" onclick="app.navigateTo('notifications'); app.toggleDropdown();" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fa-solid fa-bell mr-2"></i> Notificaciones</a>
-                                
-                                <div class="border-t border-slate-100 my-1"></div>
-                                <button onclick="app.switchRole('${otherRole}'); app.toggleDropdown();" class="w-full text-left px-4 py-2 text-xs text-amber-700 hover:bg-amber-50 font-bold">
-                                    <i class="fa-solid fa-arrows-rotate mr-2"></i> Cambiar a ${otherRoleLabel}
-                                </button>
                                 
                                 <div class="border-t border-slate-100 my-1"></div>
                                 <button onclick="app.logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-semibold"><i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar Sesión</button>
@@ -506,11 +453,6 @@
                                     <a href="#departments" onclick="app.navigateTo('departments')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-xl transition flex items-center space-x-2 text-sm">
                                         <i class="fa-solid fa-map"></i><span>Ver por Departamentos</span>
                                     </a>
-                                    ${this.currentUser ? `
-                                        <button onclick="app.navigateTo('role-selector')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-xl transition shadow flex items-center space-x-2 text-sm">
-                                            <i class="fa-solid fa-users-gear"></i><span>Elegir Modo</span>
-                                        </button>
-                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -540,32 +482,32 @@
                 }, 300);
             }
 
-            renderRoleSelector(container) {
+            renderGoogleRoleSetup(container) {
                 container.innerHTML = `
-                    <div class="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm text-center space-y-8">
-                        <div>
-                            <span class="text-xs text-cardenal-red font-bold uppercase">Selección de Modo</span>
-                            <h2 class="text-3xl font-bold text-slate-900 mt-2">¿Cómo deseas operar hoy?</h2>
-                            <p class="text-xs text-slate-500 mt-1">Con tu cuenta (${this.currentUser?.email || ''}) puedes cambiar entre modo Futbolista y Técnico/Representante del club.</p>
+                    <div class="max-w-xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
+                        <div class="text-center space-y-2">
+                            <span class="text-xs text-cardenal-red font-bold uppercase">Paso Único de Configuración</span>
+                            <h2 class="text-2xl font-bold text-slate-900">¿Cuál es tu rol principal?</h2>
+                            <p class="text-xs text-slate-500">Elegí bien: tu rol de Futbolista o Técnico/Club quedará fijado para esta cuenta.</p>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-slate-50 border border-slate-200 hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none shadow-sm">
-                                <div class="w-16 h-16 rounded-2xl bg-red-100 text-cardenal-red border border-red-200 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-shirt"></i>
-                                </div>
-                                <h3 class="text-xl font-bold text-slate-900 text-center">Modo Futbolista</h3>
-                                <p class="text-xs text-slate-600 text-center">Publica tu perfil nacional, sube videos, solicita ingreso a clubes y chatea en privado.</p>
-                                <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Futbolista</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            <button onclick="app.completeGoogleRoleSetup('player')" class="bg-slate-50 border border-slate-200 hover:border-cardenal-red p-6 rounded-2xl text-center space-y-3 transition group">
+                                <div class="w-12 h-12 rounded-xl bg-red-100 text-cardenal-red mx-auto flex items-center justify-center text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-shirt"></i></div>
+                                <h3 class="text-base font-bold text-slate-900">Futbolista</h3>
+                                <p class="text-[11px] text-slate-500">Para publicar tu perfil, subir videos y recibir ofertas de clubes.</p>
                             </button>
 
-                            <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-slate-50 border border-slate-200 hover:border-amber-500 p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none shadow-sm">
-                                <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 border border-amber-200 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-shield-halved"></i>
-                                </div>
-                                <h3 class="text-xl font-bold text-slate-900 text-center">Modo Técnico / Club</h3>
-                                <p class="text-xs text-slate-600 text-center">Busca talentos en todo Uruguay, filtra por departamento y abre chats directos.</p>
-                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Técnico</span>
+                            <button onclick="document.getElementById('google-club-name-field').classList.remove('hidden')" class="bg-slate-50 border border-slate-200 hover:border-amber-500 p-6 rounded-2xl text-center space-y-3 transition group">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 mx-auto flex items-center justify-center text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-shield-halved"></i></div>
+                                <h3 class="text-base font-bold text-slate-900">Técnico / Club</h3>
+                                <p class="text-[11px] text-slate-500">Para buscar talentos en Uruguay y enviar propuestas formales.</p>
                             </button>
+                        </div>
+
+                        <div id="google-club-name-field" class="hidden space-y-3 pt-3 border-t border-slate-100">
+                            <label class="block text-xs font-semibold text-slate-700 uppercase">Nombre de tu Club</label>
+                            <input type="text" id="g-club-name" placeholder="Ej: Club Atlético Durazno" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-red outline-none">
+                            <button onclick="app.completeGoogleRoleSetup('club', document.getElementById('g-club-name').value)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Confirmar como Técnico/Club</button>
                         </div>
                     </div>
                 `;
@@ -608,7 +550,7 @@
                 try {
                     await signInWithEmailAndPassword(auth, email, pass);
                     this.showToast("¡Bienvenido de vuelta!", "success");
-                    this.navigateTo('role-selector');
+                    this.navigateTo(this.userData?.role === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
                     this.showToast("Error: " + this.translateFirebaseError(error.code), "error");
                 }
@@ -619,7 +561,7 @@
                     <div class="max-w-md mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
                         <div class="text-center space-y-2">
                             <h2 class="text-2xl font-bold text-slate-900">Crear Cuenta</h2>
-                            <p class="text-xs text-slate-500">Registro rápido en El Cardenal Sporting</p>
+                            <p class="text-xs text-slate-500">Elige tu rol definitivo de cuenta</p>
                         </div>
                         <button onclick="app.signInWithGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold py-3 px-4 rounded-xl transition shadow-sm text-sm flex items-center justify-center space-x-3">
                             <i class="fa-brands fa-google text-red-600 text-lg"></i><span>Registrarse con Google</span>
@@ -631,7 +573,7 @@
                         </div>
                         <form id="register-form" class="space-y-4" onsubmit="app.handleRegisterSubmit(event)">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tipo de Perfil Inicial</label>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tipo de Perfil Definitivo</label>
                                 <select id="reg-role" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-red outline-none" onchange="app.toggleRegisterFields(this.value)">
                                     <option value="player">Futbolista</option>
                                     <option value="club">Técnico / Club</option>
@@ -678,7 +620,7 @@
                     const uid = cred.user.uid;
 
                     await setDoc(doc(db, 'users', uid), {
-                        uid, name, email, role, activeRole: role, roles: [role], createdAt: serverTimestamp()
+                        uid, name, email, role, createdAt: serverTimestamp()
                     });
 
                     if (role === 'player') {
@@ -696,8 +638,9 @@
                         });
                     }
 
-                    this.showToast("¡Cuenta creada con éxito!", "success");
-                    this.navigateTo('role-selector');
+                    await this.loadUserData(uid);
+                    this.showToast("¡Cuenta registrada con éxito!", "success");
+                    this.navigateTo(role === 'player' ? 'player-panel' : 'club-panel');
                 } catch (error) {
                     this.showToast("Error: " + this.translateFirebaseError(error.code), "error");
                 }
@@ -760,7 +703,7 @@
                 }
             }
 
-            // --- CHAT PRIVADO ---
+            // --- CHAT PRIVADO CON NOTIFICACIONES AUTOMÁTICAS ---
             async startPrivateChat(otherUid, otherName) {
                 if (!this.currentUser) {
                     this.showToast("Debes iniciar sesión para enviar mensajes.", "error");
@@ -827,7 +770,7 @@
                         const data = docSnap.data();
                         const otherUid = data.participants.find(uid => uid !== this.currentUser.uid);
                         const otherName = data.names ? (data.names[otherUid] || 'Usuario') : 'Usuario';
-                        const lastMsg = data.lastMessage || 'Haz clic para iniciar la conversación.';
+                        const lastMsg = data.lastMessage || 'Haz clic para abrir el chat.';
 
                         return `
                             <div onclick="app.navigateTo('chat', '${data.chatId}')" class="bg-white border border-slate-200 hover:border-cardenal-red p-4 rounded-2xl cursor-pointer transition shadow-sm flex justify-between items-center">
@@ -872,12 +815,13 @@
                     </div>
                 `;
 
+                let recipientUid = '';
                 try {
                     const chatDoc = await getDoc(doc(db, 'chats', chatId));
                     if (chatDoc.exists()) {
                         const data = chatDoc.data();
-                        const otherUid = data.participants.find(uid => uid !== this.currentUser.uid);
-                        const otherName = data.names ? (data.names[otherUid] || 'Usuario') : 'Usuario';
+                        recipientUid = data.participants.find(uid => uid !== this.currentUser.uid);
+                        const otherName = data.names ? (data.names[recipientUid] || 'Usuario') : 'Usuario';
                         const titleEl = document.getElementById('chat-title');
                         if (titleEl) titleEl.innerText = `Chat con ${otherName}`;
                     }
@@ -905,9 +849,10 @@
                         `;
                     }).join('');
                     msgsContainer.scrollTop = msgsContainer.scrollHeight;
-                }, (error) => {
-                    console.error("Error en snapshot de chat:", error);
                 });
+
+                // Guardar la referencia del destinatario para las notificaciones
+                this.currentChatRecipientUid = recipientUid;
             }
 
             async sendChatMessage(e, chatId) {
@@ -928,6 +873,18 @@
                         lastMessage: text,
                         lastUpdated: serverTimestamp()
                     }, { merge: true });
+
+                    // Crear notificación para el destinatario
+                    if (this.currentChatRecipientUid) {
+                        await addDoc(collection(db, 'notifications'), {
+                            recipientUid: this.currentChatRecipientUid,
+                            title: `Nuevo mensaje de ${this.userData?.name || 'Usuario'}`,
+                            message: text,
+                            chatId: chatId,
+                            read: false,
+                            createdAt: serverTimestamp()
+                        });
+                    }
                 } catch (error) {
                     this.showToast("Error al enviar mensaje.", "error");
                 }
@@ -1215,7 +1172,7 @@
                                 <p class="text-xs text-slate-500 mt-1">Talentos publicados en todo el territorio uruguayo</p>
                             </div>
                             <div class="flex items-center space-x-3">
-                                ${this.currentUser ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
+                                ${this.currentUser && this.userData?.role === 'player' ? `<a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Publicar Mi Perfil</span></a>` : ''}
                             </div>
                         </div>
 
@@ -1380,7 +1337,7 @@
                                             <i class="fa-solid fa-comments"></i><span>Enviar Mensaje Privado</span>
                                         </button>
                                     ` : ''}
-                                    ${this.activeRole === 'club' ? `
+                                    ${this.userData?.role === 'club' ? `
                                         <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-sm flex items-center space-x-2 text-xs">
                                             <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje</span>
                                         </a>
@@ -1677,7 +1634,10 @@
                                 <span class="text-xs text-cardenal-red font-bold uppercase">Panel de Futbolista</span>
                                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">${this.userData?.name || 'Futbolista'}</h2>
                             </div>
-                            <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil / Videos</span></a>
+                            <div class="flex gap-2">
+                                <a href="#chats" onclick="app.navigateTo('chats')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-comments"></i><span>Mis Mensajes</span></a>
+                                <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil</span></a>
+                            </div>
                         </div>
 
                         <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-4">
@@ -1750,9 +1710,12 @@
 
                 container.innerHTML = `
                     <div class="space-y-6">
-                        <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm">
-                            <span class="text-xs text-amber-600 font-bold uppercase">Panel Técnico / Representante del Club</span>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">${this.userData?.name || 'Técnico / Club'}</h2>
+                        <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <span class="text-xs text-amber-600 font-bold uppercase">Panel Técnico / Representante del Club</span>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">${this.userData?.name || 'Técnico / Club'}</h2>
+                            </div>
+                            <a href="#chats" onclick="app.navigateTo('chats')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2"><i class="fa-solid fa-comments"></i><span>Mis Mensajes</span></a>
                         </div>
 
                         <div class="bg-white border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-4">
@@ -1865,32 +1828,53 @@
                 }
                 container.innerHTML = `
                     <div class="max-w-2xl mx-auto space-y-6">
-                        <h2 class="text-2xl font-extrabold text-slate-900">Notificaciones</h2>
+                        <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm flex justify-between items-center">
+                            <div>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Notificaciones y Alertas</h2>
+                                <p class="text-xs text-slate-500 mt-1">Avisos de nuevos mensajes y ofertas</p>
+                            </div>
+                            <button onclick="app.markAllNotifsRead()" class="text-xs font-bold text-cardenal-red hover:underline">Marcar leídas</button>
+                        </div>
                         <div id="notif-list" class="space-y-3">
                             <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-red"></i></div>
                         </div>
                     </div>
                 `;
                 try {
-                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid), orderBy('createdAt', 'desc'));
                     const snap = await getDocs(q);
                     const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     const listEl = document.getElementById('notif-list');
 
                     if (list.length === 0) {
-                        listEl.innerHTML = `<div class="bg-white border border-slate-200 p-6 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No tenés notificaciones nuevas.</div>`;
+                        listEl.innerHTML = `<div class="bg-white border border-slate-200 p-6 rounded-2xl text-center text-slate-500 text-xs shadow-sm">No tenés notificaciones.</div>`;
                         return;
                     }
 
                     listEl.innerHTML = list.map(n => `
-                        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-                            <h4 class="text-sm font-bold text-slate-900">${n.title}</h4>
-                            <p class="text-xs text-slate-600 mt-1">${n.message}</p>
+                        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex justify-between items-start ${!n.read ? 'border-l-4 border-l-cardenal-red' : ''}">
+                            <div class="space-y-1">
+                                <h4 class="text-sm font-bold text-slate-900">${n.title}</h4>
+                                <p class="text-xs text-slate-600">${n.message}</p>
+                            </div>
+                            ${n.chatId ? `<button onclick="app.navigateTo('chat', '${n.chatId}')" class="bg-cardenal-red text-white text-xs font-bold px-3 py-1.5 rounded-xl">Ver Chat</button>` : ''}
                         </div>
                     `).join('');
                 } catch (e) {
                     console.error("Error cargando notificaciones:", e);
                 }
+            }
+
+            async markAllNotifsRead() {
+                try {
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid), where('read', '==', false));
+                    const snap = await getDocs(q);
+                    snap.forEach(async (d) => {
+                        await updateDoc(doc(db, 'notifications', d.id), { read: true });
+                    });
+                    this.showToast("Notificaciones marcadas como leídas", "info");
+                    this.renderNotifications(document.getElementById('app-view'));
+                } catch (e) {}
             }
 
             renderHelp(container) {
