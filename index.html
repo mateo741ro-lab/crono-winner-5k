@@ -365,37 +365,36 @@
                 `;
             }
 
-            renderRoleSelector(container) {
-                container.innerHTML = `
-                    <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl text-center space-y-8">
-                        <div>
-                            <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
-                            <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
-                            <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email}) puedes ser Jugador y Representante de Club al mismo tiempo.</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div onclick="app.switchRole('player')" class="bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group">
-                                <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-shirt"></i>
-                                </div>
-                                <h3 class="text-xl font-bold text-white">Modo Jugador Sub-17</h3>
-                                <p class="text-xs text-gray-400">Publica tu perfil, sube videos de jugadas, solicita ingreso a clubes y recibe ofertas de fichaje.</p>
-                                <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl">Entrar como Jugador</span>
-                            </div>
-
-                            <div onclick="app.switchRole('club')" class="bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group">
-                                <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-shield-halved"></i>
-                                </div>
-                                <h3 class="text-xl font-bold text-white">Modo Representante de Club</h3>
-                                <p class="text-xs text-gray-400">Busca talentos juveniles en el mercado, gestiona solicitudes de aspirantes y envía propuestas de fichaje.</p>
-                                <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl">Entrar como Club</span>
-                            </div>
-                        </div>
+           renderRoleSelector(container) {
+    container.innerHTML = `
+        <div class="max-w-2xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl text-center space-y-8">
+            <div>
+                <span class="text-xs text-cardenal-gold font-bold uppercase">Selección de Modo</span>
+                <h2 class="text-3xl font-bold text-white mt-2">¿Cómo deseas operar hoy?</h2>
+                <p class="text-xs text-gray-400 mt-1">Con tu correo (${this.currentUser?.email || ''}) puedes cambiar entre modo Jugador y Club en cualquier momento.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button type="button" onclick="window.app.switchRole('player')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-red p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
+                    <div class="w-16 h-16 rounded-2xl bg-red-950 text-red-400 border border-red-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                        <i class="fa-solid fa-shirt"></i>
                     </div>
-                `;
-            }
+                    <h3 class="text-xl font-bold text-white text-center">Modo Jugador Sub-17</h3>
+                    <p class="text-xs text-gray-400 text-center">Publica tu perfil, sube videos de jugadas, solicita ingreso a clubes y recibe ofertas de fichaje.</p>
+                    <span class="bg-cardenal-red text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Jugador</span>
+                </button>
 
+                <button type="button" onclick="window.app.switchRole('club')" class="w-full text-left bg-black/60 border border-cardenal-border hover:border-cardenal-gold p-6 rounded-2xl cursor-pointer transition flex flex-col items-center space-y-4 group focus:outline-none">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-950 text-amber-400 border border-amber-900 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white text-center">Modo Representante de Club</h3>
+                    <p class="text-xs text-gray-400 text-center">Busca talentos juveniles en el mercado, gestiona solicitudes de aspirantes y envía propuestas de fichaje.</p>
+                    <span class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">Entrar como Club</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
             renderLogin(container) {
                 container.innerHTML = `
                     <div class="max-w-md mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl">
