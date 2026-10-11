@@ -165,6 +165,15 @@
                         } else if (this.userData.role) {
                             this.activeRole = this.userData.role;
                         }
+                    } else {
+                        this.userData = {
+                            uid: uid,
+                            email: this.currentUser?.email || '',
+                            name: 'Usuario',
+                            role: 'player',
+                            roles: ['player'],
+                            activeRole: 'player'
+                        };
                     }
                 } catch (error) {
                     console.error("Error cargando perfil de usuario:", error);
@@ -214,15 +223,20 @@
                     if (!roles.includes(newRole)) roles.push(newRole);
 
                     this.activeRole = newRole;
-                    if (this.userData) {
-                        this.userData.activeRole = newRole;
-                        this.userData.roles = roles;
+                    if (!this.userData) {
+                        this.userData = { uid: this.currentUser.uid, email: this.currentUser.email, name: 'Usuario' };
                     }
+                    this.userData.activeRole = newRole;
+                    this.userData.roles = roles;
 
-                    await updateDoc(doc(db, 'users', this.currentUser.uid), {
+                    // setDoc con { merge: true } previene el error "No document to update"
+                    await setDoc(doc(db, 'users', this.currentUser.uid), {
+                        uid: this.currentUser.uid,
+                        email: this.currentUser.email,
+                        name: this.userData.name || 'Usuario',
                         activeRole: newRole,
                         roles: roles
-                    });
+                    }, { merge: true });
 
                     this.showToast(`Modo activado: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
                     this.renderNavbarAuth();
@@ -1147,7 +1161,7 @@
                         <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
                                 <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Jugador Sub-17</span>
-                                <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData.name}</h2>
+                                <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Jugador'}</h2>
                             </div>
                             <a href="#profile-edit" onclick="app.navigateTo('profile-edit')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2"><i class="fa-solid fa-user-pen"></i><span>Editar Mi Perfil Futbolístico</span></a>
                         </div>
@@ -1260,7 +1274,7 @@
                     <div class="space-y-8">
                         <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl">
                             <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Club</span>
-                            <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData.name}</h2>
+                            <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData?.name || 'Representante'}</h2>
                         </div>
 
                         <!-- Solicitudes de Jugadores -->
