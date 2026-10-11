@@ -99,7 +99,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, addDoc, serverTimestamp, writeBatch, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         // Configuración de Firebase conectada con tu proyecto cardenal-sporting
@@ -226,6 +226,8 @@
                 container.appendChild(toast);
                 setTimeout(() => toast.remove(), 5000);
             }
+
+            // --- VISTAS Y AUTENTICACIÓN ---
 
             renderHome(container) {
                 container.innerHTML = `
@@ -365,7 +367,7 @@
             translateFirebaseError(code) {
                 switch(code) {
                     case 'auth/operation-not-allowed':
-                        return 'Debes activar "Correo electrónico/contraseña" en la pestaña Authentication > Sign-in method en tu consola de Firebase.';
+                        return 'Debes activar "Correo electrónico/contraseña" en Authentication en Firebase.';
                     case 'auth/email-already-in-use':
                         return 'El correo electrónico ya está registrado. Intenta iniciar sesión.';
                     case 'auth/weak-password':
@@ -381,18 +383,47 @@
                 }
             }
 
+            // --- MERCADO DE PASES SUB-17 COMPLETO ---
+
             async renderMarket(container) {
                 container.innerHTML = `
                     <div class="space-y-8">
-                        <div class="flex justify-between items-center bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
                             <div>
                                 <h2 class="text-3xl font-extrabold text-white">Mercado de Pases Sub-17</h2>
                                 <p class="text-xs text-gray-400 mt-1">Jugadores juveniles registrados en Durazno, Uruguay</p>
                             </div>
-                            <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                                <i class="fa-solid fa-database mr-1"></i> Cargar / Reiniciar Datos Demo
-                            </button>
+                            <div class="flex items-center space-x-3 w-full md:w-auto">
+                                <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                    <i class="fa-solid fa-database mr-1"></i> Cargar / Reiniciar Datos Demo
+                                </button>
+                            </div>
                         </div>
+
+                        <!-- Filtros Avanzados -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-cardenal-card border border-cardenal-border p-4 rounded-2xl">
+                            <input type="text" id="filter-name" placeholder="Buscar por nombre..." oninput="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                            <select id="filter-position" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <option value="">Todas las posiciones</option>
+                                <option value="Arquero">Arquero</option>
+                                <option value="Lateral derecho">Lateral derecho</option>
+                                <option value="Lateral izquierdo">Lateral izquierdo</option>
+                                <option value="Defensa central">Defensa central</option>
+                                <option value="Mediocentro defensivo">Mediocentro defensivo</option>
+                                <option value="Mediocampista central">Mediocampista central</option>
+                                <option value="Mediocampista ofensivo">Mediocampista ofensivo</option>
+                                <option value="Extremo derecho">Extremo derecho</option>
+                                <option value="Extremo izquierdo">Extremo izquierdo</option>
+                                <option value="Delantero centro">Delantero centro</option>
+                            </select>
+                            <select id="filter-status" onchange="app.filterPlayers()" class="bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                                <option value="">Cualquier disponibilidad</option>
+                                <option value="Disponible">Disponible para nuevas oportunidades</option>
+                                <option value="Prestamo">En préstamo</option>
+                                <option value="Con club">Con club actual</option>
+                            </select>
+                        </div>
+
                         <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
                         </div>
@@ -405,46 +436,654 @@
                 try {
                     const snap = await getDocs(collection(db, 'players'));
                     this.playersCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const grid = document.getElementById('players-grid');
-                    if (this.playersCache.length === 0) {
-                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay jugadores. Haz clic en "Cargar Datos Demo".</div>`;
-                        return;
-                    }
-                    grid.innerHTML = this.playersCache.map(p => `
-                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl flex flex-col justify-between">
-                            <div>
-                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
-                                <h3 class="text-xl font-bold text-white mt-3">${p.sportingName}</h3>
-                                <p class="text-xs text-gray-400 mt-1">Club: ${p.currentClub || 'Libre'}</p>
-                            </div>
-                            <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
-                                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-400">${p.status}</span>
-                            </div>
-                        </div>
-                    `).join('');
+                    this.renderPlayerCards(this.playersCache);
                 } catch (error) {
                     console.error("Error cargando jugadores:", error);
                 }
             }
 
+            renderPlayerCards(players) {
+                const grid = document.getElementById('players-grid');
+                if (!grid) return;
+
+                if (players.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No se encontraron jugadores. Haz clic en "Cargar Datos Demo" si la base está vacía.</div>`;
+                    return;
+                }
+
+                grid.innerHTML = players.map(p => `
+                    <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between hover:border-cardenal-red transition group">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position || 'Fútbol'}</span>
+                                <span class="text-xs text-gray-400"><i class="fa-solid fa-shield mr-1"></i>${p.currentClub || 'Libre'}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white group-hover:text-cardenal-gold transition">${p.sportingName}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Categoría: ${p.category || 'Sub-17'} • Pierna: ${p.preferredFoot || 'Derecha'}</p>
+                            <p class="text-sm text-gray-300 mt-3 line-clamp-2">${p.description || 'Sin descripción.'}</p>
+                        </div>
+                        <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-between items-center">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${p.status?.includes('Disponible') ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-zinc-800 text-gray-300'}">${p.status || 'Disponible'}</span>
+                            <div class="flex space-x-2">
+                                <a href="#player/${p.id}" onclick="app.navigateTo('player', '${p.id}')" class="bg-cardenal-red hover:bg-red-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Perfil</a>
+                                ${this.userData?.role === 'club' ? `<a href="#proposal-create/${p.id}" onclick="app.navigateTo('proposal-create', '${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow">Ofertar</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            filterPlayers() {
+                const nameQuery = document.getElementById('filter-name').value.toLowerCase();
+                const posQuery = document.getElementById('filter-position').value;
+                const statusQuery = document.getElementById('filter-status').value;
+
+                const filtered = this.playersCache.filter(p => {
+                    const matchesName = p.sportingName.toLowerCase().includes(nameQuery);
+                    const matchesPos = !posQuery || p.position === posQuery;
+                    const matchesStatus = !statusQuery || (p.status && p.status.toLowerCase().includes(statusQuery.toLowerCase()));
+                    return matchesName && matchesPos && matchesStatus;
+                });
+
+                this.renderPlayerCards(filtered);
+            }
+
+            async renderPlayerDetail(container, playerId) {
+                try {
+                    const docSnap = await getDoc(doc(db, 'players', playerId));
+                    if (!docSnap.exists()) {
+                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Jugador no encontrado.</div>`;
+                        return;
+                    }
+                    const p = docSnap.data();
+
+                    container.innerHTML = `
+                        <div class="max-w-4xl mx-auto space-y-8">
+                            <button onclick="app.navigateTo('market')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
+                                <i class="fa-solid fa-arrow-left"></i><span>Volver al Mercado</span>
+                            </button>
+                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                                    <div class="w-24 h-24 rounded-2xl bg-zinc-800 border border-cardenal-border flex items-center justify-center text-4xl text-cardenal-gold font-extrabold">
+                                        ${p.sportingName.charAt(0)}
+                                    </div>
+                                    <div class="space-y-2">
+                                        <span class="bg-red-950 text-red-400 border border-red-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${p.position}</span>
+                                        <h2 class="text-3xl font-extrabold text-white">${p.sportingName}</h2>
+                                        <p class="text-sm text-gray-400"><i class="fa-solid fa-shield mr-1"></i>Club actual: <strong class="text-white">${p.currentClub || 'Libre'}</strong> • Categoría: ${p.category}</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-cardenal-border text-center">
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Pierna Hábil</span>
+                                        <p class="text-base font-bold text-white mt-1">${p.preferredFoot}</p>
+                                    </div>
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Estado</span>
+                                        <p class="text-sm font-bold text-emerald-400 mt-1">${p.status}</p>
+                                    </div>
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Altura (Privado)</span>
+                                        <p class="text-base font-bold text-white mt-1">${p.height || 'No especificada'}</p>
+                                    </div>
+                                    <div class="bg-black/40 p-4 rounded-xl border border-cardenal-border">
+                                        <span class="text-xs text-gray-400 uppercase font-semibold">Peso (Privado)</span>
+                                        <p class="text-base font-bold text-white mt-1">${p.weight || 'No especificado'}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 space-y-4">
+                                    <h3 class="text-lg font-bold text-white">Descripción Deportiva</h3>
+                                    <p class="text-gray-300 text-sm leading-relaxed bg-black/40 p-4 rounded-xl border border-cardenal-border">${p.description || 'Sin descripción.'}</p>
+                                </div>
+
+                                ${this.userData?.role === 'club' ? `
+                                    <div class="mt-8 pt-6 border-t border-cardenal-border flex justify-end">
+                                        <a href="#proposal-create/${playerId}" onclick="app.navigateTo('proposal-create', '${playerId}')" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center space-x-2">
+                                            <i class="fa-solid fa-handshake"></i><span>Proponer Fichaje / Préstamo</span>
+                                        </a>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando perfil.</div>`;
+                }
+            }
+
+            // --- CLUBES Y SOLICITUDES DE INGRESO ---
+
+            async renderClubs(container) {
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-3xl shadow-xl">
+                            <h2 class="text-3xl font-extrabold text-white">Clubes de Durazno</h2>
+                            <p class="text-xs text-gray-400 mt-1">Instituciones y planteles juveniles Sub-17 registrados</p>
+                        </div>
+                        <div id="clubs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="col-span-full text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+                try {
+                    const snap = await getDocs(collection(db, 'clubs'));
+                    this.clubsCache = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const grid = document.getElementById('clubs-grid');
+                    
+                    if (this.clubsCache.length === 0) {
+                        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">No hay clubes registrados. Ejecuta "Cargar Datos Demo" en el Mercado.</div>`;
+                        return;
+                    }
+
+                    grid.innerHTML = this.clubsCache.map(c => `
+                        <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <span class="bg-amber-950 text-amber-400 border border-amber-900 px-3 py-1 rounded-full text-xs font-bold uppercase">${c.city || 'Durazno'}, Uy</span>
+                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${c.verified ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' : 'bg-amber-950 text-amber-400'}">${c.verified ? 'Verificado' : 'Pendiente'}</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">${c.name}</h3>
+                                <p class="text-xs text-gray-400 mt-1">Categorías: ${(c.categories || ['Sub-17']).join(', ')}</p>
+                                <p class="text-sm text-gray-300 mt-3 line-clamp-2">${c.description || 'Sin descripción.'}</p>
+                            </div>
+                            <div class="pt-6 mt-6 border-t border-cardenal-border flex justify-end">
+                                <a href="#club-profile/${c.id}" onclick="app.navigateTo('club-profile', '${c.id}')" class="bg-cardenal-card hover:bg-zinc-800 border border-cardenal-border text-white px-4 py-2 rounded-xl text-xs font-bold transition">Ver Club y Solicitudes</a>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error("Error cargando clubes:", error);
+                }
+            }
+
+            async renderClubDetail(container, clubId) {
+                try {
+                    const docSnap = await getDoc(doc(db, 'clubs', clubId));
+                    if (!docSnap.exists()) {
+                        container.innerHTML = `<div class="text-center py-16 text-gray-400">Club no encontrado.</div>`;
+                        return;
+                    }
+                    const c = docSnap.data();
+
+                    container.innerHTML = `
+                        <div class="max-w-4xl mx-auto space-y-8">
+                            <button onclick="app.navigateTo('clubs')" class="text-xs text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
+                                <i class="fa-solid fa-arrow-left"></i><span>Volver a Clubes</span>
+                            </button>
+                            <div class="bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h2 class="text-3xl font-extrabold text-white">${c.name}</h2>
+                                        <p class="text-xs text-gray-400 mt-1">${c.city || 'Durazno'} • <strong class="text-white">${c.verified ? 'Verificado' : 'Pendiente de Aprobación'}</strong></p>
+                                    </div>
+                                    ${this.userData?.role === 'player' ? `
+                                        <button onclick="app.openApplyClubModal('${clubId}', '${c.name}', '${c.representativeUid}')" class="bg-cardenal-red hover:bg-red-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
+                                            <i class="fa-solid fa-file-signature mr-1"></i> Solicitar Ingresar al Club
+                                        </button>
+                                    ` : ''}
+                                </div>
+                                <p class="text-gray-300 text-sm bg-black/40 p-4 rounded-xl border border-cardenal-border">${c.description || 'Sin descripción institucional.'}</p>
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    container.innerHTML = `<div class="text-center py-16 text-gray-400">Error cargando club.</div>`;
+                }
+            }
+
+            openApplyClubModal(clubId, clubName, repUid) {
+                const modal = document.getElementById('global-modal');
+                const content = document.getElementById('modal-content');
+
+                content.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-white">Solicitud para ingresar a ${clubName}</h3>
+                            <button onclick="app.closeModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="app.handleApplyClubSubmit(event, '${clubId}', '${repUid}')" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Posición Principal</label>
+                                <input type="text" id="app-pos" required placeholder="Ej: Mediocampista Central" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Motivo / Mensaje para el Entrenador</label>
+                                <textarea id="app-msg" required rows="3" placeholder="Explica por qué quieres sumarte a las formativas..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Solicitud Formal</button>
+                        </form>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+            }
+
+            closeModal() {
+                document.getElementById('global-modal').classList.add('hidden');
+            }
+
+            async handleApplyClubSubmit(e, clubId, repUid) {
+                e.preventDefault();
+                const position = document.getElementById('app-pos').value;
+                const message = document.getElementById('app-msg').value;
+
+                try {
+                    await addDoc(collection(db, 'clubApplications'), {
+                        clubId,
+                        clubRepresentativeUid: repUid || '',
+                        playerUid: this.currentUser.uid,
+                        playerName: this.userData.name,
+                        position,
+                        message,
+                        status: 'Pendiente',
+                        createdAt: serverTimestamp()
+                    });
+
+                    if (repUid) {
+                        await addDoc(collection(db, 'notifications'), {
+                            recipientUid: repUid,
+                            title: 'Nueva Solicitud de Ingreso',
+                            message: `El jugador ${this.userData.name} ha solicitado sumarse al club.`,
+                            read: false,
+                            createdAt: serverTimestamp()
+                        });
+                    }
+
+                    this.showToast("Solicitud enviada correctamente al club.", "success");
+                    this.closeModal();
+                } catch (error) {
+                    this.showToast("Error al enviar solicitud: " + error.message, "error");
+                }
+            }
+
+            // --- SISTEMA DE PROPUESTAS DE FICHAJE Y CONTRAPROPUESTAS ---
+
+            async renderCreateProposal(container, playerId) {
+                const playerDoc = await getDoc(doc(db, 'players', playerId));
+                if (!playerDoc.exists()) {
+                    this.navigateTo('market');
+                    return;
+                }
+                const player = playerDoc.data();
+
+                container.innerHTML = `
+                    <div class="max-w-xl mx-auto bg-cardenal-card border border-cardenal-border rounded-3xl p-8 shadow-2xl space-y-6">
+                        <div>
+                            <span class="text-xs text-cardenal-gold font-bold uppercase">Nueva Propuesta de Fichaje</span>
+                            <h2 class="text-2xl font-bold text-white mt-1">Oferta para: ${player.sportingName}</h2>
+                            <p class="text-xs text-gray-400">Club actual: ${player.currentClub || 'Libre'}</p>
+                        </div>
+                        <form id="proposal-form" class="space-y-4" onsubmit="app.handleCreateProposalSubmit(event, '${playerId}')">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Modalidad de Fichaje</label>
+                                <select id="prop-modality" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none" onchange="app.toggleProposalFields(this.value)">
+                                    <option value="money">Transferencia por Dinero (UYU)</option>
+                                    <option value="free">Incorporación Gratuita</option>
+                                    <option value="loan">Préstamo Temporal</option>
+                                    <option value="benefits">Oferta con Beneficios</option>
+                                    <option value="combined">Oferta Combinada</option>
+                                </select>
+                            </div>
+                            <div id="field-amount">
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Importe Propuesto (Pesos Uruguayos - UYU)</label>
+                                <input type="number" id="prop-amount" placeholder="Ej: 5000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div id="field-loan" class="hidden space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Inicio</label>
+                                        <input type="date" id="prop-start" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fecha de Fin</label>
+                                        <input type="date" id="prop-end" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="field-benefits" class="hidden">
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Beneficios Adicionales</label>
+                                <input type="text" id="prop-benefits" placeholder="Ej: Transporte, equipamiento deportivo, alimentación" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Comentarios / Mensaje Adicional</label>
+                                <textarea id="prop-comments" rows="3" placeholder="Mensaje para el jugador y tutores..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-3 text-sm focus:border-cardenal-gold outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-cardenal-red hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Propuesta Formal</button>
+                        </form>
+                    </div>
+                `;
+            }
+
+            toggleProposalFields(modality) {
+                const fAmount = document.getElementById('field-amount');
+                const fLoan = document.getElementById('field-loan');
+                const fBenefits = document.getElementById('field-benefits');
+
+                fAmount.classList.add('hidden');
+                fLoan.classList.add('hidden');
+                fBenefits.classList.add('hidden');
+
+                if (modality === 'money') fAmount.classList.remove('hidden');
+                if (modality === 'loan') fLoan.classList.remove('hidden');
+                if (modality === 'benefits') fBenefits.classList.remove('hidden');
+                if (modality === 'combined') {
+                    fAmount.classList.remove('hidden');
+                    fLoan.classList.remove('hidden');
+                    fBenefits.classList.remove('hidden');
+                }
+            }
+
+            async handleCreateProposalSubmit(e, playerId) {
+                e.preventDefault();
+                const modality = document.getElementById('prop-modality').value;
+                const amount = document.getElementById('prop-amount').value || 0;
+                const startDate = document.getElementById('prop-start').value || '';
+                const endDate = document.getElementById('prop-end').value || '';
+                const benefits = document.getElementById('prop-benefits').value || '';
+                const comments = document.getElementById('prop-comments').value || '';
+
+                try {
+                    const proposalData = {
+                        playerId,
+                        senderUid: this.currentUser.uid,
+                        senderEmail: this.currentUser.email,
+                        senderName: this.userData.name,
+                        modality,
+                        amount: Number(amount),
+                        startDate,
+                        endDate,
+                        benefits,
+                        comments,
+                        status: 'Pendiente',
+                        createdAt: serverTimestamp()
+                    };
+
+                    const docRef = await addDoc(collection(db, 'transferOffers'), proposalData);
+
+                    await addDoc(collection(db, 'notifications'), {
+                        recipientUid: playerId,
+                        title: 'Nueva Propuesta de Fichaje Recibida',
+                        message: `El club ${this.userData.name} te ha enviado una propuesta.`,
+                        read: false,
+                        createdAt: serverTimestamp()
+                    });
+
+                    this.showToast("Propuesta de fichaje enviada con éxito.", "success");
+                    this.navigateTo('market');
+                } catch (error) {
+                    this.showToast("Error enviando propuesta: " + error.message, "error");
+                }
+            }
+
+            // --- PANELES ESPECÍFICOS DE USUARIOS ---
+
+            async renderPlayerPanel(container) {
+                if (!this.currentUser || this.userData?.role !== 'player') {
+                    this.navigateTo('login');
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl flex justify-between items-center">
+                            <div>
+                                <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Jugador Sub-17</span>
+                                <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData.name}</h2>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl space-y-6">
+                            <h3 class="text-xl font-bold text-white">Mis Propuestas Recibidas</h3>
+                            <div id="player-proposals" class="space-y-4">
+                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const q = query(collection(db, 'transferOffers'), where('playerId', '==', this.currentUser.uid));
+                    const snap = await getDocs(q);
+                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const propContainer = document.getElementById('player-proposals');
+
+                    if (list.length === 0) {
+                        propContainer.innerHTML = `<p class="text-sm text-gray-400">No tenés propuestas recibidas en este momento.</p>`;
+                        return;
+                    }
+
+                    propContainer.innerHTML = list.map(prop => `
+                        <div class="bg-black/40 border border-cardenal-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="space-y-1">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-950 text-amber-400 uppercase">${prop.modality}</span>
+                                <h4 class="text-lg font-bold text-white mt-1">Oferta de: ${prop.senderName || prop.senderEmail}</h4>
+                                <p class="text-xs text-gray-300">Importe propuesto: <strong>$U ${prop.amount || 0}</strong> • Comentarios: ${prop.comments || 'Ninguno'}</p>
+                                <p class="text-xs text-emerald-400 font-semibold">Estado: ${prop.status}</p>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="app.updateProposalStatus('${prop.id}', 'Aceptada en principio')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Aceptar</button>
+                                <button onclick="app.openCounterProposalModal('${prop.id}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Ofrecer Más</button>
+                                <button onclick="app.updateProposalStatus('${prop.id}', 'Rechazada')" class="bg-red-900 hover:bg-red-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Rechazar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error("Error cargando propuestas:", e);
+                }
+            }
+
+            openCounterProposalModal(propId) {
+                const modal = document.getElementById('global-modal');
+                const content = document.getElementById('modal-content');
+
+                content.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-white">Enviar Contrapropuesta</h3>
+                            <button onclick="app.closeModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="app.handleCounterProposalSubmit(event, '${propId}')" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Nuevo Importe Solicitado (UYU)</label>
+                                <input type="number" id="counter-amount" placeholder="Ej: 8000" class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Comentarios / Nuevas Condiciones</label>
+                                <textarea id="counter-msg" required rows="3" placeholder="Explica las condiciones que solicitas..." class="w-full bg-black border border-cardenal-border rounded-xl px-4 py-2.5 text-sm focus:border-cardenal-gold outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl transition shadow-lg">Enviar Contrapropuesta al Club</button>
+                        </form>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+            }
+
+            async handleCounterProposalSubmit(e, propId) {
+                e.preventDefault();
+                const amount = document.getElementById('counter-amount').value || 0;
+                const message = document.getElementById('counter-msg').value;
+
+                try {
+                    await updateDoc(doc(db, 'transferOffers', propId), {
+                        status: 'Contrapropuesta',
+                        counterAmount: Number(amount),
+                        counterMessage: message
+                    });
+
+                    this.showToast("Contrapropuesta enviada al club.", "success");
+                    this.closeModal();
+                    this.renderPlayerPanel(document.getElementById('app-view'));
+                } catch (error) {
+                    this.showToast("Error al enviar contrapropuesta: " + error.message, "error");
+                }
+            }
+
+            async updateProposalStatus(proposalId, newStatus) {
+                try {
+                    await updateDoc(doc(db, 'transferOffers', proposalId), { status: newStatus });
+                    this.showToast(`Propuesta actualizada a: ${newStatus}`, "success");
+                    this.renderPlayerPanel(document.getElementById('app-view'));
+                } catch (error) {
+                    this.showToast("Error actualizando propuesta.", "error");
+                }
+            }
+
+            async renderClubPanel(container) {
+                if (!this.currentUser || this.userData?.role !== 'club') {
+                    this.navigateTo('login');
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-8">
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl">
+                            <span class="text-xs text-cardenal-gold font-bold uppercase">Panel de Club</span>
+                            <h2 class="text-3xl font-extrabold text-white mt-1">${this.userData.name}</h2>
+                        </div>
+
+                        <!-- Solicitudes Recibidas de Jugadores -->
+                        <div class="bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-xl space-y-6">
+                            <h3 class="text-xl font-bold text-white">Solicitudes para Ingresar al Club</h3>
+                            <div id="club-applications" class="space-y-4">
+                                <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const q = query(collection(db, 'clubApplications'), where('clubRepresentativeUid', '==', this.currentUser.uid));
+                    const snap = await getDocs(q);
+                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const appContainer = document.getElementById('club-applications');
+
+                    if (list.length === 0) {
+                        appContainer.innerHTML = `<p class="text-sm text-gray-400">No tenés solicitudes de ingreso pendientes en este momento.</p>`;
+                        return;
+                    }
+
+                    appContainer.innerHTML = list.map(app => `
+                        <div class="bg-black/40 border border-cardenal-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="space-y-1">
+                                <h4 class="text-lg font-bold text-white">${app.playerName}</h4>
+                                <p class="text-xs text-gray-300">Posición: <strong>${app.position}</strong> • Mensaje: "${app.message}"</p>
+                                <p class="text-xs text-amber-400 font-semibold">Estado: ${app.status}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error("Error cargando solicitudes del club:", e);
+                }
+            }
+
+            renderAdminPanel(container) {
+                if (!this.currentUser || this.userData?.role !== 'admin') {
+                    container.innerHTML = `<div class="text-center py-24 text-red-500 font-bold">Acceso restringido a administradores.</div>`;
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="max-w-4xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
+                        <h2 class="text-3xl font-extrabold text-white">Panel de Administración</h2>
+                        <p class="text-sm text-gray-300">Herramientas de supervisión y verificación de clubes para El Cardenal Sporting.</p>
+                        <button onclick="app.seedDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-6 py-3 rounded-xl transition shadow">
+                            <i class="fa-solid fa-database mr-2"></i> Inicializar / Reiniciar Base de Datos Demo
+                        </button>
+                    </div>
+                `;
+            }
+
+            // --- NOTIFICACIONES EN TIEMPO REAL ---
+
+            async renderNotifications(container) {
+                if (!this.currentUser) {
+                    this.navigateTo('login');
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto space-y-6">
+                        <h2 class="text-3xl font-extrabold text-white">Bandeja de Notificaciones</h2>
+                        <div id="notif-list" class="space-y-4">
+                            <div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-cardenal-gold"></i></div>
+                        </div>
+                    </div>
+                `;
+                try {
+                    const q = query(collection(db, 'notifications'), where('recipientUid', '==', this.currentUser.uid));
+                    const snap = await getDocs(q);
+                    const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const listEl = document.getElementById('notif-list');
+
+                    if (list.length === 0) {
+                        listEl.innerHTML = `<div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl text-center text-gray-400">No tenés notificaciones nuevas.</div>`;
+                        return;
+                    }
+
+                    listEl.innerHTML = list.map(n => `
+                        <div class="bg-cardenal-card border border-cardenal-border p-6 rounded-2xl flex justify-between items-center">
+                            <div class="space-y-1">
+                                <h4 class="text-base font-bold text-white">${n.title}</h4>
+                                <p class="text-sm text-gray-300">${n.message}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error("Error cargando notificaciones:", e);
+                }
+            }
+
+            // --- AYUDA Y PRIVACIDAD ---
+
+            renderHelp(container) {
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto bg-cardenal-card border border-cardenal-border p-8 rounded-3xl shadow-2xl space-y-6">
+                        <h2 class="text-3xl font-extrabold text-white">Ayuda, Privacidad y Protección de Menores</h2>
+                        <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                            <p><strong>El Cardenal Sporting</strong> está diseñado específicamente para el fútbol juvenil Sub-17 de Durazno, Uruguay. Cumplimos con estrictas normativas de privacidad y protección de datos para menores de edad.</p>
+                            <h3 class="text-lg font-bold text-white pt-2">Privacidad por Defecto</h3>
+                            <p>Los datos sensibles (teléfonos, correos personales, domicilios y documentos de identidad) no se publican públicamente. Las negociaciones se realizan mediante propuestas formales supervisadas.</p>
+                            <h3 class="text-lg font-bold text-white pt-2">Eliminación de Datos</h3>
+                            <p>Si deseas solicitar la eliminación completa de tu perfil y registros deportivos, puedes contactar al soporte técnico o utilizar la opción desde tu panel de usuario autenticado.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- CARGA DE DATOS DEMO (DURAZNO) ---
+
             async seedDemoData() {
                 try {
                     this.showToast("Generando datos ficticios de demostración...", "info");
                     const batch = writeBatch(db);
-                    const positions = ['Arquero', 'Defensa central', 'Mediocampista central', 'Delantero centro'];
-                    const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez'];
 
-                    for (let i = 0; i < 10; i++) {
-                        const ref = doc(collection(db, 'players'));
-                        batch.set(ref, {
+                    const clubsData = [
+                        { name: "Club Atlético Durazno", city: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Institución histórica de la capital departamental." },
+                        { name: "Racing de Durazno", city: "Durazno", categories: ["Sub-17", "Sub-20"], verified: true, description: "Semillero de talentos juveniles en Durazno." },
+                        { name: "Wanderers de Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Tradición y formación competitiva." },
+                        { name: "Rampla Juniors de Durazno", city: "Durazno", categories: ["Sub-17"], verified: true, description: "Pasión y garra en divisiones formativas." },
+                        { name: "Santa Bernardina FC", city: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Club representativo de la zona norte." }
+                    ];
+
+                    for (let c of clubsData) {
+                        const refDoc = doc(collection(db, 'clubs'));
+                        batch.set(refDoc, { ...c, lastUpdated: serverTimestamp() });
+                    }
+
+                    const positions = ['Arquero', 'Lateral derecho', 'Lateral izquierdo', 'Defensa central', 'Mediocentro defensivo', 'Mediocampista central', 'Mediocampista ofensivo', 'Extremo derecho', 'Extremo izquierdo', 'Delantero centro'];
+                    const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez', 'Santiago Fernández', 'Ignacio López', 'Thiago Sosa', 'Bruno Ferreira', 'Lautaro Ramírez', 'Valentín Castro', 'Gonzalo Morales', 'Franco Pintos', 'Emiliano Silva', 'Lucas Da Silva'];
+                    const clubsList = ['Club Atlético Durazno', 'Racing de Durazno', 'Wanderers de Durazno', 'Libre', 'Santa Bernardina FC'];
+
+                    for (let i = 0; i < 15; i++) {
+                        const refDoc = doc(collection(db, 'players'));
+                        batch.set(refDoc, {
                             sportingName: `${names[i % names.length]} (${i + 1})`,
                             category: 'Sub-17',
                             position: positions[i % positions.length],
-                            preferredFoot: 'Derecha',
-                            currentClub: 'Club Atlético Durazno',
-                            status: 'Disponible para nuevas oportunidades',
-                            description: 'Jugador destacado en formativas locales de Durazno.',
-                            skills: ['Buen pase', 'Resistencia'],
+                            preferredFoot: i % 2 === 0 ? 'Derecha' : 'Izquierda',
+                            currentClub: clubsList[i % clubsList.length],
+                            status: i % 3 === 0 ? 'Disponible para nuevas oportunidades' : 'Con club actual',
+                            description: 'Jugador destacado en formativas locales de Durazno con gran proyección táctica y técnica.',
+                            skills: ['Excelente pegada', 'Buen juego aéreo', 'Resistencia física'],
                             lastUpdated: serverTimestamp()
                         });
                     }
@@ -456,13 +1095,6 @@
                     this.showToast("Error cargando datos demo: " + error.message, "error");
                 }
             }
-
-            renderClubs(container) { container.innerHTML = `<div class="text-center py-16 text-white">Sección de Clubes</div>`; }
-            renderHelp(container) { container.innerHTML = `<div class="text-center py-16 text-white">Ayuda y Protección de Menores</div>`; }
-            renderNotifications(container) { container.innerHTML = `<div class="text-center py-16 text-white">Notificaciones</div>`; }
-            renderPlayerPanel(container) { container.innerHTML = `<div class="text-center py-16 text-white">Panel de Jugador</div>`; }
-            renderClubPanel(container) { container.innerHTML = `<div class="text-center py-16 text-white">Panel de Club</div>`; }
-            renderAdminPanel(container) { container.innerHTML = `<div class="text-center py-16 text-white">Panel Admin</div>`; }
         }
 
         window.app = new CardenalApp();
