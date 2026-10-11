@@ -170,27 +170,67 @@
                 }
             }
 
-            async switchRole(newRole) {
-                if (!this.currentUser) return;
+         async switchRole(newRole) {
+    if (!this.currentUser) {
+        this.showToast("Debes iniciar sesión primero.", "error");
+        this.navigateTo('login');
+        return;
+    }
 
-                // Verificar si ya tiene creado el documento de dicho rol
-                if (newRole === 'player') {
-                    const pSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
-                    if (!pSnap.exists()) {
-                        // Crear perfil inicial de jugador si no existía
-                        await setDoc(doc(db, 'players', this.currentUser.uid), {
-                            uid: this.currentUser.uid,
-                            sportingName: this.userData.name || 'Jugador',
-                            category: 'Sub-17',
-                            position: 'Mediocampista central',
-                            preferredFoot: 'Derecha',
-                            currentClub: 'Libre',
-                            status: 'Disponible para nuevas oportunidades',
-                            description: 'Jugador juvenil de Durazno.',
-                            published: true,
-                            lastUpdated: serverTimestamp()
-                        }, { merge: true });
-                    }
+    try {
+        if (newRole === 'player') {
+            const pSnap = await getDoc(doc(db, 'players', this.currentUser.uid));
+            if (!pSnap.exists()) {
+                await setDoc(doc(db, 'players', this.currentUser.uid), {
+                    uid: this.currentUser.uid,
+                    sportingName: this.userData?.name || 'Jugador',
+                    category: 'Sub-17',
+                    position: 'Mediocampista central',
+                    preferredFoot: 'Derecha',
+                    currentClub: 'Libre',
+                    status: 'Disponible para nuevas oportunidades',
+                    description: 'Jugador juvenil de Durazno.',
+                    published: true,
+                    lastUpdated: serverTimestamp()
+                }, { merge: true });
+            }
+        } else if (newRole === 'club') {
+            const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
+            const cSnap = await getDocs(qClubs);
+            if (cSnap.empty) {
+                await addDoc(collection(db, 'clubs'), {
+                    name: `Club de ${this.userData?.name || 'Representante'}`,
+                    representativeUid: this.currentUser.uid,
+                    city: 'Durazno',
+                    verified: true,
+                    description: 'Club participante en las formativas de Durazno.',
+                    lastUpdated: serverTimestamp()
+                });
+            }
+        }
+
+        let roles = this.userData?.roles || [this.userData?.role || 'player'];
+        if (!roles.includes(newRole)) roles.push(newRole);
+
+        this.activeRole = newRole;
+        if (this.userData) {
+            this.userData.activeRole = newRole;
+            this.userData.roles = roles;
+        }
+
+        await updateDoc(doc(db, 'users', this.currentUser.uid), {
+            activeRole: newRole,
+            roles: roles
+        });
+
+        this.showToast(`Modo activado: ${newRole === 'player' ? 'Jugador Sub-17' : 'Representante de Club'}`, "success");
+        this.renderNavbarAuth();
+        this.navigateTo(newRole === 'player' ? 'player-panel' : 'club-panel');
+    } catch (error) {
+        console.error("Error al cambiar de rol:", error);
+        this.showToast("Error al activar modo: " + error.message, "error");
+    }
+}
                 } else if (newRole === 'club') {
                     const qClubs = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
                     const cSnap = await getDocs(qClubs);
