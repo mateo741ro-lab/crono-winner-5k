@@ -101,23 +101,24 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, addDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-        // ==========================================
-        // CONFIGURACIÓN DE FIREBASE (PEGA TUS DATOS AQUÍ)
-        // ==========================================
+        // Configuración de Firebase conectada con tu proyecto cardenal-sporting
         const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "el-cardenal-sporting.firebaseapp.com",
-            projectId: "el-cardenal-sporting",
-            storageBucket: "el-cardenal-sporting.appspot.com",
-            messagingSenderId: "TU_MESSAGING_SENDER_ID",
-            appId: "TU_APP_ID"
+            apiKey: "AIzaSyAN6fuDBCSLKNFB6w9VGKqlPRCqpyATxb0",
+            authDomain: "cardenal-sporting.firebaseapp.com",
+            projectId: "cardenal-sporting",
+            storageBucket: "cardenal-sporting.firebasestorage.app",
+            messagingSenderId: "296710922549",
+            appId: "1:296710922549:web:ec267dce1dc14057862c7c",
+            measurementId: "G-0PV7J85D5B"
         };
 
         const firebaseApp = initializeApp(firebaseConfig);
         const auth = getAuth(firebaseApp);
         const db = getFirestore(firebaseApp);
         const storage = getStorage(firebaseApp);
+        const analytics = getAnalytics(firebaseApp);
 
         class CardenalApp {
             constructor() {
@@ -771,7 +772,6 @@
 
                     const docRef = await addDoc(collection(db, 'transferOffers'), proposalData);
 
-                    // Crear notificación para el jugador
                     await addDoc(collection(db, 'notifications'), {
                         recipientUid: playerId,
                         title: 'Nueva Propuesta Recibida',
@@ -964,7 +964,6 @@
                     this.showToast("Generando datos ficticios de demostración...", "info");
                     const batch = writeBatch(db);
 
-                    // Clubes demo
                     const clubsData = [
                         { name: "Club Atlético Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-15"], verified: true, description: "Institución histórica de la capital departamental." },
                         { name: "Racing de Durazno", city: "Durazno", department: "Durazno", categories: ["Sub-17", "Sub-20"], verified: true, description: "Semillero de talentos juveniles en Durazno." },
@@ -978,7 +977,6 @@
                         batch.set(ref, { ...c, lastUpdated: serverTimestamp() });
                     }
 
-                    // Jugadores demo (Sub-17)
                     const positions = ['Arquero', 'Lateral derecho', 'Lateral izquierdo', 'Defensa central', 'Mediocentro defensivo', 'Mediocampista central', 'Mediocampista ofensivo', 'Extremo derecho', 'Extremo izquierdo', 'Delantero centro'];
                     const names = ['Agustín Silva', 'Matías Rodríguez', 'Lucas Pereira', 'Facundo Gómez', 'Joaquín Martínez', 'Santiago Fernández', 'Ignacio López', 'Thiago Sosa', 'Bruno Ferreira', 'Lautaro Ramírez', 'Valentín Castro', 'Gonzalo Morales', 'Franco Pintos', 'Emiliano Silva', 'Lucas Da Silva'];
                     const clubsList = ['Club Atlético Durazno', 'Racing de Durazno', 'Wanderers de Durazno', 'Libre', 'Santa Bernardina FC'];
