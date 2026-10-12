@@ -2,7 +2,7 @@
 <html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>El Cardenal Sporting | Plataforma Web para Conectar Futbolistas</title>
     <!-- Favicon con el Logo Oficial -->
     <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNUlRtaYLNMxGRBv4ujmiTHuVj293cP62RwiJFbEEEKMYBN3Tv7mah0L0&s=10" type="image/jpeg">
@@ -817,7 +817,7 @@
                         </div>
 
                         <form onsubmit="app.sendChatMessage(event, '${chatId}')" class="flex gap-2 pt-2 border-t border-slate-100">
-                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:border-cardenal-red outline-none">
+                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-base focus:border-cardenal-red outline-none">
                             <button type="submit" class="bg-cardenal-red hover:bg-red-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-sm"><i class="fa-solid fa-paper-plane"></i></button>
                         </form>
                     </div>
@@ -1883,7 +1883,6 @@
                 `;
 
                 try {
-                    // Cargar clubes administrados por este DT
                     const clubsQuery = query(collection(db, 'clubs'), where('representativeUid', '==', this.currentUser.uid));
                     const clubsSnap = await getDocs(clubsQuery);
                     const myClubsList = document.getElementById('my-clubs-list');
@@ -1907,7 +1906,6 @@
                         }).join('');
                     }
 
-                    // Cargar solicitudes
                     const clubIds = clubsSnap.docs.map(d => d.id);
                     const snap = await getDocs(collection(db, 'clubApplications'));
                     const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(app => 
