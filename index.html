@@ -311,6 +311,7 @@
             }
 
             handleRouting() {
+                window.scrollTo(0, 0);
                 const hash = window.location.hash.slice(1) || 'home';
                 const [view, param] = hash.split('/');
                 this.currentView = view;
@@ -869,6 +870,7 @@
                 if (!text) return;
 
                 input.value = '';
+                window.scrollTo(0, 0);
                 try {
                     await addDoc(collection(db, 'chats', chatId, 'messages'), {
                         senderUid: this.currentUser.uid,
